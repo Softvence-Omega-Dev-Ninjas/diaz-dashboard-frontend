@@ -7,27 +7,32 @@ import { clearUser } from "@/redux/features/auth/authSlice";
 import { cn } from "@/lib/utils";
 import logoImg from "@/assets/logo.png";
 import {
-  LuCodesandbox,
+  LuChartColumn,
   LuFileText,
-  LuList,
+  LuLayoutDashboard,
+  LuLayoutGrid,
   LuSettings,
+  LuShield,
+  LuShip,
   LuStar,
-  LuUser,
   LuUsers,
 } from "react-icons/lu";
-import { ImStatsDots } from "react-icons/im";
 
 const navItems = [
-  { label: "Overview", path: "/", icon: <LuCodesandbox className="text-lg" /> },
+  {
+    label: "Overview",
+    path: "/",
+    icon: <LuLayoutDashboard className="text-lg" />,
+  },
   {
     label: "Listings Management",
     path: "/listings",
-    icon: <LuList className="text-lg" />,
+    icon: <LuShip className="text-lg" />,
   },
   {
     label: "Seller Management",
     path: "/sellers",
-    icon: <LuUser className="text-lg" />,
+    icon: <LuUsers className="text-lg" />,
   },
   {
     label: "Featured & Homepage",
@@ -42,12 +47,12 @@ const navItems = [
   {
     label: "Users & Permissions",
     path: "/users",
-    icon: <LuUsers className="text-lg" />,
+    icon: <LuShield className="text-lg" />,
   },
   {
     label: "Analytics & Reports",
     path: "/analytics",
-    icon: <ImStatsDots className="text-lg" />,
+    icon: <LuChartColumn className="text-lg" />,
   },
   {
     label: "Settings",
@@ -102,13 +107,13 @@ const Navbar = () => {
       {/* Mobile Menu Toggle Button */}
       <button
         onClick={toggleMobileMenu}
-        className="lg:hidden fixed top-4 left-4 z-60 p-2 bg-white rounded-lg shadow-lg hover:bg-gray-50 transition-colors"
+        className="lg:hidden fixed top-2 left-2 z-60 p-2 bg-white rounded-lg shadow-lg hover:bg-gray-50 transition-colors"
         aria-label="Toggle menu"
       >
         {isMobileMenuOpen ? (
           <HiX className="w-6 h-6 text-gray-700" />
         ) : (
-          <HiMenuAlt3 className="w-6 h-6 text-gray-700" />
+          <LuLayoutGrid className="w-6 h-6 text-gray-700" />
         )}
       </button>
 
@@ -124,7 +129,7 @@ const Navbar = () => {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed left-0 top-0 z-50 h-screen w-[280px] sm:w-[320px] bg-white shadow-lg flex flex-col transition-transform duration-300 ease-in-out",
+          "fixed left-0 top-0 z-50 h-screen w-[280px] lg:w-[310px] xl:w-80 bg-white shadow-lg flex flex-col transition-transform duration-300 ease-in-out",
           "lg:translate-x-0",
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         )}
