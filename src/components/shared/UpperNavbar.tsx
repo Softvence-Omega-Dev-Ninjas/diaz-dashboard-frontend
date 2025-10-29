@@ -4,7 +4,7 @@ import { LuBell, LuChevronDown } from "react-icons/lu";
 
 const UpperNavbar = () => {
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white">
+        <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white p-1">
             <div className="md:ml-0 ml-10 flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
                 {/* Search Bar */}
                 <div className="flex-1 max-w-md">

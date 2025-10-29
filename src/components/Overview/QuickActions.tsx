@@ -3,7 +3,7 @@ import { LuCircleCheckBig, LuFileText, LuPlus, LuStar } from "react-icons/lu";
 
 const QuickActions = () => {
     return (
-       <div className="w-1/3 bg-white p-4 rounded-lg shadow border border-gray-200 flex flex-col">
+       <div className="w-full md:w-1/3 bg-white p-4 rounded-lg shadow border border-gray-200 flex flex-col">
           <h2 className="text-lg font-semibold">Quick Actions</h2>
           <ul className="mt-5 space-y-3 border-b border-gray-200 pb-5 shrink-0">
             <li className="bg-[#006EF0] text-white flex items-center gap-2 px-4 py-2 rounded-lg cursor-pointer hover:bg-[#005acc] transition-colors">

@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { NavLink } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { IoIosLogOut } from "react-icons/io";
-import { HiMenuAlt3, HiX } from "react-icons/hi";
+import { HiX } from "react-icons/hi";
 import { clearUser } from "@/redux/features/auth/authSlice";
 import { cn } from "@/lib/utils";
 import logoImg from "@/assets/logo.png";
