@@ -9,10 +9,14 @@ interface AccordionSection {
 
 const HomeBannersSection: React.FC = () => {
   const [bannerTitle, setBannerTitle] = useState('FLORIDA YACHT TRADER');
-  const [subtitle, setSubtitle] = useState("The World's most affordable and safe marketplace");
+  const [subtitle, setSubtitle] = useState(
+    "The World's most affordable and safe marketplace",
+  );
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
-  const [backgroundPreview, setBackgroundPreview] = useState<string | null>(null);
-  
+  const [backgroundPreview, setBackgroundPreview] = useState<string | null>(
+    null,
+  );
+
   const logoInputRef = useRef<HTMLInputElement>(null);
   const backgroundInputRef = useRef<HTMLInputElement>(null);
 
@@ -62,13 +66,20 @@ const HomeBannersSection: React.FC = () => {
   };
 
   const handleSaveChanges = () => {
-    console.log('Saving changes...', { bannerTitle, subtitle, logoPreview, backgroundPreview });
+    console.log('Saving changes...', {
+      bannerTitle,
+      subtitle,
+      logoPreview,
+      backgroundPreview,
+    });
   };
 
   const toggleAccordion = (id: string) => {
-    setAccordions(accordions.map(acc => 
-      acc.id === id ? { ...acc, isOpen: !acc.isOpen } : acc
-    ));
+    setAccordions(
+      accordions.map((acc) =>
+        acc.id === id ? { ...acc, isOpen: !acc.isOpen } : acc,
+      ),
+    );
   };
 
   return (
@@ -93,7 +104,7 @@ const HomeBannersSection: React.FC = () => {
             )}
           </button>
 
-          {accordion.isOpen && accordion.id === "hero" && (
+          {accordion.isOpen && accordion.id === 'hero' && (
             <div className="p-6 border-t border-gray-100 space-y-6">
               {/* Banner Title */}
               <div>
@@ -216,7 +227,7 @@ const HomeBannersSection: React.FC = () => {
             </div>
           )}
 
-          {accordion.isOpen && accordion.id !== "hero" && (
+          {accordion.isOpen && accordion.id !== 'hero' && (
             <div className="p-6 border-t border-gray-100">
               <p className="text-sm text-gray-500">
                 Content for {accordion.title} will be implemented here.

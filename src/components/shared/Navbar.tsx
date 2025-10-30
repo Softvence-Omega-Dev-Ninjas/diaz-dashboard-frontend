@@ -1,11 +1,11 @@
-import { useState, useEffect, useCallback } from "react";
-import { NavLink } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { IoIosLogOut } from "react-icons/io";
-import { HiX } from "react-icons/hi";
-import { clearUser } from "@/redux/features/auth/authSlice";
-import { cn } from "@/lib/utils";
-import logoImg from "@/assets/logo.png";
+import { useState, useEffect, useCallback } from 'react';
+import { NavLink } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { IoIosLogOut } from 'react-icons/io';
+import { HiX } from 'react-icons/hi';
+import { clearUser } from '@/redux/features/auth/authSlice';
+import { cn } from '@/lib/utils';
+import logoImg from '@/assets/logo.png';
 import {
   LuChartColumn,
   LuFileText,
@@ -16,47 +16,47 @@ import {
   LuShip,
   LuStar,
   LuUsers,
-} from "react-icons/lu";
+} from 'react-icons/lu';
 
 const navItems = [
   {
-    label: "Overview",
-    path: "/",
+    label: 'Overview',
+    path: '/',
     icon: <LuLayoutDashboard className="text-lg" />,
   },
   {
-    label: "Listings Management",
-    path: "/listings",
+    label: 'Listings Management',
+    path: '/listings',
     icon: <LuShip className="text-lg" />,
   },
   {
-    label: "Seller Management",
-    path: "/sellers",
+    label: 'Seller Management',
+    path: '/sellers',
     icon: <LuUsers className="text-lg" />,
   },
   {
-    label: "Featured & Homepage",
-    path: "/featured",
+    label: 'Featured & Homepage',
+    path: '/featured',
     icon: <LuStar className="text-lg" />,
   },
   {
-    label: "Content Management",
-    path: "/content",
+    label: 'Content Management',
+    path: '/content',
     icon: <LuFileText className="text-lg" />,
   },
   {
-    label: "Users & Permissions",
-    path: "/users",
+    label: 'Users & Permissions',
+    path: '/users',
     icon: <LuShield className="text-lg" />,
   },
   {
-    label: "Analytics & Reports",
-    path: "/analytics",
+    label: 'Analytics & Reports',
+    path: '/analytics',
     icon: <LuChartColumn className="text-lg" />,
   },
   {
-    label: "Settings",
-    path: "/settings",
+    label: 'Settings',
+    path: '/settings',
     icon: <LuSettings className="text-lg" />,
   },
 ];
@@ -73,25 +73,25 @@ const Navbar = () => {
       }
     };
 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
     if (isMobileMenuOpen) {
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = 'unset';
     }
     return () => {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = 'unset';
     };
   }, [isMobileMenuOpen]);
 
   const handleLogout = useCallback(() => {
     dispatch(clearUser());
-    window.location.href = "/general-login";
+    window.location.href = '/general-login';
   }, [dispatch]);
 
   const toggleMobileMenu = useCallback(() => {
@@ -129,9 +129,9 @@ const Navbar = () => {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed left-0 top-0 z-50 h-screen w-[280px] lg:w-[310px] xl:w-80 bg-white shadow-lg flex flex-col transition-transform duration-300 ease-in-out",
-          "lg:translate-x-0",
-          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+          'fixed left-0 top-0 z-50 h-screen w-[280px] lg:w-[310px] xl:w-80 bg-white shadow-lg flex flex-col transition-transform duration-300 ease-in-out',
+          'lg:translate-x-0',
+          isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full',
         )}
       >
         {/* Logo Section */}
@@ -156,16 +156,16 @@ const Navbar = () => {
                   onClick={closeMobileMenu}
                   className={({ isActive }) =>
                     cn(
-                      "flex items-center gap-3 px-4 sm:px-5 py-2.5 sm:py-3 rounded-lg transition-all duration-200 text-sm sm:text-base font-medium",
+                      'flex items-center gap-3 px-4 sm:px-5 py-2.5 sm:py-3 rounded-lg transition-all duration-200 text-sm sm:text-base font-medium',
                       isActive
-                        ? "bg-[#0066FF] text-white shadow-md"
-                        : "text-gray-700 hover:bg-gray-50"
+                        ? 'bg-[#0066FF] text-white shadow-md'
+                        : 'text-gray-700 hover:bg-gray-50',
                     )
                   }
                 >
                   {({ isActive }) => (
                     <>
-                      <span className={isActive ? "text-white" : "text-black"}>
+                      <span className={isActive ? 'text-white' : 'text-black'}>
                         {item.icon}
                       </span>
                       <span className="truncate">{item.label}</span>

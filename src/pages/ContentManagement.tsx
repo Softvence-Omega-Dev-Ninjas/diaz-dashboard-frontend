@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Plus } from 'lucide-react';
-import { FaEdit } from "react-icons/fa";
+import { FaEdit } from 'react-icons/fa';
 import { LuCalendar } from 'react-icons/lu';
 
 type Tab = 'blog' | 'pages';
@@ -60,8 +60,12 @@ const ContentManagement: React.FC = () => {
     <div className="p-4 md:p-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-xl md:text-2xl font-semibold text-gray-900">Content Management</h1>
-        <p className="text-sm text-gray-500 mt-1">Manage pages, blog posts, and site content</p>
+        <h1 className="text-xl md:text-2xl font-semibold text-gray-900">
+          Content Management
+        </h1>
+        <p className="text-sm text-gray-500 mt-1">
+          Manage pages, blog posts, and site content
+        </p>
       </div>
 
       {/* Tabs */}
@@ -95,7 +99,9 @@ const ContentManagement: React.FC = () => {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           {/* Header */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 md:p-6 border-b border-gray-200 gap-4">
-            <h2 className="text-lg font-semibold text-gray-900">Blog Articles</h2>
+            <h2 className="text-lg font-semibold text-gray-900">
+              Blog Articles
+            </h2>
             <button
               onClick={handleNewArticle}
               className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors w-full sm:w-auto justify-center"
@@ -115,7 +121,9 @@ const ContentManagement: React.FC = () => {
                 <div className="flex items-center gap-3 md:gap-4 flex-1 min-w-0">
                   <LuCalendar className="text-xl text-gray-400 shrink-0" />
                   <div className="min-w-0">
-                    <h3 className="text-sm font-medium text-gray-900 truncate">{post.title}</h3>
+                    <h3 className="text-sm font-medium text-gray-900 truncate">
+                      {post.title}
+                    </h3>
                     <p className="text-xs text-gray-500 mt-1">
                       {post.status} • {post.views} views
                     </p>
@@ -136,7 +144,9 @@ const ContentManagement: React.FC = () => {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           {/* Header */}
           <div className="p-4 md:p-6 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Static Pages</h2>
+            <h2 className="text-lg font-semibold text-gray-900">
+              Static Pages
+            </h2>
           </div>
 
           {/* Static Pages List */}
@@ -147,14 +157,16 @@ const ContentManagement: React.FC = () => {
                 className="flex items-center justify-between p-4 md:p-6 hover:bg-gray-50 transition-colors group"
               >
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-medium text-gray-900 truncate">{page.title}</h3>
+                  <h3 className="text-sm font-medium text-gray-900 truncate">
+                    {page.title}
+                  </h3>
                 </div>
                 <button
                   onClick={() => handleEditPage(page.id)}
                   className="p-2 text-gray-400 hover:text-gray-600 transition-colors shrink-0"
                   aria-label="Edit page"
                 >
-                 <FaEdit className="text-xl" />
+                  <FaEdit className="text-xl" />
                 </button>
               </div>
             ))}

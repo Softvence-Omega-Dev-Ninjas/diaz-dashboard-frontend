@@ -1,17 +1,17 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import "./index.css";
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import './index.css';
 
-import { RouterProvider } from "react-router-dom";
-import router from "./routes.tsx";
-import { Toaster } from "react-hot-toast";
-import { Provider } from "react-redux";
-import { PersistGate } from "redux-persist/integration/react";
-import { persistStore, type Persistor } from "redux-persist";
-import store from "./redux/store.ts";
+import { RouterProvider } from 'react-router-dom';
+import router from './routes.tsx';
+import { Toaster } from 'react-hot-toast';
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import { persistStore, type Persistor } from 'redux-persist';
+import store from './redux/store.ts';
 
-let persistor: Persistor = persistStore(store);
-createRoot(document.getElementById("root")!).render(
+const persistor: Persistor = persistStore(store);
+createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={store}>
       <Toaster position="top-center" reverseOrder={false} />
@@ -19,5 +19,5 @@ createRoot(document.getElementById("root")!).render(
         <RouterProvider router={router} />
       </PersistGate>
     </Provider>
-  </StrictMode>
+  </StrictMode>,
 );

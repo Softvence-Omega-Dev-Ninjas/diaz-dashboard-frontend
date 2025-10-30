@@ -60,8 +60,12 @@ const SellerManagement: React.FC = () => {
     <div className="p-4 md:p-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-xl md:text-2xl font-semibold text-gray-900">Seller Management</h1>
-        <p className="text-sm text-gray-500 mt-1">Manage seller accounts and verifications</p>
+        <h1 className="text-xl md:text-2xl font-semibold text-gray-900">
+          Seller Management
+        </h1>
+        <p className="text-sm text-gray-500 mt-1">
+          Manage seller accounts and verifications
+        </p>
       </div>
 
       {/* Table */}
@@ -93,36 +97,55 @@ const SellerManagement: React.FC = () => {
             </thead>
             <tbody className="divide-y divide-gray-200">
               {sellers.map((seller) => (
-                <tr key={seller.id} className="hover:bg-gray-50 transition-colors">
+                <tr
+                  key={seller.id}
+                  className="hover:bg-gray-50 transition-colors"
+                >
                   <td className="px-4 md:px-6 py-4">
                     <div className="flex items-center gap-3">
                       {/* Avatar */}
-                      <div className={`${seller.color} w-10 h-10 rounded-full flex items-center justify-center shrink-0`}>
-                        <span className="text-white text-sm font-semibold">{seller.initials}</span>
+                      <div
+                        className={`${seller.color} w-10 h-10 rounded-full flex items-center justify-center shrink-0`}
+                      >
+                        <span className="text-white text-sm font-semibold">
+                          {seller.initials}
+                        </span>
                       </div>
                       {/* Name and Verification */}
                       <div className="flex flex-col">
-                        <span className="text-sm font-medium text-gray-900">{seller.name}</span>
+                        <span className="text-sm font-medium text-gray-900">
+                          {seller.name}
+                        </span>
                         {seller.verified && (
                           <div className="flex items-center gap-1 mt-0.5">
                             <Check className="w-3 h-3 text-green-600" />
-                            <span className="text-xs text-gray-500">Verified Seller</span>
+                            <span className="text-xs text-gray-500">
+                              Verified Seller
+                            </span>
                           </div>
                         )}
                       </div>
                     </div>
                   </td>
                   <td className="px-4 md:px-6 py-4">
-                    <span className="text-sm text-gray-900">{seller.contact}</span>
+                    <span className="text-sm text-gray-900">
+                      {seller.contact}
+                    </span>
                   </td>
                   <td className="px-4 md:px-6 py-4">
-                    <span className="text-sm text-gray-900">{seller.listings}</span>
+                    <span className="text-sm text-gray-900">
+                      {seller.listings}
+                    </span>
                   </td>
                   <td className="px-4 md:px-6 py-4">
-                    <span className="text-sm font-medium text-cyan-600">{seller.totalSales}</span>
+                    <span className="text-sm font-medium text-cyan-600">
+                      {seller.totalSales}
+                    </span>
                   </td>
                   <td className="px-4 md:px-6 py-4">
-                    <span className="text-sm text-gray-900">{seller.joined}</span>
+                    <span className="text-sm text-gray-900">
+                      {seller.joined}
+                    </span>
                   </td>
                   <td className="px-4 md:px-6 py-4">
                     <button

@@ -1,6 +1,6 @@
-import { demodata } from "@/assets/demo/demodata";
-import ProductCard from "@/components/Product/ProductCard";
-import React from "react";
+import { demodata } from '@/assets/demo/demodata';
+import ProductCard from '@/components/Product/ProductCard';
+import React from 'react';
 
 interface MetricCard {
   id: number;
@@ -13,23 +13,23 @@ interface MetricCard {
 const DEMO_METRICS: MetricCard[] = [
   {
     id: 1,
-    title: "Total Visitors",
-    value: "24,891",
-    change: "+12.5% from last month",
+    title: 'Total Visitors',
+    value: '24,891',
+    change: '+12.5% from last month',
     isPositive: true,
   },
   {
     id: 2,
-    title: "Page Views",
-    value: "145,672",
-    change: "+8.2% from last month",
+    title: 'Page Views',
+    value: '145,672',
+    change: '+8.2% from last month',
     isPositive: true,
   },
   {
     id: 3,
-    title: "Avg. Session Time",
-    value: "4:32",
-    change: "+15% from last month",
+    title: 'Avg. Session Time',
+    value: '4:32',
+    change: '+15% from last month',
     isPositive: true,
   },
 ];
@@ -67,7 +67,7 @@ const AnalyticsAndReports: React.FC = () => {
             {/* Change Indicator */}
             <div
               className={`text-sm font-medium ${
-                metric.isPositive ? "text-green-600" : "text-red-600"
+                metric.isPositive ? 'text-green-600' : 'text-red-600'
               }`}
             >
               {metric.change}

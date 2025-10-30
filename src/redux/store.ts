@@ -1,4 +1,4 @@
-import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import {
   persistReducer,
   FLUSH,
@@ -7,16 +7,15 @@ import {
   PERSIST,
   PURGE,
   REGISTER,
-} from "redux-persist";
-import storage from "redux-persist/lib/storage";
+} from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 //  Import your reducers
-import authReducer from "@/redux/features/auth/authSlice";
+import authReducer from '@/redux/features/auth/authSlice';
 
-import { baseApi } from "@/redux/api/baseApi"; // optional if you use RTK Query
-
+import { baseApi } from '@/redux/api/baseApi'; // optional if you use RTK Query
 
 const persistConfig = {
-  key: "root",
+  key: 'root',
   version: 1,
   storage,
 };

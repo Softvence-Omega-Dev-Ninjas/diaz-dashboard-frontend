@@ -98,8 +98,12 @@ const ListingManagement: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div>
-          <h1 className="text-xl md:text-2xl font-semibold text-gray-900">Listings Management</h1>
-          <p className="text-sm text-gray-500 mt-1">Manage all yacht listings and approvals</p>
+          <h1 className="text-xl md:text-2xl font-semibold text-gray-900">
+            Listings Management
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">
+            Manage all yacht listings and approvals
+          </p>
         </div>
         <button
           onClick={handleAddListing}
@@ -128,8 +132,18 @@ const ListingManagement: React.FC = () => {
                 <option>Rejected</option>
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </div>
             </div>
@@ -149,8 +163,18 @@ const ListingManagement: React.FC = () => {
                 <option>Ocean Elite</option>
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </div>
             </div>
@@ -208,20 +232,29 @@ const ListingManagement: React.FC = () => {
             </thead>
             <tbody className="divide-y divide-gray-200">
               {listings.map((listing) => (
-                <tr key={listing.id} className="hover:bg-gray-50 transition-colors">
+                <tr
+                  key={listing.id}
+                  className="hover:bg-gray-50 transition-colors"
+                >
                   <td className="px-4 md:px-6 py-4">
                     <div className="flex flex-col">
-                      <span className="text-sm font-medium text-gray-900">{listing.yacht}</span>
+                      <span className="text-sm font-medium text-gray-900">
+                        {listing.yacht}
+                      </span>
                       <span className="text-xs text-gray-500">
                         {listing.manufacturer} • {listing.year}
                       </span>
                     </div>
                   </td>
                   <td className="px-4 md:px-6 py-4">
-                    <span className="text-sm text-gray-900">{listing.seller}</span>
+                    <span className="text-sm text-gray-900">
+                      {listing.seller}
+                    </span>
                   </td>
                   <td className="px-4 md:px-6 py-4">
-                    <span className="text-sm font-medium text-cyan-600">{listing.price}</span>
+                    <span className="text-sm font-medium text-cyan-600">
+                      {listing.price}
+                    </span>
                   </td>
                   <td className="px-4 md:px-6 py-4">
                     <span
@@ -233,10 +266,14 @@ const ListingManagement: React.FC = () => {
                     </span>
                   </td>
                   <td className="px-4 md:px-6 py-4">
-                    <span className="text-sm text-gray-900">{listing.views}</span>
+                    <span className="text-sm text-gray-900">
+                      {listing.views}
+                    </span>
                   </td>
                   <td className="px-4 md:px-6 py-4">
-                    <span className="text-sm text-gray-900">{listing.date}</span>
+                    <span className="text-sm text-gray-900">
+                      {listing.date}
+                    </span>
                   </td>
                   <td className="px-4 md:px-6 py-4">
                     <div className="flex items-center gap-2">

@@ -1,4 +1,4 @@
-import { LuCircleCheckBig, LuShip, LuStar, LuUserCheck } from "react-icons/lu";
+import { LuCircleCheckBig, LuShip, LuStar, LuUserCheck } from 'react-icons/lu';
 
 const RecentActivity = () => {
   return (

@@ -1,13 +1,13 @@
 // src/redux/features/auth/authApi.ts
-import { baseApi } from "@/redux/api/baseApi";
+import { baseApi } from '@/redux/api/baseApi';
 
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // User Signup
     signup: builder.mutation({
       query: (data) => ({
-        url: "/auth/singup",
-        method: "POST",
+        url: '/auth/singup',
+        method: 'POST',
         body: data,
       }),
     }),
@@ -15,8 +15,8 @@ export const authApi = baseApi.injectEndpoints({
     // Phone OTP
     phoneOtp: builder.mutation({
       query: (data) => ({
-        url: "/auth/phone_otp",
-        method: "POST",
+        url: '/auth/phone_otp',
+        method: 'POST',
         body: data,
       }),
     }),
@@ -24,8 +24,8 @@ export const authApi = baseApi.injectEndpoints({
     // Send OTP by Email
     sendOtpByEmail: builder.mutation({
       query: (data) => ({
-        url: "/auth/send_otp_by_email",
-        method: "POST",
+        url: '/auth/send_otp_by_email',
+        method: 'POST',
         body: data,
       }),
     }),
@@ -33,12 +33,11 @@ export const authApi = baseApi.injectEndpoints({
     // Verify OTP
     verifyOtp: builder.mutation({
       query: (data) => ({
-        url: "/auth/verify-otp",
-        method: "POST",
+        url: '/auth/verify-otp',
+        method: 'POST',
         body: data,
       }),
     }),
-
   }),
 });
 
@@ -46,5 +45,5 @@ export const {
   useSignupMutation,
   usePhoneOtpMutation,
   useSendOtpByEmailMutation,
-  useVerifyOtpMutation
+  useVerifyOtpMutation,
 } = authApi;

@@ -7,12 +7,17 @@ const General: React.FC = () => {
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-4 md:p-6">
-      <h2 className="text-base md:text-lg font-semibold text-gray-900 mb-4 md:mb-6">Site Settings</h2>
+      <h2 className="text-base md:text-lg font-semibold text-gray-900 mb-4 md:mb-6">
+        Site Settings
+      </h2>
 
       <div className="space-y-4 md:space-y-6">
         {/* Site Name */}
         <div>
-          <label htmlFor="siteName" className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="siteName"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Site Name
           </label>
           <input
@@ -27,7 +32,10 @@ const General: React.FC = () => {
 
         {/* Currency */}
         <div>
-          <label htmlFor="currency" className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="currency"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Currency
           </label>
           <div className="relative">
@@ -43,8 +51,18 @@ const General: React.FC = () => {
               <option>JPY (¥)</option>
             </select>
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </div>
           </div>
@@ -53,10 +71,15 @@ const General: React.FC = () => {
         {/* Maintenance Mode */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-2 gap-3">
           <div>
-            <label htmlFor="maintenanceMode" className="block text-sm font-medium text-gray-900">
+            <label
+              htmlFor="maintenanceMode"
+              className="block text-sm font-medium text-gray-900"
+            >
               Maintenance Mode
             </label>
-            <p className="text-sm text-gray-500 mt-1">Temporarily disable public access</p>
+            <p className="text-sm text-gray-500 mt-1">
+              Temporarily disable public access
+            </p>
           </div>
           <button
             id="maintenanceMode"
