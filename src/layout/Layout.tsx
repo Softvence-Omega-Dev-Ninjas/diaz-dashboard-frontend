@@ -5,7 +5,7 @@ import { Outlet } from 'react-router-dom'
 
 function Layout() {
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex h-full">
       <Navbar />
       
       <main className="flex-1 lg:ml-[310px] xl:ml-80 transition-all duration-300">
