@@ -127,5 +127,13 @@ jobs:
           script: |
             sudo mkdir -p /var/www/html
             sudo rm -rf /var/www/html/*
+
+            # Move files
             sudo mv ~/deploy-temp/* /var/www/html/
+
+            # Fix permissions: readable by all (Caddy can read)
+            sudo chmod -R 755 /var/www/html
+            sudo chown -R $USER:$USER /var/www/html
+
+            # Clean up
             sudo rm -rf ~/deploy-temp
