@@ -109,7 +109,16 @@ jobs:
           name: build-dist
           path: dist/
 
-      - name: Prepare /var/www/html directory
+      - name: Upload new build files to temp directory
+        uses: appleboy/scp-action@v0.1.5
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          source: 'dist/*'
+          target: '/home/${{ secrets.VPS_USER }}/deploy-temp'
+
+      - name: Move build files into /var/www/html
         uses: appleboy/ssh-action@v0.1.5
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -118,12 +127,5 @@ jobs:
           script: |
             sudo mkdir -p /var/www/html
             sudo rm -rf /var/www/html/*
-
-      - name: Upload new build files
-        uses: appleboy/scp-action@v0.1.5
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
-          source: 'dist/*'
-          target: '/var/www/html'
+            sudo mv ~/deploy-temp/* /var/www/html/
+            sudo rm -rf ~/deploy-temp
