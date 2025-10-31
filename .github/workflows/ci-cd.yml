@@ -29,6 +29,15 @@ jobs:
       - name: Format Check
         run: npm run format
 
+      - name: Build Project
+        run: npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-dist
+          path: dist/
+
   build-and-push:
     name: Build and Push Docker Image
     runs-on: ubuntu-latest
@@ -58,19 +67,17 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-    needs: build-and-push
+    needs: [ci-check, build-and-push]
     if: github.ref == 'refs/heads/main'
 
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          name: build-dist
+          path: dist/
 
-      - name: Copy Compose File
+      - name: Copy Compose File to VPS
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -79,7 +86,7 @@ jobs:
           source: 'compose.yaml'
           target: '/home/${{ secrets.VPS_USER }}/${{ secrets.PACKAGE_NAME }}'
 
-      - name: Deploy via SSH
+      - name: Deploy Docker Containers
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -92,17 +99,17 @@ jobs:
             sudo docker compose up -d
             sudo docker image prune -f
 
-      - name: Clean old files on VPS
+      - name: Prepare /var/www/html directory
         uses: appleboy/ssh-action@v0.1.5
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
           script: |
-            cd /var/www/html || exit
-            rm -rf *
+            sudo mkdir -p /var/www/html
+            sudo rm -rf /var/www/html/*
 
-      - name: Upload new build to VPS
+      - name: Upload new build files
         uses: appleboy/scp-action@v0.1.5
         with:
           host: ${{ secrets.VPS_HOST }}
