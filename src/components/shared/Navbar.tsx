@@ -120,7 +120,7 @@ const Navbar = () => {
       {/* Overlay for mobile */}
       {isMobileMenuOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+          className="lg:hidden fixed inset-0 backdrop-blur-xs bg-opacity-50 z-40"
           onClick={closeMobileMenu}
           aria-hidden="true"
         />

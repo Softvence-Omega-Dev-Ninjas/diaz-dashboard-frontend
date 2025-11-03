@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Eye, Edit2, Trash2, Download, Plus } from 'lucide-react';
+import { useNavigate } from 'react-router';
 
 // Demo data
 const DEMO_LISTINGS = [
@@ -72,12 +73,14 @@ const ListingManagement: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState('All Status');
   const [sellerFilter, setSellerFilter] = useState('All Sellers');
   const [priceRange, setPriceRange] = useState('');
+  const navigate = useNavigate();
 
   const handleExportCSV = () => {
     console.log('Exporting CSV...');
   };
 
   const handleAddListing = () => {
+    navigate('/listings/add');
     console.log('Adding new listing...');
   };
 
