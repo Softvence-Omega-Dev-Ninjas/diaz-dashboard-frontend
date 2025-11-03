@@ -17,12 +17,14 @@ const DEMO_FEATURED_YACHTS: FeaturedYacht[] = [
     manufacturer: 'Lagoon',
     year: '2015',
     price: '$425,000',
-    image: 'https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=300&h=200&fit=crop',
+    image:
+      'https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=300&h=200&fit=crop',
   },
 ];
 
 const FeaturedSection: React.FC = () => {
-  const [featuredYachts, setFeaturedYachts] = useState<FeaturedYacht[]>(DEMO_FEATURED_YACHTS);
+  const [featuredYachts, setFeaturedYachts] =
+    useState<FeaturedYacht[]>(DEMO_FEATURED_YACHTS);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDragStart = (e: React.DragEvent, index: number) => {
@@ -46,7 +48,7 @@ const FeaturedSection: React.FC = () => {
   };
 
   const handleRemoveYacht = (id: number) => {
-    setFeaturedYachts(featuredYachts.filter(yacht => yacht.id !== id));
+    setFeaturedYachts(featuredYachts.filter((yacht) => yacht.id !== id));
   };
 
   const handleAddFeaturedBoat = () => {

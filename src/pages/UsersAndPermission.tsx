@@ -52,8 +52,12 @@ const UsersAndPermission: React.FC = () => {
     <div className="p-4 md:p-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-xl md:text-2xl font-semibold text-gray-900">Users & Permissions</h1>
-        <p className="text-sm text-gray-500 mt-1">Manage admin users and access control</p>
+        <h1 className="text-xl md:text-2xl font-semibold text-gray-900">
+          Users & Permissions
+        </h1>
+        <p className="text-sm text-gray-500 mt-1">
+          Manage admin users and access control
+        </p>
       </div>
 
       {/* Admin Users Section */}
@@ -80,14 +84,22 @@ const UsersAndPermission: React.FC = () => {
               {/* User Info */}
               <div className="flex items-center gap-3 md:gap-4 flex-1 min-w-0">
                 {/* Avatar */}
-                <div className={`${user.color} w-12 h-12 rounded-full flex items-center justify-center shrink-0`}>
-                  <span className="text-white text-sm font-semibold">{user.initials}</span>
+                <div
+                  className={`${user.color} w-12 h-12 rounded-full flex items-center justify-center shrink-0`}
+                >
+                  <span className="text-white text-sm font-semibold">
+                    {user.initials}
+                  </span>
                 </div>
-                
+
                 {/* Name and Email */}
                 <div className="min-w-0">
-                  <h3 className="text-sm font-medium text-gray-900 truncate">{user.name}</h3>
-                  <p className="text-sm text-gray-500 mt-0.5 truncate">{user.email}</p>
+                  <h3 className="text-sm font-medium text-gray-900 truncate">
+                    {user.name}
+                  </h3>
+                  <p className="text-sm text-gray-500 mt-0.5 truncate">
+                    {user.email}
+                  </p>
                 </div>
               </div>
 

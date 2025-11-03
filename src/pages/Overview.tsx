@@ -1,7 +1,7 @@
-import OverviewCards from "@/components/Overview/OverviewCards";
-import PerformanceOverview from "@/components/Overview/PerformanceOverview";
-import QuickActions from "@/components/Overview/QuickActions";
-import RecentActivity from "@/components/Overview/RecentActivity";
+import OverviewCards from '@/components/Overview/OverviewCards';
+import PerformanceOverview from '@/components/Overview/PerformanceOverview';
+import QuickActions from '@/components/Overview/QuickActions';
+import RecentActivity from '@/components/Overview/RecentActivity';
 
 const Overview = () => {
   return (
@@ -12,8 +12,8 @@ const Overview = () => {
       </p>
       <OverviewCards />
       <div className="flex flex-col items-center md:flex-row md:items-stretch gap-5 flex-1 min-h-0">
-       <RecentActivity /> 
-       <QuickActions />
+        <RecentActivity />
+        <QuickActions />
       </div>
       <PerformanceOverview />
     </div>

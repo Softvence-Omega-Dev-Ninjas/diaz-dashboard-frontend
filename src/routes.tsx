@@ -12,7 +12,7 @@ import AddListing from "./pages/AddListing";
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <App />,
     children: [
       {
@@ -20,11 +20,11 @@ const router = createBrowserRouter([
         element: <Overview />,
       },
       {
-        path: "/overview",
+        path: '/overview',
         element: <Overview />,
       },
       {
-        path: "/listings",
+        path: '/listings',
         element: <ListingManagement />,
       },
       {
@@ -36,25 +36,25 @@ const router = createBrowserRouter([
         element: <SellerManagement />,
       },
       {
-        path: "/featured",
+        path: '/featured',
         element: <FeaturedAndHomeManagement />,
       },
       {
-        path: "/content",
+        path: '/content',
         element: <ContentManagement />,
       },
       {
-        path: "/users",
+        path: '/users',
         element: <UsersAndPermission />,
       },
       {
-        path: "/analytics",
+        path: '/analytics',
         element: <AnalyticsAndReports />,
       },
       {
-        path: "/settings",
+        path: '/settings',
         element: <Settings />,
-      }
+      },
     ],
   },
 ]);
