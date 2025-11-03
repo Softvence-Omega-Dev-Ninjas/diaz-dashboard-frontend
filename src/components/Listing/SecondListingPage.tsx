@@ -1,26 +1,12 @@
-import { useForm } from 'react-hook-form';
+import { CITY_OPTIONS, COUNTRY_OPTIONS, STATE_OPTIONS } from '@/lib/formConfig';
+import { secondStepSchema } from '@/lib/formValidation';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Eye, EyeOff } from 'lucide-react';
-import { useState } from 'react';
+import { FormFieldWithError } from './FormFieldWithError';
+import { PasswordField } from './PasswordField';
+import ProgressBar from './ProgressBar';
 import RightPreviewSection from './RightPreviewSection';
-
-const secondStepSchema = z.object({
-  firstName: z.string().optional(),
-  lastName: z.string().optional(),
-  contactNumber: z.string().optional(),
-  email: z.string().email().optional().or(z.literal('')),
-  country: z.string().optional(),
-  sellerCity: z.string().optional(),
-  sellerState: z.string().optional(),
-  sellerZip: z.string().optional(),
-  username: z.string().optional(),
-  password: z.string().optional(),
-  confirmPassword: z.string().optional(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
 
 type SecondStepFormData = z.infer<typeof secondStepSchema>;
 
@@ -28,6 +14,7 @@ interface SecondListingPageProps {
   onBack: () => void;
   onSubmit: (data: SecondStepFormData) => void;
   initialData?: Partial<SecondStepFormData>;
+  currentStep: number;
   previewData?: {
     coverPhoto?: string | null;
     city?: string;
@@ -40,14 +27,11 @@ interface SecondListingPageProps {
   };
 }
 
-const SecondListingPage = ({ onBack, onSubmit, initialData, previewData }: SecondListingPageProps) => {
+const SecondListingPage = ({ onBack, onSubmit, initialData, currentStep, previewData }: SecondListingPageProps) => {
   const { register, handleSubmit, formState: { errors } } = useForm<SecondStepFormData>({
     resolver: zodResolver(secondStepSchema),
     defaultValues: initialData || {},
   });
-
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleFormSubmit = (data: SecondStepFormData) => {
     onSubmit(data);
@@ -60,156 +44,37 @@ const SecondListingPage = ({ onBack, onSubmit, initialData, previewData }: Secon
         <div className="lg:col-span-2">
           <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
             {/* Progress Bar */}
-            <div>
-              <h1 className="text-xl md:text-2xl font-semibold mb-2">Listing progress</h1>
-              <div className="flex items-center gap-4 mb-4">
-                <div className="flex-1">
-                  <div className="h-1 bg-cyan-500 rounded-full"></div>
-                  <p className="text-xs text-gray-600 mt-1">Boat Information</p>
-                </div>
-                <div className="flex-1">
-                  <div className="h-1 bg-cyan-500 rounded-full"></div>
-                  <p className="text-xs text-gray-600 mt-1">Seller Information</p>
-                </div>
-              </div>
-              <p className="text-sm text-gray-500 text-right">Step 2</p>
-            </div>
+            <ProgressBar currentStep={currentStep} />
 
             {/* Your Contact Details Section */}
             <div className="bg-white rounded-lg border border-gray-200 p-4 md:p-6">
               <h2 className="text-lg font-semibold mb-4">Your Contact Details</h2>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    First Name: <span className="text-red-500">*</span>
-                  </label>
-                  <input 
-                    {...register('firstName')} 
-                    type="text" 
-                    placeholder="Type here" 
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50 focus:ring-2 focus:ring-cyan-500 focus:border-transparent focus:bg-white" 
-                  />
-                  {errors.firstName && (
-                    <p className="text-red-500 text-xs mt-1">{errors.firstName.message}</p>
-                  )}
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Last Name: <span className="text-red-500">*</span>
-                  </label>
-                  <input 
-                    {...register('lastName')} 
-                    type="text" 
-                    placeholder="Type here" 
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50 focus:ring-2 focus:ring-cyan-500 focus:border-transparent focus:bg-white" 
-                  />
-                  {errors.lastName && (
-                    <p className="text-red-500 text-xs mt-1">{errors.lastName.message}</p>
-                  )}
-                </div>
+                <FormFieldWithError label="First Name:" name="firstName" register={register} errors={errors} required />
+                <FormFieldWithError label="Last Name:" name="lastName" register={register} errors={errors} required />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Contact Number: <span className="text-red-500">*</span>
-                  </label>
-                  <input 
-                    {...register('contactNumber')} 
-                    type="text" 
-                    placeholder="Type here" 
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50 focus:ring-2 focus:ring-cyan-500 focus:border-transparent focus:bg-white" 
-                  />
-                  {errors.contactNumber && (
-                    <p className="text-red-500 text-xs mt-1">{errors.contactNumber.message}</p>
-                  )}
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Email: <span className="text-red-500">*</span>
-                  </label>
-                  <input 
-                    {...register('email')} 
-                    type="email" 
-                    placeholder="Type here" 
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50 focus:ring-2 focus:ring-cyan-500 focus:border-transparent focus:bg-white" 
-                  />
-                  {errors.email && (
-                    <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
-                  )}
-                </div>
+                <FormFieldWithError label="Contact Number:" name="contactNumber" register={register} errors={errors} required />
+                <FormFieldWithError label="Email:" name="email" register={register} errors={errors} type="email" required />
               </div>
 
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">
-                  Country: <span className="text-red-500">*</span>
-                </label>
-                <select 
-                  {...register('country')} 
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-                >
-                  <option value="">Select</option>
-                  <option value="USA">United States</option>
-                  <option value="Canada">Canada</option>
-                  <option value="Mexico">Mexico</option>
-                </select>
-                {errors.country && (
-                  <p className="text-red-500 text-xs mt-1">{errors.country.message}</p>
-                )}
-              </div>
+              <FormFieldWithError 
+                label="Country:" 
+                name="country" 
+                register={register} 
+                errors={errors} 
+                type="select" 
+                options={COUNTRY_OPTIONS} 
+                required 
+                className="mb-4"
+              />
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    City: <span className="text-red-500">*</span>
-                  </label>
-                  <select 
-                    {...register('sellerCity')} 
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-                  >
-                    <option value="">Select</option>
-                    <option value="Miami">Miami</option>
-                    <option value="Fort Lauderdale">Fort Lauderdale</option>
-                  </select>
-                  {errors.sellerCity && (
-                    <p className="text-red-500 text-xs mt-1">{errors.sellerCity.message}</p>
-                  )}
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    State: <span className="text-red-500">*</span>
-                  </label>
-                  <select 
-                    {...register('sellerState')} 
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-                  >
-                    <option value="">Select</option>
-                    <option value="Florida">Florida</option>
-                    <option value="California">California</option>
-                  </select>
-                  {errors.sellerState && (
-                    <p className="text-red-500 text-xs mt-1">{errors.sellerState.message}</p>
-                  )}
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Zip: <span className="text-red-500">*</span>
-                  </label>
-                  <input 
-                    {...register('sellerZip')} 
-                    type="text" 
-                    placeholder="Type here" 
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50 focus:ring-2 focus:ring-cyan-500 focus:border-transparent focus:bg-white" 
-                  />
-                  {errors.sellerZip && (
-                    <p className="text-red-500 text-xs mt-1">{errors.sellerZip.message}</p>
-                  )}
-                </div>
+                <FormFieldWithError label="City:" name="sellerCity" register={register} errors={errors} type="select" options={CITY_OPTIONS} required />
+                <FormFieldWithError label="State:" name="sellerState" register={register} errors={errors} type="select" options={STATE_OPTIONS} required />
+                <FormFieldWithError label="Zip:" name="sellerZip" register={register} errors={errors} required />
               </div>
             </div>
 
@@ -217,67 +82,32 @@ const SecondListingPage = ({ onBack, onSubmit, initialData, previewData }: Secon
             <div className="bg-white rounded-lg border border-gray-200 p-4 md:p-6">
               <h2 className="text-lg font-semibold mb-4">Seller Account Information</h2>
               
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">
-                  Username: <span className="text-red-500">*</span>
-                </label>
-                <input 
-                  {...register('username')} 
-                  type="text" 
-                  placeholder="username" 
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50 focus:ring-2 focus:ring-cyan-500 focus:border-transparent focus:bg-white" 
+              <FormFieldWithError 
+                label="Username:" 
+                name="username" 
+                register={register} 
+                errors={errors} 
+                placeholder="username"
+                required 
+                className="mb-4"
+              />
+
+              <PasswordField 
+                label="Password:" 
+                name="password" 
+                register={register} 
+                errors={errors} 
+                required 
+              />
+
+              <div className="mt-4">
+                <PasswordField 
+                  label="Confirm Password:" 
+                  name="confirmPassword" 
+                  register={register} 
+                  errors={errors} 
+                  required 
                 />
-                {errors.username && (
-                  <p className="text-red-500 text-xs mt-1">{errors.username.message}</p>
-                )}
-              </div>
-
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">
-                  Password: <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input 
-                    {...register('password')} 
-                    type={showPassword ? "text" : "password"}
-                    placeholder="••••••••••" 
-                    className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg text-sm bg-gray-50 focus:ring-2 focus:ring-cyan-500 focus:border-transparent focus:bg-white" 
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-                {errors.password && (
-                  <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Confirm Password: <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input 
-                    {...register('confirmPassword')} 
-                    type={showConfirmPassword ? "text" : "password"}
-                    placeholder="••••••••••" 
-                    className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg text-sm bg-gray-50 focus:ring-2 focus:ring-cyan-500 focus:border-transparent focus:bg-white" 
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
-                    {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-                {errors.confirmPassword && (
-                  <p className="text-red-500 text-xs mt-1">{errors.confirmPassword.message}</p>
-                )}
               </div>
             </div>
 

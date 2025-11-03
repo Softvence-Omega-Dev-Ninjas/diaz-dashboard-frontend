@@ -75,14 +75,15 @@ const AddListing = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-50 rounded-lg">
             {currentStep === 1 ? (
-                <FirstListingPage onNext={handleNextStep} initialData={formData} />
+                <FirstListingPage onNext={handleNextStep} initialData={formData} currentStep={currentStep} />
             ) : (
                 <SecondListingPage 
                     onBack={handleBackStep} 
                     onSubmit={handleSubmit}
                     initialData={formData}
+                    currentStep={currentStep}
                     previewData={{
                         coverPhoto: formData.coverPhoto,
                         city: formData.city,
