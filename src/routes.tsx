@@ -8,6 +8,7 @@ import ContentManagement from "./pages/ContentManagement";
 import UsersAndPermission from "./pages/UsersAndPermission";
 import AnalyticsAndReports from "./pages/AnalyticsAndReports";
 import Settings from "./pages/Settings";
+import AddListing from "./pages/AddListing";
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
       {
         path: "/listings",
         element: <ListingManagement />,
+      },
+      {
+        path: "/listings/add",
+        element: <AddListing />,
       },
       {
         path: "/sellers",
