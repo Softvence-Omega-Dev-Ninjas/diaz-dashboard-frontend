@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 
 import { BsBookmarkFill } from 'react-icons/bs';
@@ -39,12 +40,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, isPremium }) => {
         {/* Location */}
         <div className="flex items-center gap-1 text-gray-400 mb-3">
           <IoLocationOutline className="text-sm 2xl:text-xl text-black" />
-          <span className="text-sm 2xl:text-lg font-normal">{product.location}</span>
+          <span className="text-sm 2xl:text-lg font-normal">
+            {product.location}
+          </span>
         </div>
 
         {/* Product Name and Year */}
         <h3 className="text-lg 2xl:text-xl font-semibold mb-2 2xl:mb-4">
-           {product.name}
+          {product.name}
         </h3>
 
         {/* Specs Grid */}
@@ -55,9 +58,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, isPremium }) => {
               {product.brand_make}
             </p>
           </div>
-          <div className='max-w-[100px]'>
+          <div className="max-w-[100px]">
             <p className="text-sm text-gray-500 mb-1">Model</p>
-            <p className="text-sm font-medium text-gray-900 truncate">{product.model}</p>
+            <p className="text-sm font-medium text-gray-900 truncate">
+              {product.model}
+            </p>
           </div>
           <div>
             <p className="text-sm text-gray-500 mb-1">Year</p>

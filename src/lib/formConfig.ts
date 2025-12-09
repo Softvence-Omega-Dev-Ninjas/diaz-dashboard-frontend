@@ -11,9 +11,7 @@ export const MAKE_OPTIONS = [
   { value: 'SeaVee', label: 'SeaVee' },
 ];
 
-export const MODEL_OPTIONS = [
-  { value: '80 Enclosed', label: '80 Enclosed' },
-];
+export const MODEL_OPTIONS = [{ value: '80 Enclosed', label: '80 Enclosed' }];
 
 export const CLASS_OPTIONS = [
   { value: 'Power', label: 'Power' },

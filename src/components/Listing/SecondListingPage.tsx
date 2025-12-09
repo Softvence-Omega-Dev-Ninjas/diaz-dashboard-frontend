@@ -27,8 +27,18 @@ interface SecondListingPageProps {
   };
 }
 
-const SecondListingPage = ({ onBack, onSubmit, initialData, currentStep, previewData }: SecondListingPageProps) => {
-  const { register, handleSubmit, formState: { errors } } = useForm<SecondStepFormData>({
+const SecondListingPage = ({
+  onBack,
+  onSubmit,
+  initialData,
+  currentStep,
+  previewData,
+}: SecondListingPageProps) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SecondStepFormData>({
     resolver: zodResolver(secondStepSchema),
     defaultValues: initialData || {},
   });
@@ -48,65 +58,116 @@ const SecondListingPage = ({ onBack, onSubmit, initialData, currentStep, preview
 
             {/* Your Contact Details Section */}
             <div className="bg-white rounded-lg border border-gray-200 p-4 md:p-6">
-              <h2 className="text-lg font-semibold mb-4">Your Contact Details</h2>
-              
+              <h2 className="text-lg font-semibold mb-4">
+                Your Contact Details
+              </h2>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <FormFieldWithError label="First Name:" name="firstName" register={register} errors={errors} required />
-                <FormFieldWithError label="Last Name:" name="lastName" register={register} errors={errors} required />
+                <FormFieldWithError
+                  label="First Name:"
+                  name="firstName"
+                  register={register}
+                  errors={errors}
+                  required
+                />
+                <FormFieldWithError
+                  label="Last Name:"
+                  name="lastName"
+                  register={register}
+                  errors={errors}
+                  required
+                />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <FormFieldWithError label="Contact Number:" name="contactNumber" register={register} errors={errors} required />
-                <FormFieldWithError label="Email:" name="email" register={register} errors={errors} type="email" required />
+                <FormFieldWithError
+                  label="Contact Number:"
+                  name="contactNumber"
+                  register={register}
+                  errors={errors}
+                  required
+                />
+                <FormFieldWithError
+                  label="Email:"
+                  name="email"
+                  register={register}
+                  errors={errors}
+                  type="email"
+                  required
+                />
               </div>
 
-              <FormFieldWithError 
-                label="Country:" 
-                name="country" 
-                register={register} 
-                errors={errors} 
-                type="select" 
-                options={COUNTRY_OPTIONS} 
-                required 
+              <FormFieldWithError
+                label="Country:"
+                name="country"
+                register={register}
+                errors={errors}
+                type="select"
+                options={COUNTRY_OPTIONS}
+                required
                 className="mb-4"
               />
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <FormFieldWithError label="City:" name="sellerCity" register={register} errors={errors} type="select" options={CITY_OPTIONS} required />
-                <FormFieldWithError label="State:" name="sellerState" register={register} errors={errors} type="select" options={STATE_OPTIONS} required />
-                <FormFieldWithError label="Zip:" name="sellerZip" register={register} errors={errors} required />
+                <FormFieldWithError
+                  label="City:"
+                  name="sellerCity"
+                  register={register}
+                  errors={errors}
+                  type="select"
+                  options={CITY_OPTIONS}
+                  required
+                />
+                <FormFieldWithError
+                  label="State:"
+                  name="sellerState"
+                  register={register}
+                  errors={errors}
+                  type="select"
+                  options={STATE_OPTIONS}
+                  required
+                />
+                <FormFieldWithError
+                  label="Zip:"
+                  name="sellerZip"
+                  register={register}
+                  errors={errors}
+                  required
+                />
               </div>
             </div>
 
             {/* Seller Account Information Section */}
             <div className="bg-white rounded-lg border border-gray-200 p-4 md:p-6">
-              <h2 className="text-lg font-semibold mb-4">Seller Account Information</h2>
-              
-              <FormFieldWithError 
-                label="Username:" 
-                name="username" 
-                register={register} 
-                errors={errors} 
+              <h2 className="text-lg font-semibold mb-4">
+                Seller Account Information
+              </h2>
+
+              <FormFieldWithError
+                label="Username:"
+                name="username"
+                register={register}
+                errors={errors}
                 placeholder="username"
-                required 
+                required
                 className="mb-4"
               />
 
-              <PasswordField 
-                label="Password:" 
-                name="password" 
-                register={register} 
-                errors={errors} 
-                required 
+              <PasswordField
+                label="Password:"
+                name="password"
+                register={register}
+                errors={errors}
+                required
               />
 
               <div className="mt-4">
-                <PasswordField 
-                  label="Confirm Password:" 
-                  name="confirmPassword" 
-                  register={register} 
-                  errors={errors} 
-                  required 
+                <PasswordField
+                  label="Confirm Password:"
+                  name="confirmPassword"
+                  register={register}
+                  errors={errors}
+                  required
                 />
               </div>
             </div>
@@ -133,9 +194,7 @@ const SecondListingPage = ({ onBack, onSubmit, initialData, currentStep, preview
 
         {/* Right Preview Section */}
         <div className="lg:col-span-1">
-          <RightPreviewSection 
-            data={previewData || {}}
-          />
+          <RightPreviewSection data={previewData || {}} />
         </div>
       </div>
     </div>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { UseFormRegister } from 'react-hook-form';
 
 interface MeasurementFieldProps {
@@ -8,7 +9,13 @@ interface MeasurementFieldProps {
   required?: boolean;
 }
 
-export function MeasurementField({ label, ftName, inName, register, required = false }: MeasurementFieldProps) {
+export function MeasurementField({
+  label,
+  ftName,
+  inName,
+  register,
+  required = false,
+}: MeasurementFieldProps) {
   return (
     <div>
       <label className="block text-sm font-medium mb-2">
@@ -17,22 +24,26 @@ export function MeasurementField({ label, ftName, inName, register, required = f
       </label>
       <div className="flex items-center gap-2">
         <div className="relative flex-1">
-          <input 
-            {...register(ftName)} 
-            type="text" 
-            placeholder="-" 
-            className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg text-sm text-center bg-gray-50 focus:ring-2 focus:ring-cyan-500 focus:border-transparent focus:bg-white" 
+          <input
+            {...register(ftName)}
+            type="text"
+            placeholder="-"
+            className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg text-sm text-center bg-gray-50 focus:ring-2 focus:ring-cyan-500 focus:border-transparent focus:bg-white"
           />
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">ft</span>
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">
+            ft
+          </span>
         </div>
         <div className="relative flex-1">
-          <input 
-            {...register(inName)} 
-            type="text" 
-            placeholder="-" 
-            className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg text-sm text-center bg-gray-50 focus:ring-2 focus:ring-cyan-500 focus:border-transparent focus:bg-white" 
+          <input
+            {...register(inName)}
+            type="text"
+            placeholder="-"
+            className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg text-sm text-center bg-gray-50 focus:ring-2 focus:ring-cyan-500 focus:border-transparent focus:bg-white"
           />
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">In</span>
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">
+            In
+          </span>
         </div>
       </div>
     </div>

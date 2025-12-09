@@ -8,7 +8,9 @@ const OverviewCards = ({ cardsData }: any) => {
         <div className="space-y-1">
           <p className="text-xs">Total Yachts Listed</p>
           <h1 className="text-xl">{cardsData.totalYachts}</h1>
-          <p className="text-xs">+{cardsData.totalYatchPercentageChange}% from last month</p>
+          <p className="text-xs">
+            +{cardsData.totalYatchPercentageChange}% from last month
+          </p>
         </div>
         <LuShip className="h-8 w-8 text-white" />
       </div>

@@ -8,14 +8,28 @@ interface GalleryUploadProps {
   onUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export function GalleryUpload({ photos, onRemove, inputRef, onUpload }: GalleryUploadProps) {
+export function GalleryUpload({
+  photos,
+  onRemove,
+  inputRef,
+  onUpload,
+}: GalleryUploadProps) {
   return (
     <div>
-      <label className="block text-sm font-medium mb-2">Upload Media Gallery</label>
+      <label className="block text-sm font-medium mb-2">
+        Upload Media Gallery
+      </label>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-4">
         {photos.map((photo, index) => (
-          <div key={index} className="relative aspect-square border border-gray-300 rounded-lg overflow-hidden group">
-            <img src={photo} alt={`Gallery ${index + 1}`} className="w-full h-full object-cover" />
+          <div
+            key={index}
+            className="relative aspect-square border border-gray-300 rounded-lg overflow-hidden group"
+          >
+            <img
+              src={photo}
+              alt={`Gallery ${index + 1}`}
+              className="w-full h-full object-cover"
+            />
             <button
               type="button"
               onClick={() => onRemove(index)}
@@ -33,7 +47,7 @@ export function GalleryUpload({ photos, onRemove, inputRef, onUpload }: GalleryU
             )}
           </div>
         ))}
-        
+
         <div
           onClick={() => inputRef.current?.click()}
           className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-cyan-500 transition-colors"
