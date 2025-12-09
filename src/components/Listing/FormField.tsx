@@ -23,8 +23,10 @@ export function FormField<T extends FieldValues>({
   rows = 4,
   className = '',
 }: FormFieldProps<T>) {
-  const baseInputClass = "w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50 focus:ring-2 focus:ring-cyan-500 focus:border-transparent focus:bg-white";
-  const selectClass = "w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm focus:ring-2 focus:ring-cyan-500 focus:border-transparent";
+  const baseInputClass =
+    'w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50 focus:ring-2 focus:ring-cyan-500 focus:border-transparent focus:bg-white';
+  const selectClass =
+    'w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm focus:ring-2 focus:ring-cyan-500 focus:border-transparent';
 
   return (
     <div className={className}>
@@ -32,11 +34,11 @@ export function FormField<T extends FieldValues>({
         {label}
         {required && <span className="text-red-500"> *</span>}
       </label>
-      
+
       {type === 'select' ? (
         <select {...register(name)} className={selectClass}>
           <option value="">Select</option>
-          {options.map(option => (
+          {options.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>

@@ -1,4 +1,4 @@
-import z from "zod";
+import z from 'zod';
 
 export const firstStepSchema = z.object({
   buildYear: z.string().optional(),
@@ -32,20 +32,21 @@ export const firstStepSchema = z.object({
   embedUrl: z.string().optional(),
 });
 
-
-export const secondStepSchema = z.object({
-  firstName: z.string().optional(),
-  lastName: z.string().optional(),
-  contactNumber: z.string().optional(),
-  email: z.string().email().optional().or(z.literal('')),
-  country: z.string().optional(),
-  sellerCity: z.string().optional(),
-  sellerState: z.string().optional(),
-  sellerZip: z.string().optional(),
-  username: z.string().optional(),
-  password: z.string().optional(),
-  confirmPassword: z.string().optional(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
+export const secondStepSchema = z
+  .object({
+    firstName: z.string().optional(),
+    lastName: z.string().optional(),
+    contactNumber: z.string().optional(),
+    email: z.string().email().optional().or(z.literal('')),
+    country: z.string().optional(),
+    sellerCity: z.string().optional(),
+    sellerState: z.string().optional(),
+    sellerZip: z.string().optional(),
+    username: z.string().optional(),
+    password: z.string().optional(),
+    confirmPassword: z.string().optional(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  });
