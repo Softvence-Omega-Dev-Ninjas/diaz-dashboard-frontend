@@ -35,29 +35,29 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, isPremium }) => {
       </div>
 
       {/* Content Section */}
-      <div className="p-5 pb-5">
+      <div className="p-3 2xl:p-5 pb-3 2xl:pb-5">
         {/* Location */}
         <div className="flex items-center gap-1 text-gray-400 mb-3">
-          <IoLocationOutline className="text-xl text-black" />
-          <span className="text-lg font-normal">{product.location}</span>
+          <IoLocationOutline className="text-sm 2xl:text-xl text-black" />
+          <span className="text-sm 2xl:text-lg font-normal">{product.location}</span>
         </div>
 
         {/* Product Name and Year */}
-        <h3 className="text-xl font-semibold mb-4">
-          {product.built_year} {product.name}
+        <h3 className="text-lg 2xl:text-xl font-semibold mb-2 2xl:mb-4">
+           {product.name}
         </h3>
 
         {/* Specs Grid */}
-        <div className="flex items-start justify-between gap-4 mb-10 border-y border-gray-200 py-4">
+        <div className="flex items-start justify-between gap-2 2xl:gap-4 mb-10 border-y border-gray-200 py-4">
           <div>
             <p className="text-sm text-gray-500 mb-1">Make</p>
             <p className="text-sm font-medium text-gray-900">
               {product.brand_make}
             </p>
           </div>
-          <div>
+          <div className='max-w-[100px]'>
             <p className="text-sm text-gray-500 mb-1">Model</p>
-            <p className="text-sm font-medium text-gray-900">{product.model}</p>
+            <p className="text-sm font-medium text-gray-900 truncate">{product.model}</p>
           </div>
           <div>
             <p className="text-sm text-gray-500 mb-1">Year</p>
@@ -69,7 +69,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, isPremium }) => {
       </div>
       {/* Price */}
       <div className="absolute bottom-0 left-0 w-full p-5">
-        <p className="text-xl font-semibold text-primary">
+        <p className="text-lg 2xl:text-xl font-semibold text-primary">
           Price: {formatPrice(product.price)}
         </p>
       </div>
