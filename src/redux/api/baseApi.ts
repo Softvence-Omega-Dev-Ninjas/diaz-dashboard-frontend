@@ -5,7 +5,7 @@ import type { RootState } from '../store';
 export const baseApi = createApi({
   reducerPath: 'baseApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://10.10.10.54:7000', //  Change this to your API base URL
+    baseUrl: 'https://api.floridayachttrader.com/api', //  Change this to your API base URL
     prepareHeaders: (headers, { getState }) => {
       const state = getState() as RootState;
       console.log('Current State:', state); // Debugging line to check the state structure
@@ -19,7 +19,7 @@ export const baseApi = createApi({
     },
   }),
 
-  tagTypes: ['Auth'],
+  tagTypes: ['Auth', 'User', 'Yacht', 'Seller', 'Dashboard', 'Activity', 'Admin'],
 
   endpoints: () => ({}),
 });
