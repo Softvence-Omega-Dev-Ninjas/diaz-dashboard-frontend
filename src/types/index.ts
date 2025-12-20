@@ -10,3 +10,9 @@ export type {
     RecentActivityItem
 } from './overview-types';
 
+// Seller types
+export type {
+    SellerData,
+    SellerResponse
+} from './seller-types';
+

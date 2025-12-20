@@ -10,17 +10,21 @@ interface ListingsTableProps {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  ACTIVE: 'bg-green-100 text-green-800',
   ONBOARDING_PENDING: 'bg-yellow-100 text-yellow-800',
-  FEATURED: 'bg-blue-100 text-blue-800',
-  REJECTED: 'bg-red-100 text-red-800',
+  DRAFT: 'bg-gray-100 text-gray-800',
+  PENDING: 'bg-blue-100 text-blue-800',
+  ACTIVE: 'bg-green-100 text-green-800',
+  INACTIVE: 'bg-gray-100 text-gray-800',
+  SOLD: 'bg-purple-100 text-purple-800',
 };
 
 const STATUS_LABELS: Record<string, string> = {
+  ONBOARDING_PENDING: 'Onboarding Pending',
+  DRAFT: 'Draft',
+  PENDING: 'Pending',
   ACTIVE: 'Active',
-  ONBOARDING_PENDING: 'Pending',
-  FEATURED: 'Featured',
-  REJECTED: 'Rejected',
+  INACTIVE: 'Inactive',
+  SOLD: 'Sold',
 };
 
 export const ListingsTable: React.FC<ListingsTableProps> = ({

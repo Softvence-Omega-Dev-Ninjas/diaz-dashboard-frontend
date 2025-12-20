@@ -27,10 +27,23 @@ export const ListingsFilters: React.FC<ListingsFiltersProps> = ({
     onFilterChange({ ...filters, priceRange });
   };
 
+  const handleSearchChange = (search: string) => {
+    onFilterChange({ ...filters, search });
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
       <div className="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between">
         <div className="flex flex-col sm:flex-row flex-wrap gap-3 flex-1">
+          {/* Search Input */}
+          <input
+            type="text"
+            placeholder="Search listings..."
+            value={filters.search}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            className="w-full sm:w-auto border border-gray-300 rounded-lg px-4 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:min-w-60"
+          />
+
           {/* Status Filter */}
           <div className="relative w-full sm:w-auto">
             <select
@@ -38,11 +51,13 @@ export const ListingsFilters: React.FC<ListingsFiltersProps> = ({
               onChange={(e) => handleStatusChange(e.target.value)}
               className="w-full appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-10 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer"
             >
-              <option>All Status</option>
-              <option>ACTIVE</option>
-              <option>ONBOARDING_PENDING</option>
-              <option>FEATURED</option>
-              <option>REJECTED</option>
+              <option value="">All Status</option>
+              <option value="ONBOARDING_PENDING">Onboarding Pending</option>
+              <option value="DRAFT">Draft</option>
+              <option value="PENDING">Pending</option>
+              <option value="ACTIVE">Active</option>
+              <option value="INACTIVE">Inactive</option>
+              <option value="SOLD">Sold</option>
             </select>
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
               <svg

@@ -12,7 +12,7 @@ export interface Listing {
   model: string;
   year: number;
   price: number;
-  status: 'ACTIVE' | 'ONBOARDING_PENDING' | 'REJECTED' | 'FEATURED';
+  status: 'ONBOARDING_PENDING' | 'DRAFT' | 'PENDING' | 'ACTIVE' | 'INACTIVE' | 'SOLD';
   views: number;
   createdAt: string;
   seller: Seller;
@@ -26,6 +26,7 @@ export interface ListingResponse {
 }
 
 export interface ListingFilters {
+  search: string;
   status: string;
   seller: string;
   priceRange: string;

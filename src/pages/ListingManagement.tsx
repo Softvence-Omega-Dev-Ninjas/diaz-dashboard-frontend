@@ -6,72 +6,60 @@ import {
 } from '@/components/ListingManagement';
 import { usePagination } from '@/hooks/use-pagination';
 import { useGetAllListingQuery } from '@/redux/features/listingManagement/listingManagement';
-import type { Listing, ListingFilters } from '@/types/listing-types';
+import type { ListingFilters } from '@/types/listing-types';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 
 const ListingManagement: React.FC = () => {
   const navigate = useNavigate();
   const [filters, setFilters] = useState<ListingFilters>({
-    status: 'All Status',
+    search: '',
+    status: '',
     seller: 'All Sellers',
     priceRange: '',
   });
 
-  // Initialize pagination
+
   const pagination = usePagination({ initialPage: 1, initialLimit: 10 });
 
-  // Fetch data with pagination parameters
-  const { data: listingData, isLoading, isError } = useGetAllListingQuery({
-    page: pagination.page,
-    limit: pagination.limit,
-  });
+  
+  const queryParams = useMemo(() => {
+    const params: any = {
+      page: pagination.page,
+      limit: pagination.limit,
+    };
 
-  // Update total items when data changes
+    if (filters.search && filters.search.trim()) {
+      params.search = filters.search.trim();
+    }
+
+    if (filters.status && filters.status.trim()) {
+      params.status = filters.status.trim();
+    }
+
+    return params;
+  }, [pagination.page, pagination.limit, filters.search, filters.status]);
+
+  const { data: listingData, isLoading, isError } = useGetAllListingQuery(queryParams);
+
   useEffect(() => {
     if (listingData?.total) {
       pagination.setTotal(listingData.total);
     }
   }, [listingData?.total]);
 
-  // Extract unique sellers for filter dropdown
+
   const uniqueSellers = useMemo(() => {
     if (!listingData?.items) return [];
-    const sellers = listingData.items.map((item) => item.seller.name);
+    const sellers = listingData.items.map((item: any) => item.seller?.name || item.name || 'Unknown');
     return Array.from(new Set(sellers));
   }, [listingData]);
 
-  // Apply filters to listings (client-side filtering)
+
   const filteredListings = useMemo(() => {
     if (!listingData?.items) return [];
+    return listingData.items as any[];
 
-    return listingData.items.filter((listing: Listing) => {
-      // Status filter
-      if (
-        filters.status !== 'All Status' &&
-        listing.status !== filters.status
-      ) {
-        return false;
-      }
-
-      // Seller filter
-      if (
-        filters.seller !== 'All Sellers' &&
-        listing.seller.name !== filters.seller
-      ) {
-        return false;
-      }
-
-      // Price range filter (basic implementation)
-      if (filters.priceRange) {
-        const priceStr = filters.priceRange.toLowerCase();
-        if (!listing.price.toString().includes(priceStr.replace(/[^0-9]/g, ''))) {
-          return false;
-        }
-      }
-
-      return true;
-    });
   }, [listingData, filters]);
 
   const handleAddListing = () => {
