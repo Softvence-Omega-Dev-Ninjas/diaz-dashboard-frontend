@@ -5,7 +5,11 @@ import {
   useDeletePermissionMutation,
   useGetAllPermissionUsersQuery,
 } from '@/redux/features/permissionManagement/permission';
-import type { CreateAdminRequest, PermissionUser, UpdateRoleRequest } from '@/types/permission-types';
+import type {
+  CreateAdminRequest,
+  PermissionUser,
+  UpdateRoleRequest,
+} from '@/types/permission-types';
 import { MoreVertical, Pencil, Plus, Trash2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -17,8 +21,13 @@ const UsersAndPermission: React.FC = () => {
   const [selectedUser, setSelectedUser] = useState<PermissionUser | null>(null);
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
 
-  const { data: users = [], isLoading, isError } = useGetAllPermissionUsersQuery({});
-  const [createAdmin, { isLoading: isCreating }] = useCreatePermissionMutation();
+  const {
+    data: users = [],
+    isLoading,
+    isError,
+  } = useGetAllPermissionUsersQuery({});
+  const [createAdmin, { isLoading: isCreating }] =
+    useCreatePermissionMutation();
   const [updateRole, { isLoading: isUpdating }] = useChangeRoleMutation();
   const [deleteUser, { isLoading: isDeleting }] = useDeletePermissionMutation();
 
@@ -26,7 +35,10 @@ const UsersAndPermission: React.FC = () => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
-      if (!target.closest('.dropdown-menu') && !target.closest('.dropdown-button')) {
+      if (
+        !target.closest('.dropdown-menu') &&
+        !target.closest('.dropdown-button')
+      ) {
         setOpenDropdownId(null);
       }
     };
@@ -48,8 +60,9 @@ const UsersAndPermission: React.FC = () => {
       await createAdmin(data).unwrap();
       toast.success('Admin created successfully');
       setIsAddModalOpen(false);
-    } catch (error: any) {
-      toast.error(error?.data?.message || 'Failed to create admin');
+    } catch (error) {
+      const err = error as { data?: { message?: string } };
+      toast.error(err?.data?.message || 'Failed to create admin');
     }
   };
 
@@ -67,8 +80,9 @@ const UsersAndPermission: React.FC = () => {
       toast.success('Role updated successfully');
       setIsUpdateModalOpen(false);
       setSelectedUser(null);
-    } catch (error: any) {
-      toast.error(error?.data?.message || 'Failed to update role');
+    } catch (error) {
+      const err = error as { data?: { message?: string } };
+      toast.error(err?.data?.message || 'Failed to update role');
     }
   };
 
@@ -90,8 +104,9 @@ const UsersAndPermission: React.FC = () => {
       try {
         await deleteUser(user.id).unwrap();
         toast.success('User deleted successfully');
-      } catch (error: any) {
-        toast.error(error?.data?.message || 'Failed to delete user');
+      } catch (error) {
+        const err = error as { data?: { message?: string } };
+        toast.error(err?.data?.message || 'Failed to delete user');
       }
     }
   };
@@ -141,7 +156,9 @@ const UsersAndPermission: React.FC = () => {
     return (
       <div className="p-4 md:p-6">
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-red-800">Error loading users. Please try again later.</p>
+          <p className="text-red-800">
+            Error loading users. Please try again later.
+          </p>
         </div>
       </div>
     );

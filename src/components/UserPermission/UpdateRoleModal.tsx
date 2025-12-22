@@ -19,7 +19,9 @@ export const UpdateRoleModal: React.FC<UpdateRoleModalProps> = ({
   userName,
   isLoading = false,
 }) => {
-  const [selectedRole, setSelectedRole] = useState<'SUPER_ADMIN' | 'ADMIN'>(currentRole);
+  const [selectedRole, setSelectedRole] = useState<'SUPER_ADMIN' | 'ADMIN'>(
+    currentRole,
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +40,9 @@ export const UpdateRoleModal: React.FC<UpdateRoleModalProps> = ({
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">Update User Role</h2>
+          <h2 className="text-xl font-semibold text-gray-900">
+            Update User Role
+          </h2>
           <button
             onClick={handleClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -54,13 +58,18 @@ export const UpdateRoleModal: React.FC<UpdateRoleModalProps> = ({
             <p className="text-sm text-gray-600 mb-4">
               Update role for <span className="font-semibold">{userName}</span>
             </p>
-            <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="role"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Select Role
             </label>
             <select
               id="role"
               value={selectedRole}
-              onChange={(e) => setSelectedRole(e.target.value as 'SUPER_ADMIN' | 'ADMIN')}
+              onChange={(e) =>
+                setSelectedRole(e.target.value as 'SUPER_ADMIN' | 'ADMIN')
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={isLoading}
             >

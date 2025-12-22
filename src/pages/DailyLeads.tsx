@@ -1,7 +1,4 @@
-import {
-    DailyLeadsHeader,
-    DailyLeadsTable,
-} from '@/components/DailyLeads';
+import { DailyLeadsHeader, DailyLeadsTable } from '@/components/DailyLeads';
 import { useGetDailyLeadsQuery } from '@/redux/features/dailyLeads/dailyLeads';
 import React from 'react';
 
@@ -28,7 +25,10 @@ const DailyLeads: React.FC = () => {
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
-    link.setAttribute('download', `daily-leads-${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute(
+      'download',
+      `daily-leads-${new Date().toISOString().split('T')[0]}.csv`,
+    );
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();

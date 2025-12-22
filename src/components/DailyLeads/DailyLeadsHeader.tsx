@@ -15,7 +15,8 @@ export const DailyLeadsHeader: React.FC<DailyLeadsHeaderProps> = ({
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Daily Leads</h1>
         <p className="text-sm text-gray-600 mt-1">
-          Total {totalLeads} {totalLeads === 1 ? 'lead' : 'leads'} generated today
+          Total {totalLeads} {totalLeads === 1 ? 'lead' : 'leads'} generated
+          today
         </p>
       </div>
       <div className="flex items-center gap-3">

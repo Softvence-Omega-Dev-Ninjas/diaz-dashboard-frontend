@@ -19,12 +19,10 @@ const ListingManagement: React.FC = () => {
     priceRange: '',
   });
 
-
   const pagination = usePagination({ initialPage: 1, initialLimit: 10 });
 
-  
   const queryParams = useMemo(() => {
-    const params: any = {
+    const params: Record<string, string | number> = {
       page: pagination.page,
       limit: pagination.limit,
     };
@@ -40,7 +38,11 @@ const ListingManagement: React.FC = () => {
     return params;
   }, [pagination.page, pagination.limit, filters.search, filters.status]);
 
-  const { data: listingData, isLoading, isError } = useGetAllListingQuery(queryParams);
+  const {
+    data: listingData,
+    isLoading,
+    isError,
+  } = useGetAllListingQuery(queryParams);
 
   useEffect(() => {
     if (listingData?.total) {
@@ -48,18 +50,17 @@ const ListingManagement: React.FC = () => {
     }
   }, [listingData?.total]);
 
-
-  const uniqueSellers = useMemo(() => {
+  const uniqueSellers = useMemo((): string[] => {
     if (!listingData?.items) return [];
-    const sellers = listingData.items.map((item: any) => item.seller?.name || item.name || 'Unknown');
-    return Array.from(new Set(sellers));
+    const sellers = listingData.items.map(
+      (item) => item.seller?.name || item.name || 'Unknown',
+    );
+    return Array.from(new Set(sellers)) as string[];
   }, [listingData]);
-
 
   const filteredListings = useMemo(() => {
     if (!listingData?.items) return [];
-    return listingData.items as any[];
-
+    return listingData.items;
   }, [listingData, filters]);
 
   const handleAddListing = () => {
@@ -132,7 +133,7 @@ const ListingManagement: React.FC = () => {
           onEdit={handleEdit}
           onDelete={handleDelete}
         />
-        
+
         {!isLoading && !isError && listingData && (
           <Pagination
             currentPage={pagination.page}

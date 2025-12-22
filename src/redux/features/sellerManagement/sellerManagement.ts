@@ -16,11 +16,8 @@ const sellerManagementApi = baseApi.injectEndpoints({
       }),
       providesTags: ['Seller'],
     }),
-
   }),
 });
 
-export const {
-  useGetAllSellersQuery,
-  useGetSellerByIdQuery
-} = sellerManagementApi;
+export const { useGetAllSellersQuery, useGetSellerByIdQuery } =
+  sellerManagementApi;

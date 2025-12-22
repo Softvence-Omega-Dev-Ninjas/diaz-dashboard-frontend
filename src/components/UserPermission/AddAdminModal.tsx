@@ -15,21 +15,25 @@ export const AddAdminModal: React.FC<AddAdminModalProps> = ({
   onSubmit,
   isLoading = false,
 }) => {
-    const randomString = Math.random().toString(36).substring(2, 15);
+  const randomString = Math.random().toString(36).substring(2, 15);
   const [formData, setFormData] = useState<CreateAdminRequest>({
     email: '',
     username: '',
     password: '',
     name: '',
     role: 'ADMIN',
-     googleId: randomString,
-      avatarUrl: randomString,
-      isVerified: true
+    googleId: randomString,
+    avatarUrl: randomString,
+    isVerified: true,
   });
 
-  const [errors, setErrors] = useState<Partial<Record<keyof CreateAdminRequest, string>>>({});
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof CreateAdminRequest, string>>
+  >({});
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: '' }));
@@ -78,7 +82,7 @@ export const AddAdminModal: React.FC<AddAdminModalProps> = ({
       role: 'ADMIN',
       googleId: '',
       avatarUrl: '',
-      isVerified: true
+      isVerified: true,
     });
     setErrors({});
     onClose();
@@ -105,7 +109,10 @@ export const AddAdminModal: React.FC<AddAdminModalProps> = ({
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {/* Name */}
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Full Name <span className="text-red-500">*</span>
             </label>
             <input
@@ -118,12 +125,17 @@ export const AddAdminModal: React.FC<AddAdminModalProps> = ({
               placeholder="John Doe"
               disabled={isLoading}
             />
-            {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+            {errors.name && (
+              <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+            )}
           </div>
 
           {/* Email */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Email <span className="text-red-500">*</span>
             </label>
             <input
@@ -136,12 +148,17 @@ export const AddAdminModal: React.FC<AddAdminModalProps> = ({
               placeholder="admin@example.com"
               disabled={isLoading}
             />
-            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+            {errors.email && (
+              <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+            )}
           </div>
 
           {/* Username */}
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="username"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Username <span className="text-red-500">*</span>
             </label>
             <input
@@ -154,12 +171,17 @@ export const AddAdminModal: React.FC<AddAdminModalProps> = ({
               placeholder="johndoe"
               disabled={isLoading}
             />
-            {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
+            {errors.username && (
+              <p className="text-red-500 text-xs mt-1">{errors.username}</p>
+            )}
           </div>
 
           {/* Password */}
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Password <span className="text-red-500">*</span>
             </label>
             <input
@@ -172,12 +194,17 @@ export const AddAdminModal: React.FC<AddAdminModalProps> = ({
               placeholder="SuperSecret123!"
               disabled={isLoading}
             />
-            {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+            {errors.password && (
+              <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+            )}
           </div>
 
           {/* Role */}
           <div>
-            <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="role"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Role <span className="text-red-500">*</span>
             </label>
             <select

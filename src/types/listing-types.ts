@@ -12,7 +12,13 @@ export interface Listing {
   model: string;
   year: number;
   price: number;
-  status: 'ONBOARDING_PENDING' | 'DRAFT' | 'PENDING' | 'ACTIVE' | 'INACTIVE' | 'SOLD';
+  status:
+    | 'ONBOARDING_PENDING'
+    | 'DRAFT'
+    | 'PENDING'
+    | 'ACTIVE'
+    | 'INACTIVE'
+    | 'SOLD';
   views: number;
   createdAt: string;
   seller: Seller;

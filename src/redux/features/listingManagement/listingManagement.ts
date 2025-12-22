@@ -5,15 +5,15 @@ const listingManagementApi = baseApi.injectEndpoints({
     getAllListing: build.query({
       query: ({ page, limit, search, status }) => {
         let url = `/admin/listings?page=${page}&limit=${limit}`;
-        
+
         if (search && search.trim() !== '') {
           url += `&search=${encodeURIComponent(search.trim())}`;
         }
-        
+
         if (status && status.trim() !== '') {
           url += `&status=${encodeURIComponent(status)}`;
         }
-        
+
         return {
           url,
           method: 'GET',
@@ -21,10 +21,7 @@ const listingManagementApi = baseApi.injectEndpoints({
       },
       providesTags: ['Listing'],
     }),
-
   }),
 });
 
-export const {
-  useGetAllListingQuery,
-} = listingManagementApi;
+export const { useGetAllListingQuery } = listingManagementApi;

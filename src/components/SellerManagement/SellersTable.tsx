@@ -19,7 +19,6 @@ export const SellersTable: React.FC<SellersTableProps> = ({
     }).format(price);
   };
 
- 
   const getInitials = (name: string) => {
     const words = name.split(' ');
     if (words.length >= 2) {

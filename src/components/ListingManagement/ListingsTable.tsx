@@ -137,9 +137,7 @@ export const ListingsTable: React.FC<ListingsTableProps> = ({
                   </span>
                 </td>
                 <td className="px-4 md:px-6 py-4">
-                  <span className="text-sm text-gray-900">
-                    {listing.views}
-                  </span>
+                  <span className="text-sm text-gray-900">{listing.views}</span>
                 </td>
                 <td className="px-4 md:px-6 py-4">
                   <span className="text-sm text-gray-900">

@@ -1,10 +1,14 @@
-import { SellerDetails, SellersHeader, SellersTable } from '@/components/SellerManagement';
+import {
+  SellerDetails,
+  SellersHeader,
+  SellersTable,
+} from '@/components/SellerManagement';
 import { useGetAllSellersQuery } from '@/redux/features/sellerManagement/sellerManagement';
 import React, { useState } from 'react';
 
 const SellerManagement: React.FC = () => {
   const [selectedSellerId, setSelectedSellerId] = useState<string | null>(null);
-  
+
   // Fetch all sellers without pagination
   const { data: sellerData, isLoading, isError } = useGetAllSellersQuery({});
 

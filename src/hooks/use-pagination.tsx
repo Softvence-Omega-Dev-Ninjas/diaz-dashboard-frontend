@@ -27,7 +27,7 @@ interface UsePaginationOptions {
 }
 
 export const usePagination = (
-  options: UsePaginationOptions = {}
+  options: UsePaginationOptions = {},
 ): UsePaginationReturn => {
   const { initialPage = 1, initialLimit = 10 } = options;
 
@@ -45,7 +45,7 @@ export const usePagination = (
         setPage(newPage);
       }
     },
-    [totalPages]
+    [totalPages],
   );
 
   const nextPage = useCallback(() => {

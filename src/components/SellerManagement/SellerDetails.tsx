@@ -1,15 +1,15 @@
 import { useGetSellerByIdQuery } from '@/redux/features/sellerManagement/sellerManagement';
 import {
-    ArrowLeft,
-    Calendar,
-    CheckCircle,
-    CreditCard,
-    Mail,
-    MapPin,
-    Phone,
-    Shield,
-    User,
-    XCircle,
+  ArrowLeft,
+  Calendar,
+  CheckCircle,
+  CreditCard,
+  Mail,
+  MapPin,
+  Phone,
+  Shield,
+  User,
+  XCircle,
 } from 'lucide-react';
 import React from 'react';
 
@@ -98,7 +98,9 @@ export const SellerDetails: React.FC<SellerDetailsProps> = ({
         </button>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <p className="text-red-600 font-medium">Failed to load seller details</p>
+            <p className="text-red-600 font-medium">
+              Failed to load seller details
+            </p>
             <p className="text-gray-600 mt-2">Please try again later</p>
           </div>
         </div>
@@ -148,7 +150,7 @@ export const SellerDetails: React.FC<SellerDetailsProps> = ({
                 </h1>
                 <span
                   className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadge(
-                    seller.status
+                    seller.status,
                   )}`}
                 >
                   {seller.status}

@@ -18,7 +18,7 @@ const permissionManageApi = baseApi.injectEndpoints({
       invalidatesTags: ['PERMISSION'],
     }),
     changeRole: build.mutation({
-      query: ({id, data}) => ({
+      query: ({ id, data }) => ({
         url: `/user-permissions/${id}`,
         method: 'PATCH',
         body: data,
@@ -33,13 +33,12 @@ const permissionManageApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['PERMISSION'],
     }),
-
   }),
 });
 
 export const {
   useGetAllPermissionUsersQuery,
   useCreatePermissionMutation,
-    useChangeRoleMutation,
-    useDeletePermissionMutation
+  useChangeRoleMutation,
+  useDeletePermissionMutation,
 } = permissionManageApi;
