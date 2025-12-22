@@ -16,3 +16,9 @@ export type {
     SellerResponse
 } from './seller-types';
 
+// Daily Leads types
+export type {
+    DailyLeadsResponse,
+    Lead
+} from './daily-leads-types';
+

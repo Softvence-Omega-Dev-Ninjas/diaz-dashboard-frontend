@@ -1,14 +1,15 @@
 import { createBrowserRouter } from 'react-router-dom';
 import App from './App';
-import Overview from './pages/Overview';
-import ListingManagement from './pages/ListingManagement';
-import SellerManagement from './pages/SellerManagement';
-import FeaturedAndHomeManagement from './pages/Featured&HomeManagement';
-import ContentManagement from './pages/ContentManagement';
-import UsersAndPermission from './pages/UsersAndPermission';
-import AnalyticsAndReports from './pages/AnalyticsAndReports';
-import Settings from './pages/Settings';
 import AddListing from './pages/AddListing';
+import AnalyticsAndReports from './pages/AnalyticsAndReports';
+import ContentManagement from './pages/ContentManagement';
+import DailyLeads from './pages/DailyLeads';
+import FeaturedAndHomeManagement from './pages/Featured&HomeManagement';
+import ListingManagement from './pages/ListingManagement';
+import Overview from './pages/Overview';
+import SellerManagement from './pages/SellerManagement';
+import Settings from './pages/Settings';
+import UsersAndPermission from './pages/UsersAndPermission';
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
       {
         path: '/sellers',
         element: <SellerManagement />,
+      },
+      {
+        path: '/daily-leads',
+        element: <DailyLeads />,
       },
       {
         path: '/featured',
