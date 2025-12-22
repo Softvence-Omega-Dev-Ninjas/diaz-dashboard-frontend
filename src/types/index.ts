@@ -22,3 +22,10 @@ export type {
     Lead
 } from './daily-leads-types';
 
+// Permission types
+export type {
+    CreateAdminRequest,
+    PermissionUser,
+    UpdateRoleRequest
+} from './permission-types';
+
