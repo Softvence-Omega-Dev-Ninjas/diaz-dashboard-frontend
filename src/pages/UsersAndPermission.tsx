@@ -197,7 +197,7 @@ const UsersAndPermission: React.FC = () => {
               No admin users found
             </div>
           ) : (
-            users.map((user) => (
+            users.map((user: any) => (
               <div
                 key={user.id}
                 className="flex flex-col lg:flex-row items-start lg:items-center justify-between p-4 md:p-6 hover:bg-gray-50 transition-colors gap-4"

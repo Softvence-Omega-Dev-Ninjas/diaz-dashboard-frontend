@@ -53,7 +53,7 @@ const ListingManagement: React.FC = () => {
   const uniqueSellers = useMemo((): string[] => {
     if (!listingData?.items) return [];
     const sellers = listingData.items.map(
-      (item) => item.seller?.name || item.name || 'Unknown',
+      (item: any) => item.seller?.name || item.name || 'Unknown',
     );
     return Array.from(new Set(sellers)) as string[];
   }, [listingData]);
