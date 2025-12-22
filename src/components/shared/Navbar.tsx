@@ -1,13 +1,12 @@
-import { useState, useEffect, useCallback } from 'react';
-import { NavLink } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { IoIosLogOut } from 'react-icons/io';
-import { HiX } from 'react-icons/hi';
-import { clearUser } from '@/redux/features/auth/authSlice';
-import { cn } from '@/lib/utils';
 import logoImg from '@/assets/logo.png';
+import { cn } from '@/lib/utils';
+import { clearUser } from '@/redux/features/auth/authSlice';
+import { useCallback, useEffect, useState } from 'react';
+import { HiX } from 'react-icons/hi';
+import { IoIosLogOut } from 'react-icons/io';
 import {
   LuChartColumn,
+  LuClipboardList,
   LuFileText,
   LuLayoutDashboard,
   LuLayoutGrid,
@@ -17,6 +16,8 @@ import {
   LuStar,
   LuUsers,
 } from 'react-icons/lu';
+import { useDispatch } from 'react-redux';
+import { NavLink } from 'react-router-dom';
 
 const navItems = [
   {
@@ -33,6 +34,11 @@ const navItems = [
     label: 'Seller Management',
     path: '/sellers',
     icon: <LuUsers className="text-lg" />,
+  },
+  {
+    label: 'Daily Leads',
+    path: '/daily-leads',
+    icon: <LuClipboardList className="text-lg" />,
   },
   {
     label: 'Featured & Homepage',
