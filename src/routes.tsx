@@ -3,12 +3,14 @@ import App from './App';
 import AddListing from './pages/AddListing';
 import AnalyticsAndReports from './pages/AnalyticsAndReports';
 import ContentManagement from './pages/ContentManagement';
+import CreateNewArticle from './pages/CreateNewArticle';
 import DailyLeads from './pages/DailyLeads';
 import FeaturedAndHomeManagement from './pages/Featured&HomeManagement';
 import ListingManagement from './pages/ListingManagement';
 import Overview from './pages/Overview';
 import SellerManagement from './pages/SellerManagement';
 import Settings from './pages/Settings';
+import UpdateBlogPost from './pages/UpdateBlogPost';
 import UsersAndPermission from './pages/UsersAndPermission';
 
 const router = createBrowserRouter([
@@ -47,6 +49,14 @@ const router = createBrowserRouter([
       {
         path: '/content',
         element: <ContentManagement />,
+      },
+      {
+        path: '/content/new-article',
+        element: <CreateNewArticle />,
+      },
+      {
+        path: '/content/edit/:id',
+        element: <UpdateBlogPost />,
       },
       {
         path: '/users',

@@ -29,6 +29,7 @@ export const baseApi = createApi({
     'Admin',
     'Listing',
     'PERMISSION',
+    'Blog',
   ],
 
   endpoints: () => ({}),
