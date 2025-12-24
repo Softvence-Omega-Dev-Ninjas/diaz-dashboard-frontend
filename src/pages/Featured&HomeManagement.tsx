@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import FeaturedSection from '@/components/FeaturedAndHomeComponents/FeaturedSection';
 import HomeBannersSection from '@/components/FeaturedAndHomeComponents/HomeBannersSection';
 
-type Tab = 'featured' | 'hero';
+type Tab = 'featured' | 'FLORIDA' | "JUPITER";
 
 const FeaturedAndHomeManagement: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>('featured');
@@ -33,20 +33,30 @@ const FeaturedAndHomeManagement: React.FC = () => {
             Featured Yachts
           </button>
           <button
-            onClick={() => setActiveTab('hero')}
+            onClick={() => setActiveTab('FLORIDA')}
             className={`px-4 py-2 text-sm font-medium rounded-full transition-colors whitespace-nowrap ${
-              activeTab === 'hero'
+              activeTab === 'FLORIDA'
                 ? 'bg-white text-gray-900 shadow-sm'
                 : 'bg-transparent text-gray-600 hover:text-gray-900'
             }`}
           >
-            Hero Banner
+            Florida Hero Banner 
+          </button>
+          <button
+            onClick={() => setActiveTab('JUPITER')}
+            className={`px-4 py-2 text-sm font-medium rounded-full transition-colors whitespace-nowrap ${
+              activeTab === 'JUPITER'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'bg-transparent text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            Jupiter Hero Banner 
           </button>
         </div>
       </div>
 
       {/* Content */}
-      {activeTab === 'featured' ? <FeaturedSection /> : <HomeBannersSection />}
+      {activeTab === 'featured' ? <FeaturedSection /> : activeTab === 'FLORIDA' ? <HomeBannersSection website={activeTab} /> : <HomeBannersSection website={activeTab} />}
     </div>
   );
 };
