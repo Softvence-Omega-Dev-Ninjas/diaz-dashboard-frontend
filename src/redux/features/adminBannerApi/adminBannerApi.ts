@@ -33,6 +33,28 @@ export interface GetSingleBannerQuery {
   site: string;
 }
 
+export interface AdminSettings {
+  id: string;
+  siteName: string;
+  currency: string;
+  maintenanceMode: boolean;
+  logoId: string | null;
+  newListingSubmitted: boolean;
+  newSellerRegistration: boolean ;
+  createdAt: string;
+  updatedAt: string;
+  logo: string | null;
+  logoUrl: string | null;
+}
+
+export interface UpdateAdminSettingsPayload {
+  siteName?: string;
+  currency?: string;
+  maintenanceMode?: boolean;
+  newListingSubmitted?: boolean;
+  newSellerRegistration?: boolean;
+  logo?: File | null | string;
+}
 
 
 export const adminBannerApi = baseApi.injectEndpoints({
