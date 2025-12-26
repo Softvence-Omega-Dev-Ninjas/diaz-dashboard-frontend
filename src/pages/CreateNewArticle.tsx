@@ -164,9 +164,7 @@ const CreateNewArticle: React.FC = () => {
               <h1 className="text-4xl font-bold text-gray-900 mb-8">
                 {formData.title || 'Untitled Article'}
               </h1>
-              <div className="prose prose-lg max-w-none">
-                <EditorPreview content={formData.content} />
-              </div>
+              <EditorPreview content={formData.content} />
             </div>
           </div>
         ) : (

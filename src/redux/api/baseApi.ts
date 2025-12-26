@@ -31,6 +31,10 @@ export const baseApi = createApi({
     'PERMISSION',
     'Blog',
     'TermsOfService',
+    'AboutUs',
+    'PrivacyPolicy',
+    'ContactUs',
+
   ],
 
   endpoints: () => ({}),

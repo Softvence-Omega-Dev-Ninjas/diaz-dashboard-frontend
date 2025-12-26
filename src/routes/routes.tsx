@@ -14,6 +14,10 @@ import LoginPage from "../pages/login/Login";
 import ProtectedRoute from "./ProtectedRoute";
 import CreateNewArticle from "@/pages/CreateNewArticle";
 import UpdateBlogPost from "@/pages/UpdateBlogPost";
+import AboutUs from "@/pages/AboutUs";
+import TermsOfService from "@/pages/TermsOfService";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import ContactUs from "@/pages/ContactUs";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +42,10 @@ const router = createBrowserRouter([
           { path: "content", element: <ContentManagement /> },
           {path: "content/new-article", element: <CreateNewArticle /> },
           {path: "content/edit/:id", element: <UpdateBlogPost /> },
+          {path: "content/about-us", element: <AboutUs /> },
+          {path: "content/contact", element: <ContactUs /> },
+          {path: "content/privacy-policy", element: <PrivacyPolicy /> },
+          {path: "content/terms-of-service", element: <TermsOfService /> },
           { path: "users", element: <UsersAndPermission /> },
           { path: "analytics", element: <AnalyticsAndReports /> },
           { path: "settings", element: <Settings /> },

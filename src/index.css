@@ -1,10 +1,9 @@
-@import "tailwindcss";
-@import "leaflet/dist/leaflet.css";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import '@tailwindcss/typography';
+@import 'leaflet/dist/leaflet.css';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
-
-
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
@@ -114,8 +113,8 @@
 }
 
 @theme {
-  --color-primary: #FF7346;
-  --color-secondary: #716E6E;
+  --color-primary: #ff7346;
+  --color-secondary: #716e6e;
 }
 
 @layer base {
@@ -127,6 +126,5 @@
   }
 }
 body {
-  font-family: "Inter", sans-serif;
+  font-family: 'Inter', sans-serif;
 }
-

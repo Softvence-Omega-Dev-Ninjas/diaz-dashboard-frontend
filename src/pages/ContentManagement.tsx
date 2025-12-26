@@ -101,7 +101,17 @@ const ContentManagement: React.FC = () => {
   };
 
   const handleEditPage = (id: number) => {
-    console.log('Editing page:', id);
+    const pageRoutes: { [key: number]: string } = {
+      1: '/content/about-us',
+      2: '/content/contact',
+      3: '/content/privacy-policy',
+      4: '/content/terms-of-service',
+    };
+
+    const route = pageRoutes[id];
+    if (route) {
+      navigate(route);
+    }
   };
 
   return (

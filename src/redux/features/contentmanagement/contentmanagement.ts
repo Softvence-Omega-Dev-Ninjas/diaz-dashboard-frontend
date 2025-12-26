@@ -2,9 +2,16 @@ import { baseApi } from '@/redux/api/baseApi';
 
 const contentManagementApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
+    getTermsAndConditions: build.query({
+      query: (site) => ({
+        url: `/terms-of-service?site=${site}`,
+        method: 'GET',
+      }),
+      providesTags: ['TermsOfService'],
+    }),
     createTermsAndConditions: build.mutation({
-      query: (termsAndConditions) => ({
-        url: `/terms-of-service/create`,
+      query: ({ site, termsAndConditions }) => ({
+        url: `/terms-of-service/create?site=${site}`,
         method: 'POST',
         body: termsAndConditions,
       }),
@@ -12,20 +19,105 @@ const contentManagementApi = baseApi.injectEndpoints({
     }),
 
     updateTermsAndConditions: build.mutation({
-      query: (termsAndConditions) => ({
-        url: `/terms-of-service/update`,
+      query: ({ site, termsAndConditions }) => ({
+        url: `/terms-of-service?site=${site}`,
         method: 'PATCH',
         body: termsAndConditions,
       }),
       invalidatesTags: ['TermsOfService'],
     }),
 
-  
+    getPrivacyPolicy: build.query({
+      query: (site) => ({
+        url: `/privacy-policy?site=${site}`,
+        method: 'GET',
+      }),
+      providesTags: ['PrivacyPolicy'],
+    }),
+    createPrivacyPolicy: build.mutation({
+      query: ({ site, privacyPolicy }) => ({
+        url: `/privacy-policy/create?site=${site}`,
+        method: 'POST',
+        body: privacyPolicy,
+      }),
+      invalidatesTags: ['PrivacyPolicy'],
+    }),
+
+    updatePrivacyPolicy: build.mutation({
+      query: ({ site, privacyPolicy }) => ({
+        url: `/privacy-policy?site=${site}`,
+        method: 'PATCH',
+        body: privacyPolicy,
+      }),
+      invalidatesTags: ['PrivacyPolicy'],
+    }),
+
+    getContactUs: build.query({
+      query: (site) => ({
+        url: `/contactus?site=${site}`,
+        method: 'GET',
+      }),
+      providesTags: ['ContactUs'],
+    }),
+    createContactUs: build.mutation({
+      query: ({ site, contactUs }) => ({
+        url: `/contactus/create?site=${site}`,
+        method: 'POST',
+        body: contactUs,
+      }),
+      invalidatesTags: ['ContactUs'],
+    }),
+
+    updateContactUs: build.mutation({
+      query: ({ site, contactUs }) => ({
+        url: `/contactus?site=${site}`,
+        method: 'PATCH',
+        body: contactUs,
+      }),
+      invalidatesTags: ['ContactUs'],
+    }),
+
+    getAboutUsContent: build.query({
+      query: (site) => ({
+        url: `/aboutus?site=${site}`,
+        method: 'GET',
+      }),
+      providesTags: ['AboutUs'],
+    }),
+    createAboutUs: build.mutation({
+      query: ({ site, aboutUsContent }) => ({
+        url: `/aboutus/create?site=${site}`,
+        method: 'POST',
+        body: aboutUsContent,
+      }),
+      invalidatesTags: ['AboutUs'],
+    }),
+
+    updateAboutUs: build.mutation({
+      query: ({ site, aboutUsContent }) => ({
+        url: `/aboutus?site=${site}`,
+        method: 'PATCH',
+        body: aboutUsContent,
+      }),
+      invalidatesTags: ['AboutUs'],
+    }),
   }),
 });
 
 export const {
-
   useCreateTermsAndConditionsMutation,
-    useUpdateTermsAndConditionsMutation,
+  useUpdateTermsAndConditionsMutation,
+  useGetTermsAndConditionsQuery,
+
+  useGetPrivacyPolicyQuery,
+  useCreatePrivacyPolicyMutation,
+  useUpdatePrivacyPolicyMutation,
+
+  useGetContactUsQuery,
+  useCreateContactUsMutation,
+  useUpdateContactUsMutation,
+
+  useGetAboutUsContentQuery,
+  useCreateAboutUsMutation,
+  useUpdateAboutUsMutation,
 } = contentManagementApi;
