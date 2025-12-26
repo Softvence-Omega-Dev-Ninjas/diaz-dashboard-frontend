@@ -12,6 +12,8 @@ import Settings from "../pages/Settings";
 import UsersAndPermission from "../pages/UsersAndPermission";
 import LoginPage from "../pages/login/Login";
 import ProtectedRoute from "./ProtectedRoute";
+import CreateNewArticle from "@/pages/CreateNewArticle";
+import UpdateBlogPost from "@/pages/UpdateBlogPost";
 
 const router = createBrowserRouter([
   {
@@ -34,6 +36,8 @@ const router = createBrowserRouter([
           { path: "daily-leads", element: <DailyLeads /> },
           { path: "featured", element: <FeaturedAndHomeManagement /> },
           { path: "content", element: <ContentManagement /> },
+          {path: "content/new-article", element: <CreateNewArticle /> },
+          {path: "content/edit/:id", element: <UpdateBlogPost /> },
           { path: "users", element: <UsersAndPermission /> },
           { path: "analytics", element: <AnalyticsAndReports /> },
           { path: "settings", element: <Settings /> },
