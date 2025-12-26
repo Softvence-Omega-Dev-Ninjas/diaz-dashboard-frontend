@@ -1,71 +1,81 @@
-import React, { useState, useRef } from 'react';
-import { ImageIcon, X } from 'lucide-react';
+import React, { useRef, useState, useEffect } from "react";
+import { ImageIcon, X } from "lucide-react";
+import type { UpdateAdminSettingsPayload } from "@/redux/features/adminBannerApi/adminBannerApi";
 
-const Branding = () => {
+interface Props {
+  formData: UpdateAdminSettingsPayload;
+  setFormData: React.Dispatch<React.SetStateAction<UpdateAdminSettingsPayload>>;
+}
+
+const Branding: React.FC<Props> = ({ formData, setFormData }) => {
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    if (!formData.logo) {
+      setLogoPreview(null);
+    } else if (formData.logo instanceof File) {
+      const reader = new FileReader();
+      reader.onloadend = () => setLogoPreview(reader.result as string);
+      reader.readAsDataURL(formData.logo);
+    } else if (typeof formData.logo === "string") {
+      setLogoPreview(formData.logo); // backend URL
+    }
+  }, [formData.logo]);
+
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setLogoPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+
+    setFormData((prev) => ({ ...prev, logo: file }));
   };
 
   const handleRemoveLogo = () => {
+    setFormData((prev) => ({ ...prev, logo: undefined }));
     setLogoPreview(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4 md:p-6">
-      <h2 className="text-base md:text-lg font-semibold text-gray-900 mb-4 md:mb-6">
-        Branding
-      </h2>
+    <div className="bg-white border rounded-lg p-6">
+      <h2 className="text-lg font-semibold mb-6">Branding</h2>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Logo
-        </label>
+      <label className="block text-sm font-medium mb-4">Logo</label>
 
-        {logoPreview ? (
-          <div className="relative w-32 h-32 border border-gray-300 rounded-lg overflow-hidden group">
+      <div className="flex gap-6 items-start">
+        {/* Select Field / Dotted Box */}
+        <div
+          onClick={() => fileInputRef.current?.click()}
+          className="h-32 w-full border-2 border-dashed rounded-lg flex items-center justify-center cursor-pointer hover:border-gray-400"
+        >
+          <ImageIcon className="text-gray-400 w-8 h-8" />
+        </div>
+
+        {/* Preview */}
+        {logoPreview && (
+          <div className="relative w-32 h-32">
             <img
               src={logoPreview}
               alt="Logo preview"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover rounded-lg"
             />
             <button
               onClick={handleRemoveLogo}
-              className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+              className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 cursor-pointer"
             >
-              <X className="w-4 h-4" />
+              <X size={14} />
             </button>
           </div>
-        ) : (
-          <div
-            onClick={() => fileInputRef.current?.click()}
-            className="w-full sm:w-auto h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-gray-400 transition-colors"
-          >
-            <ImageIcon className="w-8 h-8 text-gray-400 mb-2" />
-            <span className="text-sm text-gray-500">Upload logo</span>
-          </div>
         )}
-
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          onChange={handleLogoUpload}
-          className="hidden"
-        />
       </div>
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        hidden
+        accept="image/*"
+        onChange={handleLogoUpload}
+      />
     </div>
   );
 };
