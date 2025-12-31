@@ -146,8 +146,8 @@ const ListingManagement: React.FC = () => {
     // Combine headers and rows
     const csvContent = [
       headers.join(','),
-      ...rows.map((row) =>
-        row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','),
+      ...rows.map((row: any) =>
+        row.map((cell: any) => `"${String(cell).replace(/"/g, '""')}"`).join(','),
       ),
     ].join('\n');
 
