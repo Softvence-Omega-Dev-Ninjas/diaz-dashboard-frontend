@@ -38,8 +38,8 @@ const navItems = [
     icon: <LuUsers className="text-lg" />,
   },
   {
-    label: 'Daily Leads',
-    path: '/daily-leads',
+    label: 'Yacht Leads',
+    path: '/yacht-leads',
     icon: <LuClipboardList className="text-lg" />,
   },
   {
@@ -97,21 +97,19 @@ const Navbar = () => {
     };
   }, [isMobileMenuOpen]);
 
-  const navigate = useNavigate()
-const handleLogout = () => {
+  const navigate = useNavigate();
+  const handleLogout = () => {
     dispatch(logout());
 
     // persistor.purge();
 
+    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
 
-    localStorage.removeItem("token");
-    sessionStorage.removeItem("token");
+    toast.success('Logout Successfully');
 
-    toast.success("Logout Successfully");
-
-    navigate("/admin-login", { replace: true });
+    navigate('/admin-login', { replace: true });
   };
-
 
   const toggleMobileMenu = useCallback(() => {
     setIsMobileMenuOpen((prev) => !prev);

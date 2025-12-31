@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import FeaturedSection from '@/components/FeaturedAndHomeComponents/FeaturedSection';
 import HomeBannersSection from '@/components/FeaturedAndHomeComponents/HomeBannersSection';
 
-type Tab = 'featured' | 'FLORIDA' | "JUPITER";
+type Tab = 'featured' | 'FLORIDA' | 'JUPITER';
 
 const FeaturedAndHomeManagement: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>('featured');
@@ -40,7 +40,7 @@ const FeaturedAndHomeManagement: React.FC = () => {
                 : 'bg-transparent text-gray-600 hover:text-gray-900'
             }`}
           >
-            Florida Hero Banner 
+            Florida Hero Banner
           </button>
           <button
             onClick={() => setActiveTab('JUPITER')}
@@ -50,13 +50,19 @@ const FeaturedAndHomeManagement: React.FC = () => {
                 : 'bg-transparent text-gray-600 hover:text-gray-900'
             }`}
           >
-            Jupiter Hero Banner 
+            Jupiter Hero Banner
           </button>
         </div>
       </div>
 
       {/* Content */}
-      {activeTab === 'featured' ? <FeaturedSection /> : activeTab === 'FLORIDA' ? <HomeBannersSection website={activeTab} /> : <HomeBannersSection website={activeTab} />}
+      {activeTab === 'featured' ? (
+        <FeaturedSection />
+      ) : activeTab === 'FLORIDA' ? (
+        <HomeBannersSection website={activeTab} />
+      ) : (
+        <HomeBannersSection website={activeTab} />
+      )}
     </div>
   );
 };

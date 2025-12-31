@@ -25,8 +25,10 @@ export function MeasurementField({
       <div className="flex items-center gap-2">
         <div className="relative flex-1">
           <input
-            {...register(ftName)}
-            type="text"
+            {...register(ftName, { valueAsNumber: true })}
+            type="number"
+            min="0"
+            step="1"
             placeholder="-"
             className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg text-sm text-center bg-gray-50 focus:ring-2 focus:ring-cyan-500 focus:border-transparent focus:bg-white"
           />
@@ -36,8 +38,11 @@ export function MeasurementField({
         </div>
         <div className="relative flex-1">
           <input
-            {...register(inName)}
-            type="text"
+            {...register(inName, { valueAsNumber: true })}
+            type="number"
+            min="0"
+            max="12"
+            step="1"
             placeholder="-"
             className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg text-sm text-center bg-gray-50 focus:ring-2 focus:ring-cyan-500 focus:border-transparent focus:bg-white"
           />

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   ListingsFilters,
   ListingsHeader,
@@ -5,11 +6,16 @@ import {
   Pagination,
 } from '@/components/ListingManagement';
 import { usePagination } from '@/hooks/use-pagination';
-import { useGetAllListingQuery } from '@/redux/features/listingManagement/listingManagement';
+import {
+  useDeleteListingMutation,
+  useGetAllListingQuery,
+} from '@/redux/features/listingManagement/listingManagement';
 import type { ListingFilters } from '@/types/listing-types';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
+import Swal from 'sweetalert2';
 
+const url = import.meta.env.VITE_BASE_URL;
 const ListingManagement: React.FC = () => {
   const navigate = useNavigate();
   const [filters, setFilters] = useState<ListingFilters>({
@@ -18,9 +24,9 @@ const ListingManagement: React.FC = () => {
     seller: 'All Sellers',
     priceRange: '',
   });
+  const [deleteListing] = useDeleteListingMutation();
 
   const pagination = usePagination({ initialPage: 1, initialLimit: 10 });
-
   const queryParams = useMemo(() => {
     const params: Record<string, string | number> = {
       page: pagination.page,
@@ -68,20 +74,35 @@ const ListingManagement: React.FC = () => {
   };
 
   const handleView = (id: string) => {
-    console.log('Viewing listing:', id);
-    // Navigate to listing detail page
-    // navigate(`/listings/${id}`);
+    window.open(`${url}/search-listing/${id}`, '_blank');
   };
 
-  const handleEdit = (id: string) => {
-    console.log('Editing listing:', id);
-    // Navigate to edit page
-    // navigate(`/listings/${id}/edit`);
-  };
+  const handleDelete = async (id: string) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    });
 
-  const handleDelete = (id: string) => {
-    console.log('Deleting listing:', id);
-    // Implement delete functionality
+    if (result.isConfirmed) {
+      await deleteListing(id)
+        .unwrap()
+        .then(() => {
+          Swal.fire(
+            'Deleted!',
+            'Listing has been deleted successfully.',
+            'success',
+          );
+        })
+        .catch((error) => {
+          Swal.fire('Error!', 'Failed to delete listing.', 'error');
+          console.error('❌ Failed to delete listing:', error);
+        });
+    }
   };
 
   const handleExportCSV = () => {
@@ -130,7 +151,6 @@ const ListingManagement: React.FC = () => {
         <ListingsTable
           listings={filteredListings}
           onView={handleView}
-          onEdit={handleEdit}
           onDelete={handleDelete}
         />
 

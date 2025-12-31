@@ -2,10 +2,15 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { RootState } from '../store';
 
+// Use environment variable or fallback to hardcoded URL
+const API_BASE_URL = 'https://api.floridayachttrader.com';
+
+console.log('🔧 Redux API Base URL:', API_BASE_URL);
+
 export const baseApi = createApi({
   reducerPath: 'baseApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://api.floridayachttrader.com/api', //  Change this to your API base URL
+    baseUrl: `${API_BASE_URL}/api`,
     prepareHeaders: (headers, { getState }) => {
       const state = getState() as RootState;
       console.log('Current State:', state); // Debugging line to check the state structure
@@ -29,6 +34,11 @@ export const baseApi = createApi({
     'Admin',
     'Listing',
     'PERMISSION',
+    'Blog',
+    'TermsOfService',
+    'AboutUs',
+    'PrivacyPolicy',
+    'ContactUs',
   ],
 
   endpoints: () => ({}),

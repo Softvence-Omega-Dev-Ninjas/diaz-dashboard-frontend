@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   useCreateBannerMutation,
   useGetSingleBannerQuery,
@@ -24,11 +25,14 @@ interface SectionState {
 }
 
 interface HomeBannersSectionProps {
-  website: 'FLORIDA' | "JUPITER"
+  website: 'FLORIDA' | 'JUPITER';
 }
 
-
-const HomeBannersSection: React.FC<HomeBannersSectionProps> = ({website} : {website: string}) => {
+const HomeBannersSection: React.FC<HomeBannersSectionProps> = ({
+  website,
+}: {
+  website: string;
+}) => {
   const [accordions, setAccordions] = useState<AccordionSection[]>([
     { id: 'hero', title: 'Homepage Hero Banner', isOpen: true },
     { id: 'blogs', title: 'Blogs', isOpen: false },
@@ -187,7 +191,7 @@ const HomeBannersSection: React.FC<HomeBannersSectionProps> = ({website} : {webs
           }));
         } catch (err) {
           // toast.promise already showed an error; keep console for debug
-          // eslint-disable-next-line no-console
+
           console.error('Update error', err);
         }
       } else {
@@ -224,14 +228,14 @@ const HomeBannersSection: React.FC<HomeBannersSectionProps> = ({website} : {webs
           }));
         } catch (err) {
           // toast.promise showed error
-          // eslint-disable-next-line no-console
+
           console.error('Create error', err);
         }
       }
     } catch (err) {
       // simple console for now
       // in real app show toast
-      // eslint-disable-next-line no-console
+
       console.error('Save banner error', err);
     }
   };
@@ -274,24 +278,20 @@ const HomeBannersSection: React.FC<HomeBannersSectionProps> = ({website} : {webs
         }));
       }
     });
-
-
-  
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     queries.map((q) => q.data).join?.(),
     accordions.map((a) => a.isOpen).join?.(),
-    website
+    website,
   ]);
 
-  useEffect(()=> {
-        setAccordions((prev) =>
-    prev.map((accordion) => ({
-      ...accordion,
-      isOpen: false,
-    }))
-  );
-  }, [website])
+  useEffect(() => {
+    setAccordions((prev) =>
+      prev.map((accordion) => ({
+        ...accordion,
+        isOpen: false,
+      })),
+    );
+  }, [website]);
   return (
     <div className="space-y-4">
       {/* Homepage Hero Banner Accordion */}

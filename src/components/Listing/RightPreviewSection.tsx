@@ -7,8 +7,8 @@ interface PreviewData {
   name?: string;
   make?: string;
   model?: string;
-  buildYear?: string;
-  price?: string;
+  buildYear?: string | number;
+  price?: string | number;
 }
 
 interface RightPreviewSectionProps {
@@ -28,7 +28,7 @@ const RightPreviewSection = ({ data }: RightPreviewSectionProps) => {
 
   // Format price
   const formattedPrice = price
-    ? `$${parseFloat(price).toLocaleString()}`
+    ? `$${parseFloat(String(price)).toLocaleString()}`
     : '$1,195,000';
 
   return (

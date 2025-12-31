@@ -1,36 +1,41 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import FirstListingPage from '@/components/Listing/FirstListingPage';
 import SecondListingPage from '@/components/Listing/SecondListingPage';
+import { useCreateListingMutation } from '@/redux/features/listingManagement/listingManagement';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 interface FormData {
   // Step 1 - Boat Information
-  buildYear?: string;
+  buildYear?: number;
   make?: string;
   model?: string;
-  lengthFt?: string;
-  lengthIn?: string;
-  beamFt?: string;
-  beamIn?: string;
-  maxDraftFt?: string;
-  maxDraftIn?: string;
+  lengthFt?: number;
+  lengthIn?: number;
+  beamFt?: number;
+  beamIn?: number;
+  maxDraftFt?: number;
+  maxDraftIn?: number;
   class?: string;
   material?: string;
   fuelType?: string;
-  numberOfEngines?: string;
-  numberOfCabins?: string;
-  numberOfHeads?: string;
+  propMaterial?: string;
+  numberOfEngines?: number;
+  numberOfCabins?: number;
+  numberOfHeads?: number;
 
   // Engine 1
-  engine1Hours?: string;
+  engine1Hours?: number;
   engine1Make?: string;
   engine1Model?: string;
-  engine1TotalPower?: string;
+  engine1TotalPower?: number;
   engine1FuelType?: string;
   engine1PropellerType?: string;
 
   // Basic Information
   condition?: string;
-  price?: string;
+  price?: number;
   city?: string;
   state?: string;
   zip?: string;
@@ -38,8 +43,21 @@ interface FormData {
   description?: string;
   moreDetails?: Array<{ title: string; description: string }>;
   embedUrl?: string;
+  videoURL?: string;
   coverPhoto?: string | null;
   galleryPhotos?: string[];
+
+  // Equipment Arrays
+  electricalEquipment?: string[];
+  additionalEquipment?: string[];
+  outsideEquipment?: string[];
+  insideEquipment?: string[];
+  coversEquipment?: string[];
+  electronics?: string[];
+
+  // Engine Types
+  engineType?: string;
+  propType?: string;
 
   // Step 2 - Seller Information
   firstName?: string;
@@ -50,14 +68,202 @@ interface FormData {
   sellerCity?: string;
   sellerState?: string;
   sellerZip?: string;
-  username?: string;
-  password?: string;
-  confirmPassword?: string;
 }
+
+/**
+ * Create FormData object for submission
+ * Converts form data to proper types (numbers, etc.)
+ */
+const createBoatRegistrationFormData = async (
+  data: FormData,
+): Promise<FormData> => {
+  const formData = new FormData();
+
+  // Helper to safely parse numbers
+  const toNumber = (value: number | string | undefined): number => {
+    if (typeof value === 'number') return value;
+    return parseInt(String(value || '0')) || 0;
+  };
+
+  const toFloat = (value: number | string | undefined): number => {
+    if (typeof value === 'number') return value;
+    return parseFloat(String(value || '0')) || 0;
+  };
+
+  // Boat Information with proper number types - matching backend structure
+  const boatInfo = {
+    zip: data.zip || '',
+    electricalEquipment: data.electricalEquipment || [],
+    additionalEquipment: data.additionalEquipment || [],
+    material: data.material || '',
+    price: toFloat(data.price),
+    outsideEquipment: data.outsideEquipment || [],
+    model: data.model || '',
+    propMaterial: data.propMaterial || '',
+    city: data.city || '',
+    name: data.name || '',
+    buildYear: toNumber(data.buildYear),
+    boatDimensions: {
+      lengthFeet: toNumber(data.lengthFt),
+      lengthInches: toNumber(data.lengthIn),
+      beamFeet: toNumber(data.beamFt),
+      beamInches: toNumber(data.beamIn),
+      draftFeet: toNumber(data.maxDraftFt),
+      draftInches: toNumber(data.maxDraftIn),
+    },
+    make: data.make || '',
+    fuelType: data.fuelType || '',
+    state: data.state || '',
+    engines: [
+      {
+        hours: toNumber(data.engine1Hours),
+        horsepower: toNumber(data.engine1TotalPower),
+        make: data.engine1Make || '',
+        model: data.engine1Model || '',
+        fuelType: data.engine1FuelType || '',
+        propellerType: data.engine1PropellerType || '',
+      },
+    ],
+    extraDetails:
+      data.moreDetails?.map((detail) => ({
+        key: detail.title,
+        value: detail.description,
+      })) || [],
+    insideEquipment: data.insideEquipment || [],
+    coversEquipment: data.coversEquipment || [],
+    cabinsNumber: toNumber(data.numberOfCabins),
+    videoURL: data.videoURL || data.embedUrl || '',
+    electronics: data.electronics || [],
+    boatClass: data.class || '',
+    enginesNumber: toNumber(data.numberOfEngines),
+    condition: data.condition || '',
+    engineType: data.engineType || '',
+    headsNumber: toNumber(data.numberOfHeads),
+    description: data.description || '',
+    propType: data.propType || '',
+  };
+
+  // Add boatInfo as JSON string to FormData
+  formData.append('boatInfo', JSON.stringify(boatInfo));
+
+  // Handle cover photo (array of images, even if single) with compression
+  if (data.coverPhoto) {
+    if (
+      typeof data.coverPhoto === 'string' &&
+      data.coverPhoto.startsWith('data:')
+    ) {
+      const blob = dataURLtoBlob(data.coverPhoto);
+      let file = new File([blob], 'cover.jpg', { type: 'image/jpeg' });
+      // Compress the image
+      file = await compressImage(file);
+      formData.append('covers', file);
+    } else if (data.coverPhoto && typeof data.coverPhoto !== 'string') {
+      const compressedFile = await compressImage(data.coverPhoto as File);
+      formData.append('covers', compressedFile);
+    }
+  }
+
+  // Handle gallery photos (array of images) with compression
+  if (data.galleryPhotos && data.galleryPhotos.length > 0) {
+    for (let index = 0; index < data.galleryPhotos.length; index++) {
+      const photo = data.galleryPhotos[index];
+      if (typeof photo === 'string' && photo.startsWith('data:')) {
+        const blob = dataURLtoBlob(photo);
+        let file = new File([blob], `gallery-${index}.jpg`, {
+          type: 'image/jpeg',
+        });
+        // Compress the image
+        file = await compressImage(file);
+        formData.append('galleries', file);
+      } else if (typeof photo !== 'string') {
+        const compressedFile = await compressImage(photo as File);
+        formData.append('galleries', compressedFile);
+      }
+    }
+  }
+
+  return formData as unknown as FormData;
+};
+
+/**
+ * Convert base64/DataURL to Blob
+ */
+const dataURLtoBlob = (dataURL: string): Blob => {
+  const parts = dataURL.split(',');
+  const mime = parts[0].match(/:(.*?);/)?.[1] || 'image/jpeg';
+  const bstr = atob(parts[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new Blob([u8arr], { type: mime });
+};
+
+/**
+ * Compress image to reduce file size
+ */
+const compressImage = async (file: File): Promise<File> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target?.result as string;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        // Resize if too large
+        const maxWidth = 1920;
+        const maxHeight = 1920;
+
+        if (width > maxWidth || height > maxHeight) {
+          if (width > height) {
+            height = (height * maxWidth) / width;
+            width = maxWidth;
+          } else {
+            width = (width * maxHeight) / height;
+            height = maxHeight;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d');
+        ctx?.drawImage(img, 0, 0, width, height);
+
+        // Compress with quality adjustment
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              const compressedFile = new File([blob], file.name, {
+                type: 'image/jpeg',
+                lastModified: Date.now(),
+              });
+              resolve(compressedFile);
+            } else {
+              reject(new Error('Compression failed'));
+            }
+          },
+          'image/jpeg',
+          0.8, // 80% quality
+        );
+      };
+      img.onerror = reject;
+    };
+    reader.onerror = reject;
+  });
+};
 
 const AddListing = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<FormData>({});
+  const [createListing, { isLoading: isSubmitting }] =
+    useCreateListingMutation();
+  const navigate = useNavigate();
 
   const handleNextStep = (data: Partial<FormData>) => {
     setFormData({ ...formData, ...data });
@@ -68,10 +274,50 @@ const AddListing = () => {
     setCurrentStep(1);
   };
 
-  const handleSubmit = (data: Partial<FormData>) => {
+  const handleSubmit = async (data: Partial<FormData>) => {
     const finalData = { ...formData, ...data };
-    console.log('Final Form Data:', finalData);
-    // Handle form submission here
+
+    // Create FormData object with compression
+    const formDataToSubmit = await createBoatRegistrationFormData(finalData);
+
+    // Console log FormData
+    console.log('========== BOAT REGISTRATION SUBMISSION ==========');
+    console.log('\n📋 Complete Form Data:', finalData);
+    console.log('\n📦 FormData Object:', formDataToSubmit);
+
+    // Log FormData entries
+    console.log('\n📝 FormData Entries:');
+    for (const [key, value] of (formDataToSubmit as any).entries()) {
+      if (value instanceof File) {
+        console.log(
+          `  ${key}: [File] ${value.name} (${(value.size / 1024).toFixed(2)} KB)`,
+        );
+      } else if (typeof value === 'string' && value.startsWith('{')) {
+        try {
+          console.log(`  ${key}:`, JSON.parse(value));
+        } catch {
+          console.log(`  ${key}:`, value);
+        }
+      } else {
+        console.log(`  ${key}:`, value);
+      }
+    }
+
+    console.log('\n==================================================\n');
+
+    // Submit via Redux
+    try {
+      const result = await createListing(formDataToSubmit).unwrap();
+      console.log('✅ Submission successful:', result);
+      toast.success('Boat listing created successfully!');
+      navigate('/listings');
+
+      // Reset form or redirect
+      // router.push('/listings');
+    } catch (error: any) {
+      console.error('❌ Submission failed:', error);
+      toast.error(error?.data?.message || 'Failed to create listing');
+    }
   };
 
   return (
@@ -95,9 +341,10 @@ const AddListing = () => {
             name: formData.name,
             make: formData.make,
             model: formData.model,
-            buildYear: formData.buildYear,
-            price: formData.price,
+            buildYear: formData.buildYear?.toString(),
+            price: formData.price?.toString(),
           }}
+          isSubmitting={isSubmitting}
         />
       )}
     </div>

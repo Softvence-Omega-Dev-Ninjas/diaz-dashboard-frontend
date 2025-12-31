@@ -1,36 +1,48 @@
-import React, { useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {
+  useDeleteBlogMutation,
+  useGetBlogsQuery,
+} from '@/redux/features/blogManagement/blogmanagement';
 import { Plus } from 'lucide-react';
-import { FaEdit } from 'react-icons/fa';
+import React, { useState } from 'react';
+import { FaEdit, FaTrash } from 'react-icons/fa';
 import { LuCalendar } from 'react-icons/lu';
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 type Tab = 'blog' | 'pages';
 
+interface BlogImage {
+  id: string;
+  filename: string;
+  originalFilename: string;
+  path: string;
+  url: string;
+  fileType: string;
+  mimeType: string;
+  size: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 interface BlogPost {
-  id: number;
-  title: string;
-  status: string;
-  views: number;
+  id: string;
+  blogImageId: string;
+  blogTitle: string;
+  blogDescription: string;
+  sharedLink: string;
+  readTime: number;
+  postStatus: string;
+  createdAt: string;
+  updatedAt: string;
+  blogImage: BlogImage;
+  pageViewCount: number;
 }
 
 interface StaticPage {
   id: number;
   title: string;
 }
-
-const DEMO_BLOG_POSTS: BlogPost[] = [
-  {
-    id: 1,
-    title: 'The Future of Boating: Smarter Tech',
-    status: 'Published',
-    views: 245,
-  },
-  {
-    id: 2,
-    title: 'Market Trends and Sales Projections',
-    status: 'Published',
-    views: 245,
-  },
-];
 
 const DEMO_STATIC_PAGES: StaticPage[] = [
   { id: 1, title: 'About Us' },
@@ -40,20 +52,67 @@ const DEMO_STATIC_PAGES: StaticPage[] = [
 ];
 
 const ContentManagement: React.FC = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<Tab>('blog');
-  const [blogPosts] = useState<BlogPost[]>(DEMO_BLOG_POSTS);
   const [staticPages] = useState<StaticPage[]>(DEMO_STATIC_PAGES);
+  const { data: blogsData, isLoading } = useGetBlogsQuery({});
+  const [deleteBlog] = useDeleteBlogMutation();
+
+  const blogPosts: BlogPost[] = blogsData || [];
 
   const handleNewArticle = () => {
-    console.log('Creating new article...');
+    navigate('/content/new-article');
   };
 
-  const handleEditPost = (id: number) => {
-    console.log('Editing post:', id);
+  const handleEditPost = (id: string) => {
+    navigate(`/content/edit/${id}`);
+  };
+
+  const handleDeleteBlog = (id: string) => async () => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await deleteBlog(id).unwrap();
+        Swal.fire({
+          title: 'Deleted!',
+          text: 'Blog post has been deleted.',
+          icon: 'success',
+          confirmButtonText: 'OK',
+        });
+      } catch (error: any) {
+        console.error('Delete error:', error);
+        Swal.fire({
+          title: 'Error!',
+          text: error?.data?.message || 'Failed to delete blog post',
+          icon: 'error',
+          confirmButtonText: 'OK',
+        });
+      }
+    }
   };
 
   const handleEditPage = (id: number) => {
-    console.log('Editing page:', id);
+    const pageRoutes: { [key: number]: string } = {
+      1: '/content/about-us',
+      2: '/content/contact',
+      3: '/content/privacy-policy',
+      4: '/content/terms-of-service',
+    };
+
+    const route = pageRoutes[id];
+    if (route) {
+      navigate(route);
+    }
   };
 
   return (
@@ -113,31 +172,57 @@ const ContentManagement: React.FC = () => {
 
           {/* Blog Posts List */}
           <div className="divide-y divide-gray-200">
-            {blogPosts.map((post) => (
-              <div
-                key={post.id}
-                className="flex items-center justify-between p-4 md:p-6 hover:bg-gray-50 transition-colors group"
-              >
-                <div className="flex items-center gap-3 md:gap-4 flex-1 min-w-0">
-                  <LuCalendar className="text-xl text-gray-400 shrink-0" />
-                  <div className="min-w-0">
-                    <h3 className="text-sm font-medium text-gray-900 truncate">
-                      {post.title}
-                    </h3>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {post.status} • {post.views} views
-                    </p>
+            {isLoading ? (
+              <div className="flex items-center justify-center p-8">
+                <p className="text-gray-500">Loading blog posts...</p>
+              </div>
+            ) : blogPosts.length === 0 ? (
+              <div className="flex items-center justify-center p-8">
+                <p className="text-gray-500">
+                  No blog posts found. Create your first article!
+                </p>
+              </div>
+            ) : (
+              blogPosts.map((post) => (
+                <div
+                  key={post.id}
+                  className="flex items-center justify-between p-4 md:p-6 hover:bg-gray-50 transition-colors group"
+                >
+                  <div className="flex items-center gap-3 md:gap-4 flex-1 min-w-0">
+                    {post.blogImage?.url ? (
+                      <img
+                        src={post.blogImage.url}
+                        alt={post.blogTitle}
+                        className="w-12 h-12 object-cover rounded-lg shrink-0"
+                      />
+                    ) : (
+                      <LuCalendar className="text-xl text-gray-400 shrink-0" />
+                    )}
+                    <div className="min-w-0">
+                      <h3 className="text-sm font-medium text-gray-900 truncate">
+                        {post.blogTitle}
+                      </h3>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {post.postStatus} • {post.pageViewCount} views •{' '}
+                        {post.readTime} min read
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => handleEditPost(post.id)}
+                      className="p-2 text-gray-600 transition-colors shrink-0"
+                      aria-label="Edit post"
+                    >
+                      <FaEdit className="text-xl" />
+                    </button>
+                    <button onClick={handleDeleteBlog(post.id)}>
+                      <FaTrash className="text-xl text-red-500 hover:text-red-700 transition-colors" />
+                    </button>
                   </div>
                 </div>
-                <button
-                  onClick={() => handleEditPost(post.id)}
-                  className="p-2 text-gray-400 hover:text-gray-600 transition-colors shrink-0"
-                  aria-label="Edit post"
-                >
-                  <FaEdit className="text-xl" />
-                </button>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       ) : (
