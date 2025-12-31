@@ -53,16 +53,6 @@ export const CONDITION_OPTIONS = [
   { value: 'Used', label: 'Used' },
 ];
 
-export const CITY_OPTIONS = [
-  { value: 'Miami', label: 'Miami' },
-  { value: 'Fort Lauderdale', label: 'Fort Lauderdale' },
-];
-
-export const STATE_OPTIONS = [
-  { value: 'Florida', label: 'Florida' },
-  { value: 'California', label: 'California' },
-];
-
 export const COUNTRY_OPTIONS = [
   { value: 'USA', label: 'United States' },
   { value: 'Canada', label: 'Canada' },

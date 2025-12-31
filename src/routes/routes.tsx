@@ -3,7 +3,6 @@ import App from "../App";
 import AddListing from "../pages/AddListing";
 import AnalyticsAndReports from "../pages/AnalyticsAndReports";
 import ContentManagement from "../pages/ContentManagement";
-import DailyLeads from "../pages/DailyLeads";
 import FeaturedAndHomeManagement from "../pages/Featured&HomeManagement";
 import ListingManagement from "../pages/ListingManagement";
 import Overview from "../pages/Overview";
@@ -18,6 +17,7 @@ import AboutUs from "@/pages/AboutUs";
 import TermsOfService from "@/pages/TermsOfService";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import ContactUs from "@/pages/ContactUs";
+import AllLeads from "../pages/DailyLeads";
 
 const router = createBrowserRouter([
   {
@@ -37,7 +37,7 @@ const router = createBrowserRouter([
           { path: "listings", element: <ListingManagement /> },
           { path: "listings/add", element: <AddListing /> },
           { path: "sellers", element: <SellerManagement /> },
-          { path: "daily-leads", element: <DailyLeads /> },
+          { path: "yacht-leads", element: <AllLeads /> },
           { path: "featured", element: <FeaturedAndHomeManagement /> },
           { path: "content", element: <ContentManagement /> },
           {path: "content/new-article", element: <CreateNewArticle /> },

@@ -38,8 +38,8 @@ const navItems = [
     icon: <LuUsers className="text-lg" />,
   },
   {
-    label: 'Daily Leads',
-    path: '/daily-leads',
+    label: 'Yacht Leads',
+    path: '/yacht-leads',
     icon: <LuClipboardList className="text-lg" />,
   },
   {

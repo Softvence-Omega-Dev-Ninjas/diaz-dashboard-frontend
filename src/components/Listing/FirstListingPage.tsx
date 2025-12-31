@@ -6,19 +6,13 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import {
   CABIN_COUNT_OPTIONS,
-  CITY_OPTIONS,
-  CLASS_OPTIONS,
-  CONDITION_OPTIONS,
   ENGINE_COUNT_OPTIONS,
-  FUEL_TYPE_OPTIONS,
   HEAD_COUNT_OPTIONS,
-  MAKE_OPTIONS,
-  MATERIAL_OPTIONS,
-  MODEL_OPTIONS,
-  STATE_OPTIONS,
   YEAR_OPTIONS,
 } from '../../lib/formConfig';
 import { combineMeasurements } from '../../lib/formUtils';
+import { CityField } from './CityField';
+import { DynamicFormSelect } from './DynamicFormSelect';
 import { EngineSection } from './EngineSection';
 import { FormField } from './FormField';
 import { GalleryUpload } from './GalleryUpload';
@@ -26,6 +20,7 @@ import { ImageUpload } from './ImageUpload';
 import { MeasurementField } from './MeasurementField';
 import ProgressBar from './ProgressBar';
 import RightPreviewSection from './RightPreviewSection';
+import { StateField } from './StateField';
 
 type FirstStepFormData = z.infer<typeof firstStepSchema>;
 
@@ -51,8 +46,13 @@ const FirstListingPage = ({
   initialData,
   currentStep,
 }: FirstListingPageProps) => {
-  const { register, handleSubmit, watch } = useForm<FirstStepFormData>({
-    resolver: zodResolver(firstStepSchema),
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+  } = useForm<FirstStepFormData>({
+    resolver: zodResolver(firstStepSchema) as any,
     defaultValues: initialData || {},
   });
 
@@ -141,20 +141,22 @@ const FirstListingPage = ({
                   options={YEAR_OPTIONS}
                   required
                 />
-                <FormField
+                <DynamicFormSelect
                   label="Make:"
                   name="make"
+                  type="MAKE"
                   register={register}
-                  type="select"
-                  options={MAKE_OPTIONS}
+                  value={formValues.make}
+                  onChange={(value) => setValue('make', value)}
                   required
                 />
-                <FormField
+                <DynamicFormSelect
                   label="Model:"
                   name="model"
+                  type="MODEL"
                   register={register}
-                  type="select"
-                  options={MODEL_OPTIONS}
+                  value={formValues.model}
+                  onChange={(value) => setValue('model', value)}
                   required
                 />
               </div>
@@ -181,28 +183,43 @@ const FirstListingPage = ({
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <FormField
+                <DynamicFormSelect
                   label="Class:"
                   name="class"
+                  type="CLASS"
                   register={register}
-                  type="select"
-                  options={CLASS_OPTIONS}
+                  value={formValues.class}
+                  onChange={(value) => setValue('class', value)}
                   required
                 />
-                <FormField
+                <DynamicFormSelect
                   label="Material:"
                   name="material"
+                  type="MATERIAL"
                   register={register}
-                  type="select"
-                  options={MATERIAL_OPTIONS}
+                  value={formValues.material}
+                  onChange={(value) => setValue('material', value)}
                   required
                 />
-                <FormField
+                <DynamicFormSelect
                   label="Fuel Type:"
                   name="fuelType"
+                  type="FUEL_TYPE"
                   register={register}
-                  type="select"
-                  options={FUEL_TYPE_OPTIONS}
+                  value={formValues.fuelType}
+                  onChange={(value) => setValue('fuelType', value)}
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <DynamicFormSelect
+                  label="Propeller Material:"
+                  name="propMaterial"
+                  type="PROP_MATERIAL"
+                  register={register}
+                  value={formValues.propMaterial}
+                  onChange={(value) => setValue('propMaterial', value)}
                   required
                 />
               </div>
@@ -236,44 +253,44 @@ const FirstListingPage = ({
             </div>
 
             {/* Engine 1 Section */}
-            <EngineSection register={register} engineNumber={1} />
+            <EngineSection register={register} setValue={setValue} watch={watch} engineNumber={1} />
 
             {/* Basic Information Section */}
             <div className="bg-white rounded-lg border border-gray-200 p-4 md:p-6">
               <h2 className="text-lg font-semibold mb-4">Basic Information</h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <FormField
+                <DynamicFormSelect
                   label="Condition:"
                   name="condition"
+                  type="CONDITION"
                   register={register}
-                  type="select"
-                  options={CONDITION_OPTIONS}
+                  value={formValues.condition}
+                  onChange={(value) => setValue('condition', value)}
                   required
                 />
                 <FormField
                   label="Price:"
                   name="price"
                   register={register}
+                  type="number"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <FormField
-                  label="City:"
-                  name="city"
-                  register={register}
-                  type="select"
-                  options={CITY_OPTIONS}
-                  required
-                />
-                <FormField
-                  label="State:"
+                <StateField
                   name="state"
                   register={register}
-                  type="select"
-                  options={STATE_OPTIONS}
+                  setValue={setValue}
+                  watch={watch}
+                  required
+                />
+                <CityField
+                  name="city"
+                  register={register}
+                  setValue={setValue}
+                  watch={watch}
                   required
                 />
                 <FormField
@@ -351,8 +368,11 @@ const FirstListingPage = ({
                   label="Enter Embed URL (YouTube or Vimeo):"
                   name="embedUrl"
                   register={register}
-                  placeholder="url"
+                  placeholder="https://youtube.com/embed/... or https://vimeo.com/..."
                 />
+                <p className="text-xs text-gray-500 mt-1">
+                  Optional: Add a YouTube or Vimeo embed URL for video preview
+                </p>
               </div>
 
               <div className="mb-4">

@@ -4,7 +4,7 @@ interface FormFieldProps<T extends FieldValues> {
   label: string;
   name: Path<T>;
   register: UseFormRegister<T>;
-  type?: 'text' | 'select' | 'textarea';
+  type?: 'text' | 'select' | 'textarea' | 'number';
   placeholder?: string;
   required?: boolean;
   options?: { value: string; label: string }[];

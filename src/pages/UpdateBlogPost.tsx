@@ -111,7 +111,7 @@ const UpdateBlogPost: React.FC = () => {
     }
 
     try {
-      const result = await updateBlog({
+      await updateBlog({
         id,
         body: formDataToSend,
       }).unwrap();
