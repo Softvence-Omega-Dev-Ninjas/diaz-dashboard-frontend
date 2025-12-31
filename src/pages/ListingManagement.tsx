@@ -106,8 +106,67 @@ const ListingManagement: React.FC = () => {
   };
 
   const handleExportCSV = () => {
-    console.log('Exporting CSV...');
-    // Implement CSV export functionality
+    if (!filteredListings || filteredListings.length === 0) {
+      Swal.fire('No Data', 'There are no listings to export.', 'info');
+      return;
+    }
+
+    // Define CSV headers
+    const headers = [
+      'Listing ID',
+      'Yacht Name',
+      'Make',
+      'Model',
+      'Year',
+      'Price',
+      'Status',
+      'Views',
+      'Seller Name',
+      'Seller Email',
+      'Created Date',
+    ];
+
+    // Convert listings to CSV rows
+    const rows = filteredListings.map((listing: any) => [
+      listing.listingId || '',
+      listing.name || '',
+      listing.make || '',
+      listing.model || '',
+      listing.year || '',
+      listing.price || '',
+      listing.status || '',
+      listing.views || 0,
+      listing.seller?.name || '',
+      listing.seller?.email || '',
+      listing.createdAt
+        ? new Date(listing.createdAt).toLocaleDateString('en-US')
+        : '',
+    ]);
+
+    // Combine headers and rows
+    const csvContent = [
+      headers.join(','),
+      ...rows.map((row) =>
+        row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','),
+      ),
+    ].join('\n');
+
+    // Create blob and download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+
+    link.setAttribute('href', url);
+    link.setAttribute(
+      'download',
+      `listings_${new Date().toISOString().split('T')[0]}.csv`,
+    );
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    Swal.fire('Success', 'CSV exported successfully!', 'success');
   };
 
   if (isLoading) {

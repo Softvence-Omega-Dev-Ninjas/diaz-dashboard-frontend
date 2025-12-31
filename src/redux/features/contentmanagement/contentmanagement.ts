@@ -101,6 +101,32 @@ const contentManagementApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['AboutUs'],
     }),
+
+    getFooter: build.query({
+      query: ({ site }) => ({
+        url: `/footer?site=${site}`,
+        method: 'GET',
+      }),
+      providesTags: ['Footer'],
+    }),
+
+    createFooter: build.mutation({
+      query: ({ site, footerContent }) => ({
+        url: `/footer?site=${site}`,
+        method: 'POST',
+        body: footerContent,
+      }),
+      invalidatesTags: ['Footer'],
+    }),
+
+    updateFooter: build.mutation({
+      query: ({ site, footerContent }) => ({
+        url: `/footer?site=${site}`,
+        method: 'PATCH',
+        body: footerContent,
+      }),
+      invalidatesTags: ['Footer'],
+    }),
   }),
 });
 
@@ -120,4 +146,8 @@ export const {
   useGetAboutUsContentQuery,
   useCreateAboutUsMutation,
   useUpdateAboutUsMutation,
+
+  useGetFooterQuery,
+  useCreateFooterMutation,
+  useUpdateFooterMutation,
 } = contentManagementApi;

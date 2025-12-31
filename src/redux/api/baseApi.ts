@@ -39,6 +39,7 @@ export const baseApi = createApi({
     'AboutUs',
     'PrivacyPolicy',
     'ContactUs',
+    'Footer',
   ],
 
   endpoints: () => ({}),

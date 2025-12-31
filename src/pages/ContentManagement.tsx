@@ -49,6 +49,12 @@ const DEMO_STATIC_PAGES: StaticPage[] = [
   { id: 2, title: 'Contact' },
   { id: 3, title: 'Privacy Policy' },
   { id: 4, title: 'Terms of Service' },
+  { id: 5, title: 'Footer' },
+  { id: 6, title: 'FAQ' },
+  { id: 7, title: 'Why Us' },
+  { id: 8, title: 'Our Team' },
+  { id: 9, title: 'Featured Brands' },
+  { id: 10, title: 'Category' },
 ];
 
 const ContentManagement: React.FC = () => {
@@ -107,6 +113,12 @@ const ContentManagement: React.FC = () => {
       2: '/content/contact',
       3: '/content/privacy-policy',
       4: '/content/terms-of-service',
+      5: '/content/footer',
+      6: '/content/faq',
+      7: '/content/why-us',
+      8: '/content/our-team',
+      9: '/content/featured-brands',
+      10: '/content/category',
     };
 
     const route = pageRoutes[id];
