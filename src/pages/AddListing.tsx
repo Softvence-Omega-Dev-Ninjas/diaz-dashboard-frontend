@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import FirstListingPage from '@/components/Listing/FirstListingPage';
 import SecondListingPage from '@/components/Listing/SecondListingPage';
 import { useCreateListingMutation } from '@/redux/features/listingManagement/listingManagement';
@@ -202,9 +203,7 @@ const dataURLtoBlob = (dataURL: string): Blob => {
 /**
  * Compress image to reduce file size
  */
-const compressImage = async (
-  file: File,
-): Promise<File> => {
+const compressImage = async (file: File): Promise<File> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -264,7 +263,7 @@ const AddListing = () => {
   const [formData, setFormData] = useState<FormData>({});
   const [createListing, { isLoading: isSubmitting }] =
     useCreateListingMutation();
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleNextStep = (data: Partial<FormData>) => {
     setFormData({ ...formData, ...data });

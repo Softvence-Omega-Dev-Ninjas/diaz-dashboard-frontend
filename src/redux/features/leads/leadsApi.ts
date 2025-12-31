@@ -25,6 +25,4 @@ const leadsApi = baseApi.injectEndpoints({
   }),
 });
 
-export const {
- 
-} = leadsApi;
+export const {} = leadsApi;

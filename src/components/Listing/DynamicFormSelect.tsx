@@ -183,11 +183,7 @@ export function DynamicFormSelect<T extends FieldValues>({
         {label} {required && <span className="text-red-500"> *</span>}
       </label>
       <div className="relative">
-        <input
-          {...register(name)}
-          type="hidden"
-          value={selectedValue}
-        />
+        <input {...register(name)} type="hidden" value={selectedValue} />
         <button
           type="button"
           onClick={() => !disabled && setIsOpen(!isOpen)}
@@ -235,7 +231,9 @@ export function DynamicFormSelect<T extends FieldValues>({
                   </p>
                   <button
                     type="button"
-                    onClick={() => setParams({ type, search: searchQuery, limit })}
+                    onClick={() =>
+                      setParams({ type, search: searchQuery, limit })
+                    }
                     className="text-xs text-blue-600 hover:underline mt-2"
                   >
                     Retry

@@ -1,54 +1,54 @@
-import { createBrowserRouter } from "react-router-dom";
-import App from "../App";
-import AddListing from "../pages/AddListing";
-import AnalyticsAndReports from "../pages/AnalyticsAndReports";
-import ContentManagement from "../pages/ContentManagement";
-import FeaturedAndHomeManagement from "../pages/Featured&HomeManagement";
-import ListingManagement from "../pages/ListingManagement";
-import Overview from "../pages/Overview";
-import SellerManagement from "../pages/SellerManagement";
-import Settings from "../pages/Settings";
-import UsersAndPermission from "../pages/UsersAndPermission";
-import LoginPage from "../pages/login/Login";
-import ProtectedRoute from "./ProtectedRoute";
-import CreateNewArticle from "@/pages/CreateNewArticle";
-import UpdateBlogPost from "@/pages/UpdateBlogPost";
-import AboutUs from "@/pages/AboutUs";
-import TermsOfService from "@/pages/TermsOfService";
-import PrivacyPolicy from "@/pages/PrivacyPolicy";
-import ContactUs from "@/pages/ContactUs";
-import AllLeads from "../pages/DailyLeads";
+import { createBrowserRouter } from 'react-router-dom';
+import App from '../App';
+import AddListing from '../pages/AddListing';
+import AnalyticsAndReports from '../pages/AnalyticsAndReports';
+import ContentManagement from '../pages/ContentManagement';
+import FeaturedAndHomeManagement from '../pages/Featured&HomeManagement';
+import ListingManagement from '../pages/ListingManagement';
+import Overview from '../pages/Overview';
+import SellerManagement from '../pages/SellerManagement';
+import Settings from '../pages/Settings';
+import UsersAndPermission from '../pages/UsersAndPermission';
+import LoginPage from '../pages/login/Login';
+import ProtectedRoute from './ProtectedRoute';
+import CreateNewArticle from '@/pages/CreateNewArticle';
+import UpdateBlogPost from '@/pages/UpdateBlogPost';
+import AboutUs from '@/pages/AboutUs';
+import TermsOfService from '@/pages/TermsOfService';
+import PrivacyPolicy from '@/pages/PrivacyPolicy';
+import ContactUs from '@/pages/ContactUs';
+import AllLeads from '../pages/DailyLeads';
 
 const router = createBrowserRouter([
   {
-    path: "/admin-login",
+    path: '/admin-login',
     element: <LoginPage />,
   },
   {
-    path: "/",
-    element: <ProtectedRoute />, 
+    path: '/',
+    element: <ProtectedRoute />,
     children: [
       {
-        path: "/",
+        path: '/',
         element: <App />,
         children: [
           { index: true, element: <Overview /> },
-          { path: "overview", element: <Overview /> },
-          { path: "listings", element: <ListingManagement /> },
-          { path: "listings/add", element: <AddListing /> },
-          { path: "sellers", element: <SellerManagement /> },
-          { path: "yacht-leads", element: <AllLeads /> },
-          { path: "featured", element: <FeaturedAndHomeManagement /> },
-          { path: "content", element: <ContentManagement /> },
-          {path: "content/new-article", element: <CreateNewArticle /> },
-          {path: "content/edit/:id", element: <UpdateBlogPost /> },
-          {path: "content/about-us", element: <AboutUs /> },
-          {path: "content/contact", element: <ContactUs /> },
-          {path: "content/privacy-policy", element: <PrivacyPolicy /> },
-          {path: "content/terms-of-service", element: <TermsOfService /> },
-          { path: "users", element: <UsersAndPermission /> },
-          { path: "analytics", element: <AnalyticsAndReports /> },
-          { path: "settings", element: <Settings /> },
+          { path: 'overview', element: <Overview /> },
+          { path: 'listings', element: <ListingManagement /> },
+          { path: 'listings/add', element: <AddListing /> },
+          { path: 'sellers', element: <SellerManagement /> },
+          { path: 'yacht-leads', element: <AllLeads /> },
+          { path: 'featured', element: <FeaturedAndHomeManagement /> },
+          { path: 'content', element: <ContentManagement /> },
+          { path: 'content/new-article', element: <CreateNewArticle /> },
+          { path: 'content/edit/:id', element: <UpdateBlogPost /> },
+          { path: 'content/about-us', element: <AboutUs /> },
+          { path: 'content/contact', element: <ContactUs /> },
+          { path: 'content/privacy-policy', element: <PrivacyPolicy /> },
+          { path: 'content/terms-of-service', element: <TermsOfService /> },
+          { path: 'users', element: <UsersAndPermission /> },
+          { path: 'analytics', element: <AnalyticsAndReports /> },
+          { path: 'settings', element: <Settings /> },
         ],
       },
     ],

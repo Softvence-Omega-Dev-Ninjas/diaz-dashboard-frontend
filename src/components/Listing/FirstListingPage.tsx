@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { firstStepSchema } from '@/lib/formValidation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus } from 'lucide-react';
@@ -46,15 +47,11 @@ const FirstListingPage = ({
   initialData,
   currentStep,
 }: FirstListingPageProps) => {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-  } = useForm<FirstStepFormData>({
-    resolver: zodResolver(firstStepSchema) as any,
-    defaultValues: initialData || {},
-  });
+  const { register, handleSubmit, watch, setValue } =
+    useForm<FirstStepFormData>({
+      resolver: zodResolver(firstStepSchema) as any,
+      defaultValues: initialData || {},
+    });
 
   const [coverPhoto, setCoverPhoto] = useState<string | null>(null);
   const [galleryPhotos, setGalleryPhotos] = useState<string[]>([]);
@@ -253,7 +250,12 @@ const FirstListingPage = ({
             </div>
 
             {/* Engine 1 Section */}
-            <EngineSection register={register} setValue={setValue} watch={watch} engineNumber={1} />
+            <EngineSection
+              register={register}
+              setValue={setValue}
+              watch={watch}
+              engineNumber={1}
+            />
 
             {/* Basic Information Section */}
             <div className="bg-white rounded-lg border border-gray-200 p-4 md:p-6">

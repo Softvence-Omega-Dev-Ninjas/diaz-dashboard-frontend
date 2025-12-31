@@ -37,7 +37,7 @@ export const getSpecifications = async ({
     });
 
     const url = `${API_BASE_URL}/boats/specification/list?${queryParams}`;
-    
+
     console.log('🔍 Fetching specifications:', { url, type, search, limit });
 
     const response = await fetch(url, {
@@ -52,9 +52,9 @@ export const getSpecifications = async ({
     }
 
     const data = await response.json();
-    
+
     console.log('✅ Specifications received:', data);
-    
+
     // Handle different response formats from the API
     if (data.items && Array.isArray(data.items)) {
       return data;

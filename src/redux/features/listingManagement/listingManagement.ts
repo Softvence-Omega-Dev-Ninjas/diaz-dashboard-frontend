@@ -41,4 +41,8 @@ const listingManagementApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useGetAllListingQuery, useCreateListingMutation, useDeleteListingMutation } = listingManagementApi;
+export const {
+  useGetAllListingQuery,
+  useCreateListingMutation,
+  useDeleteListingMutation,
+} = listingManagementApi;

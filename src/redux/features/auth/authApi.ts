@@ -10,7 +10,6 @@ const authApi = baseApi.injectEndpoints({
       }),
     }),
 
-    
     // varifyemailLogin: build.mutation({
     //   query: (credentials) => ({
     //     url: '/auth/verify/email',

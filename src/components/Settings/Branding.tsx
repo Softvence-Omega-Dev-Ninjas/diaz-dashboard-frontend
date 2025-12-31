@@ -1,6 +1,6 @@
-import React, { useRef, useState, useEffect } from "react";
-import { ImageIcon, X } from "lucide-react";
-import type { UpdateAdminSettingsPayload } from "@/redux/features/adminBannerApi/adminBannerApi";
+import React, { useRef, useState, useEffect } from 'react';
+import { ImageIcon, X } from 'lucide-react';
+import type { UpdateAdminSettingsPayload } from '@/redux/features/adminBannerApi/adminBannerApi';
 
 interface Props {
   formData: UpdateAdminSettingsPayload;
@@ -18,7 +18,7 @@ const Branding: React.FC<Props> = ({ formData, setFormData }) => {
       const reader = new FileReader();
       reader.onloadend = () => setLogoPreview(reader.result as string);
       reader.readAsDataURL(formData.logo);
-    } else if (typeof formData.logo === "string") {
+    } else if (typeof formData.logo === 'string') {
       setLogoPreview(formData.logo); // backend URL
     }
   }, [formData.logo]);
@@ -33,7 +33,7 @@ const Branding: React.FC<Props> = ({ formData, setFormData }) => {
   const handleRemoveLogo = () => {
     setFormData((prev) => ({ ...prev, logo: undefined }));
     setLogoPreview(null);
-    if (fileInputRef.current) fileInputRef.current.value = "";
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   return (

@@ -42,5 +42,5 @@ export const {
   useCreateBlogMutation,
   useGetBlogsQuery,
   useUpdateBlogMutation,
-    useDeleteBlogMutation,
+  useDeleteBlogMutation,
 } = blogManagementApi;

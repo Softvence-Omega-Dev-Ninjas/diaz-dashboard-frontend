@@ -152,7 +152,7 @@ export const ListingsTable: React.FC<ListingsTableProps> = ({
                     >
                       <Eye className="w-4 h-4" />
                     </button>
-                  
+
                     <button
                       onClick={() => onDelete(listing.id)}
                       className="p-1.5 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded transition-colors"

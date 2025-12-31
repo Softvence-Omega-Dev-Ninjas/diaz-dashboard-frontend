@@ -901,6 +901,4 @@ export const US_CITIES_BY_STATE: Record<string, { name: string }[]> = {
   ],
 };
 
-export const COUNTRY_OPTIONS = [
-  { value: 'USA', label: 'United States' },
-];
+export const COUNTRY_OPTIONS = [{ value: 'USA', label: 'United States' }];
