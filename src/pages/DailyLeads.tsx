@@ -2,12 +2,17 @@ import {
   CustomerContactedTable,
   DailyLeadsHeader,
   DailyLeadsTable,
+  YachtLeadsTable,
 } from '@/components/DailyLeads';
 import { Pagination } from '@/components/ListingManagement';
 import { useGetDailyLeadsQuery } from '@/redux/features/dailyLeads/dailyLeads';
-import { useGetCustomerContactedQuery } from '@/redux/features/leads/leadsApi';
+import {
+  useGetBoatLeadsQuery,
+  useGetCustomerContactedQuery,
+} from '@/redux/features/leads/leadsApi';
 import type { CustomerContacted } from '@/types/customer-contacted-types';
-import { Download } from 'lucide-react';
+import type { YachtLead } from '@/types/yacht-leads-types';
+import { Download, Filter } from 'lucide-react';
 import React, { useState } from 'react';
 
 type TabType = 'daily-leads-ai' | 'yacht-leads' | 'customer-contacted';
@@ -16,6 +21,8 @@ const AllLeads: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('daily-leads-ai');
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
+  const [yachtSource, setYachtSource] = useState<string>('');
+  const [yachtStatus, setYachtStatus] = useState<string>('');
 
   const { data: leadsData, isLoading, isError } = useGetDailyLeadsQuery();
   const {
@@ -23,6 +30,17 @@ const AllLeads: React.FC = () => {
     isLoading: isLoadingContacts,
     isError: isErrorContacts,
   } = useGetCustomerContactedQuery({ page, limit });
+
+  const {
+    data: yachtLeadsData,
+    isLoading: isLoadingYachtLeads,
+    isError: isErrorYachtLeads,
+  } = useGetBoatLeadsQuery({
+    page,
+    limit,
+    source: yachtSource || undefined,
+    status: yachtStatus || undefined,
+  });
 
   const handleExportCSV = () => {
     if (!leadsData?.leads) return;
@@ -47,6 +65,66 @@ const AllLeads: React.FC = () => {
     link.setAttribute(
       'download',
       `daily-leads-${new Date().toISOString().split('T')[0]}.csv`,
+    );
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleExportYachtLeadsCSV = () => {
+    if (!yachtLeadsData?.data) return;
+
+    const csvHeaders = [
+      'Serial',
+      'Name',
+      'Email',
+      'Phone',
+      'Boat Name',
+      'Price',
+      'Message',
+      'Source',
+      'Status',
+      'Date',
+    ];
+    const csvRows = yachtLeadsData.data.map(
+      (lead: YachtLead, index: number) => {
+        const boatName =
+          lead.source === 'FLORIDA' && lead.floridaLeads.length > 0
+            ? lead.floridaLeads[0].boat.name
+            : 'N/A';
+        const boatPrice =
+          lead.source === 'FLORIDA' && lead.floridaLeads.length > 0
+            ? lead.floridaLeads[0].boat.price
+            : 'N/A';
+
+        return [
+          index + 1,
+          lead.name,
+          lead.email,
+          lead.phone,
+          boatName,
+          boatPrice,
+          lead.message,
+          lead.source,
+          lead.status,
+          new Date(lead.createdAt).toLocaleDateString(),
+        ];
+      },
+    );
+
+    const csvContent = [
+      csvHeaders.join(','),
+      ...csvRows.map((row) => row.map((cell) => `"${cell}"`).join(',')),
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute(
+      'download',
+      `yacht-leads-${new Date().toISOString().split('T')[0]}.csv`,
     );
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
@@ -254,9 +332,95 @@ const AllLeads: React.FC = () => {
           <DailyLeadsTable leads={leadsData?.leads || []} />
         )}
         {activeTab === 'yacht-leads' && (
-          <div className="p-6 text-center text-gray-500">
-            <p>Yacht Leads content will be displayed here</p>
-          </div>
+          <>
+            {/* Filters and Export Section */}
+            <div className="p-4 border-b border-gray-200">
+              <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+                {/* Filters */}
+                <div className="flex flex-wrap gap-3 items-center">
+                  <Filter className="w-5 h-5 text-gray-500" />
+                  <div className="flex gap-3">
+                    <select
+                      value={yachtSource}
+                      onChange={(e) => {
+                        setYachtSource(e.target.value);
+                        setPage(1);
+                      }}
+                      className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">All Sources</option>
+                      <option value="FLORIDA">Florida</option>
+                      <option value="JUPITER">Jupiter</option>
+                    </select>
+                    <select
+                      value={yachtStatus}
+                      onChange={(e) => {
+                        setYachtStatus(e.target.value);
+                        setPage(1);
+                      }}
+                      className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">All Status</option>
+                      <option value="Not Contacted">Not Contacted</option>
+                      <option value="Contacted">Contacted</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Export Button */}
+                <button
+                  onClick={handleExportYachtLeadsCSV}
+                  disabled={
+                    !yachtLeadsData?.data || yachtLeadsData.data.length === 0
+                  }
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Download className="w-4 h-4" />
+                  Export CSV
+                </button>
+              </div>
+            </div>
+
+            {/* Loading State */}
+            {isLoadingYachtLeads && (
+              <div className="p-6 text-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                <p className="mt-2 text-gray-600">Loading yacht leads...</p>
+              </div>
+            )}
+
+            {/* Error State */}
+            {isErrorYachtLeads && (
+              <div className="p-6 text-center text-red-600">
+                <p>Error loading yacht leads. Please try again.</p>
+              </div>
+            )}
+
+            {/* Table */}
+            {!isLoadingYachtLeads && !isErrorYachtLeads && (
+              <>
+                <YachtLeadsTable
+                  leads={yachtLeadsData?.data || []}
+                  currentPage={page}
+                  limit={limit}
+                />
+
+                {/* Pagination */}
+                {yachtLeadsData?.metadata && (
+                  <Pagination
+                    currentPage={page}
+                    totalPages={yachtLeadsData.metadata.totalPage}
+                    onPageChange={handlePageChange}
+                    hasNextPage={page < yachtLeadsData.metadata.totalPage}
+                    hasPrevPage={page > 1}
+                    limit={limit}
+                    onLimitChange={handleLimitChange}
+                    totalItems={yachtLeadsData.metadata.total}
+                  />
+                )}
+              </>
+            )}
+          </>
         )}
         {activeTab === 'customer-contacted' && (
           <>
