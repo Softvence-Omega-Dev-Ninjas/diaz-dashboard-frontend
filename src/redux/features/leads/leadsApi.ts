@@ -2,27 +2,15 @@ import { baseApi } from '@/redux/api/baseApi';
 
 const leadsApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
-    getYachtLeads: build.query({
-      query: () => ({
-        url: `/admin/dashboard/summary`,
+    getCustomerContacted: build.query({
+      query: ({ page, limit }) => ({
+        url: `/contact/contact-us?page=${page}&limit=${limit}`,
         method: 'GET',
       }),
+      providesTags: ['Leads'],
     }),
 
-    getRecentActivity: build.query({
-      query: () => ({
-        url: `/admin/dashboard/recent-activity`,
-        method: 'GET',
-      }),
-    }),
-
-    getPerformanceOverview: build.query({
-      query: () => ({
-        url: `/admin/dashboard/performance-overview`,
-        method: 'GET',
-      }),
-    }),
   }),
 });
 
-export const {} = leadsApi;
+export const { useGetCustomerContactedQuery } = leadsApi;
