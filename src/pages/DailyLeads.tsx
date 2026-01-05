@@ -39,8 +39,14 @@ const AllLeads: React.FC = () => {
     page,
     limit,
     source: yachtSource || undefined,
-    status: yachtStatus || undefined,
   });
+
+  // Client-side filtering for status
+  const filteredYachtLeads =
+    yachtLeadsData?.data?.filter((lead: YachtLead) => {
+      if (!yachtStatus) return true;
+      return lead.status === yachtStatus;
+    }) || [];
 
   const handleExportCSV = () => {
     if (!leadsData?.leads) return;
@@ -73,7 +79,7 @@ const AllLeads: React.FC = () => {
   };
 
   const handleExportYachtLeadsCSV = () => {
-    if (!yachtLeadsData?.data) return;
+    if (!filteredYachtLeads || filteredYachtLeads.length === 0) return;
 
     const csvHeaders = [
       'Serial',
@@ -87,31 +93,29 @@ const AllLeads: React.FC = () => {
       'Status',
       'Date',
     ];
-    const csvRows = yachtLeadsData.data.map(
-      (lead: YachtLead, index: number) => {
-        const boatName =
-          lead.source === 'FLORIDA' && lead.floridaLeads.length > 0
-            ? lead.floridaLeads[0].boat.name
-            : 'N/A';
-        const boatPrice =
-          lead.source === 'FLORIDA' && lead.floridaLeads.length > 0
-            ? lead.floridaLeads[0].boat.price
-            : 'N/A';
+    const csvRows = filteredYachtLeads.map((lead: YachtLead, index: number) => {
+      const boatName =
+        lead.source === 'FLORIDA' && lead.floridaLeads.length > 0
+          ? lead.floridaLeads[0].boat.name
+          : 'N/A';
+      const boatPrice =
+        lead.source === 'FLORIDA' && lead.floridaLeads.length > 0
+          ? lead.floridaLeads[0].boat.price
+          : 'N/A';
 
-        return [
-          index + 1,
-          lead.name,
-          lead.email,
-          lead.phone,
-          boatName,
-          boatPrice,
-          lead.message,
-          lead.source,
-          lead.status,
-          new Date(lead.createdAt).toLocaleDateString(),
-        ];
-      },
-    );
+      return [
+        index + 1,
+        lead.name,
+        lead.email,
+        lead.phone,
+        boatName,
+        boatPrice,
+        lead.message,
+        lead.source,
+        lead.status,
+        new Date(lead.createdAt).toLocaleDateString(),
+      ];
+    });
 
     const csvContent = [
       csvHeaders.join(','),
@@ -232,10 +236,7 @@ const AllLeads: React.FC = () => {
 
   return (
     <div className="p-4 md:p-6">
-      <DailyLeadsHeader
-        totalLeads={leadsData?.total_leads || 0}
-        onExportCSV={handleExportCSV}
-      />
+      <DailyLeadsHeader totalLeads={leadsData?.total_leads || 0} />
 
       {/* Tabs */}
       <div className="bg-white rounded-lg shadow mb-4">
@@ -329,7 +330,20 @@ const AllLeads: React.FC = () => {
       {/* Tab Content */}
       <div className="bg-white rounded-lg shadow">
         {activeTab === 'daily-leads-ai' && (
-          <DailyLeadsTable leads={leadsData?.leads || []} />
+          <>
+            {/* Export Button */}
+            <div className="p-4 border-b border-gray-200 flex justify-end">
+              <button
+                onClick={handleExportCSV}
+                disabled={!leadsData?.leads || leadsData.leads.length === 0}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Download className="w-4 h-4" />
+                Export CSV
+              </button>
+            </div>
+            <DailyLeadsTable leads={leadsData?.leads || []} />
+          </>
         )}
         {activeTab === 'yacht-leads' && (
           <>
@@ -371,7 +385,7 @@ const AllLeads: React.FC = () => {
                 <button
                   onClick={handleExportYachtLeadsCSV}
                   disabled={
-                    !yachtLeadsData?.data || yachtLeadsData.data.length === 0
+                    !filteredYachtLeads || filteredYachtLeads.length === 0
                   }
                   className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
@@ -400,7 +414,7 @@ const AllLeads: React.FC = () => {
             {!isLoadingYachtLeads && !isErrorYachtLeads && (
               <>
                 <YachtLeadsTable
-                  leads={yachtLeadsData?.data || []}
+                  leads={filteredYachtLeads}
                   currentPage={page}
                   limit={limit}
                 />

@@ -1,6 +1,9 @@
+import { useUpdateBoatLeadsStatusMutation } from '@/redux/features/leads/leadsApi';
 import type { YachtLead } from '@/types/yacht-leads-types';
 import { ExternalLink, Mail, Phone } from 'lucide-react';
 import React from 'react';
+import toast from 'react-hot-toast';
+import Swal from 'sweetalert2';
 
 interface YachtLeadsTableProps {
   leads: YachtLead[];
@@ -13,6 +16,9 @@ export const YachtLeadsTable: React.FC<YachtLeadsTableProps> = ({
   currentPage,
   limit,
 }) => {
+  const [updateBoatLeadsStatus, { isLoading: isUpdating }] =
+    useUpdateBoatLeadsStatusMutation();
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -22,6 +28,28 @@ export const YachtLeadsTable: React.FC<YachtLeadsTableProps> = ({
       hour: '2-digit',
       minute: '2-digit',
     });
+  };
+
+  const handleStatusUpdate = async (leadId: string) => {
+    const result = await Swal.fire({
+      title: 'Did you contact this lead?',
+      text: 'This will update the status to "Contacted"',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3b82f6',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Yes, I contacted them',
+      cancelButtonText: 'Cancel',
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await updateBoatLeadsStatus({ leadId }).unwrap();
+        toast.success('Lead status updated successfully!');
+      } catch (error: any) {
+        toast.error(error?.data?.message || 'Failed to update lead status');
+      }
+    }
   };
 
   const handleEmail = (email: string) => {
@@ -150,15 +178,22 @@ export const YachtLeadsTable: React.FC<YachtLeadsTableProps> = ({
                   </span>
                 </td>
                 <td className="px-4 md:px-6 py-4">
-                  <span
-                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      lead.status === 'Not Contacted'
-                        ? 'bg-yellow-100 text-yellow-800'
-                        : 'bg-green-100 text-green-800'
-                    }`}
-                  >
-                    {lead.status}
-                  </span>
+                  {lead.status === 'Not Contacted' ? (
+                    <button
+                      onClick={() => handleStatusUpdate(lead.id)}
+                      disabled={isUpdating}
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 hover:bg-yellow-200 transition-colors cursor-pointer ${
+                        isUpdating ? 'opacity-50 cursor-not-allowed' : ''
+                      }`}
+                      title="Click to mark as contacted"
+                    >
+                      {lead.status}
+                    </button>
+                  ) : (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      {lead.status}
+                    </span>
+                  )}
                 </td>
                 <td className="px-4 md:px-6 py-4">
                   <span className="text-sm text-gray-600">

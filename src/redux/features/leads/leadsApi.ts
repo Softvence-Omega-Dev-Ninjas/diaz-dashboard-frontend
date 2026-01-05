@@ -11,13 +11,10 @@ const leadsApi = baseApi.injectEndpoints({
     }),
 
     getBoatLeads: build.query({
-      query: ({ page, limit, source, status }) => {
+      query: ({ page, limit, source }) => {
         let url = `/contact?page=${page}&limit=${limit}&type=INDIVIDUAL_LISTING`;
         if (source) {
           url += `&source=${source}`;
-        }
-        if (status) {
-          url += `&status=${status}`;
         }
         return {
           url,
@@ -26,7 +23,16 @@ const leadsApi = baseApi.injectEndpoints({
       },
       providesTags: ['Leads'],
     }),
+
+    updateBoatLeadsStatus: build.mutation({
+      query: ({ leadId }) => ({
+        url: `/contact/${leadId}/status`,
+        method: 'PATCH',
+        body: { status : "Contacted" },
+      }),
+      invalidatesTags: ['Leads'],
+    }),
   }),
 });
 
-export const { useGetCustomerContactedQuery, useGetBoatLeadsQuery } = leadsApi;
+export const { useGetCustomerContactedQuery, useGetBoatLeadsQuery, useUpdateBoatLeadsStatusMutation } = leadsApi;
