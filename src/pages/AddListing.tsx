@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import FirstListingPage from '@/components/Listing/FirstListingPage';
-import SecondListingPage from '@/components/Listing/SecondListingPage';
 import { useCreateListingMutation } from '@/redux/features/listingManagement/listingManagement';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
@@ -58,16 +57,6 @@ interface FormData {
   // Engine Types
   engineType?: string;
   propType?: string;
-
-  // Step 2 - Seller Information
-  firstName?: string;
-  lastName?: string;
-  contactNumber?: string;
-  email?: string;
-  country?: string;
-  sellerCity?: string;
-  sellerState?: string;
-  sellerZip?: string;
 }
 
 /**
@@ -259,23 +248,13 @@ const compressImage = async (file: File): Promise<File> => {
 };
 
 const AddListing = () => {
-  const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<FormData>({});
   const [createListing, { isLoading: isSubmitting }] =
     useCreateListingMutation();
   const navigate = useNavigate();
 
-  const handleNextStep = (data: Partial<FormData>) => {
-    setFormData({ ...formData, ...data });
-    setCurrentStep(2);
-  };
-
-  const handleBackStep = () => {
-    setCurrentStep(1);
-  };
-
   const handleSubmit = async (data: Partial<FormData>) => {
-    const finalData = { ...formData, ...data };
+    const finalData = data;
 
     // Create FormData object with compression
     const formDataToSubmit = await createBoatRegistrationFormData(finalData);
@@ -322,31 +301,11 @@ const AddListing = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 rounded-lg">
-      {currentStep === 1 ? (
-        <FirstListingPage
-          onNext={handleNextStep}
-          initialData={formData}
-          currentStep={currentStep}
-        />
-      ) : (
-        <SecondListingPage
-          onBack={handleBackStep}
-          onSubmit={handleSubmit}
-          initialData={formData}
-          currentStep={currentStep}
-          previewData={{
-            coverPhoto: formData.coverPhoto,
-            city: formData.city,
-            state: formData.state,
-            name: formData.name,
-            make: formData.make,
-            model: formData.model,
-            buildYear: formData.buildYear?.toString(),
-            price: formData.price?.toString(),
-          }}
-          isSubmitting={isSubmitting}
-        />
-      )}
+      <FirstListingPage
+        onNext={handleSubmit}
+        initialData={formData}
+        isSubmitting={isSubmitting}
+      />
     </div>
   );
 };
