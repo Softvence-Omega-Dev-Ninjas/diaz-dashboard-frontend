@@ -162,6 +162,40 @@ const contentManagementApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['FAQ'],
     }),
+
+    getWhyUs: build.query({
+      query: (site) => ({
+        url: `/why-us?site=${site}`,
+        method: 'GET',
+      }),
+      providesTags: ['WhyUs'],
+    }),
+
+    createWhyUs: build.mutation({
+      query: ({ whyUsContent }) => ({
+        url: `/why-us`,
+        method: 'POST',
+        body: whyUsContent,
+      }),
+      invalidatesTags: ['WhyUs'],
+    }),
+
+    updateWhyUs: build.mutation({
+      query: ({ site, whyUsContent }) => ({
+        url: `/why-us?site=${site}`,
+        method: 'PATCH',
+        body: whyUsContent,
+      }),
+      invalidatesTags: ['WhyUs'],  
+    }),
+
+    deleteWhyUs: build.mutation({
+      query: ({ site }) => ({
+        url: `/why-us?site=${site}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['WhyUs'],
+    }),
   }),
 });
 
@@ -190,4 +224,9 @@ export const {
   useUpdateFaqMutation,
   useGetFaqQuery,
   useDeleteFaqMutation,
+
+  useGetWhyUsQuery,
+  useCreateWhyUsMutation,
+  useUpdateWhyUsMutation,
+  useDeleteWhyUsMutation,
 } = contentManagementApi;
