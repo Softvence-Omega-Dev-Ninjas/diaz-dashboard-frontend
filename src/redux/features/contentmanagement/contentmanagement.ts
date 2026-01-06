@@ -127,6 +127,41 @@ const contentManagementApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Footer'],
     }),
+
+
+    createFaq: build.mutation({
+      query: ({ faqContent }) => ({
+        url: `/faq`,
+        method: 'POST',
+        body: faqContent,
+      }),
+      invalidatesTags: ['FAQ'],
+    }),
+
+    updateFaq: build.mutation({
+      query: ({ site, faqContent }) => ({
+        url: `/faq?site=${site}`,
+        method: 'PATCH',
+        body: faqContent,
+      }),
+      invalidatesTags: ['FAQ'],
+    }),
+
+    getFaq: build.query({
+      query: (site) => ({
+        url: `/faq?site=${site}`,
+        method: 'GET',
+      }),
+      providesTags: ['FAQ'],
+    }),
+    
+    deleteFaq: build.mutation({
+      query: ({ site }) => ({
+        url: `/faq?site=${site}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['FAQ'],
+    }),
   }),
 });
 
@@ -150,4 +185,9 @@ export const {
   useGetFooterQuery,
   useCreateFooterMutation,
   useUpdateFooterMutation,
+
+  useCreateFaqMutation,
+  useUpdateFaqMutation,
+  useGetFaqQuery,
+  useDeleteFaqMutation,
 } = contentManagementApi;

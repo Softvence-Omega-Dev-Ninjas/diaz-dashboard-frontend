@@ -40,7 +40,12 @@ export const baseApi = createApi({
     'PrivacyPolicy',
     'ContactUs',
     'Footer',
-    'Leads'
+    'Leads',
+    'FAQ',
+    'WhyUs',
+    'OurTeam',
+    'FeaturedBrands',
+    'Category',
   ],
 
   endpoints: () => ({}),
