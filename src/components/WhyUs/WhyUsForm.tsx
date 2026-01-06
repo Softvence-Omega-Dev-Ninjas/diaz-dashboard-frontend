@@ -5,8 +5,15 @@ import { type WhyUsFormData } from './types';
 
 interface WhyUsFormProps {
   formData: WhyUsFormData;
-  onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
-  onImageChange: (imageKey: 'image1' | 'image2' | 'image3', file: File | null) => void;
+  onInputChange: (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => void;
+  onImageChange: (
+    imageKey: 'image1' | 'image2' | 'image3',
+    file: File | null,
+  ) => void;
   onRemoveImage: (imageKey: 'image1' | 'image2' | 'image3') => void;
 }
 

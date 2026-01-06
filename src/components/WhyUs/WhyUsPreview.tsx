@@ -13,9 +13,7 @@ const WhyUsPreview: React.FC<WhyUsPreviewProps> = ({ formData }) => {
           {formData.title || 'Why Us Title'}
         </h1>
         {formData.description && (
-          <p className="text-gray-600 mb-8 text-lg">
-            {formData.description}
-          </p>
+          <p className="text-gray-600 mb-8 text-lg">{formData.description}</p>
         )}
 
         {/* Stats */}
@@ -50,7 +48,8 @@ const WhyUsPreview: React.FC<WhyUsPreviewProps> = ({ formData }) => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {[formData.image1, formData.image2, formData.image3].map(
             (image, index) =>
-              image && (image.preview || image.url) && (
+              image &&
+              (image.preview || image.url) && (
                 <div key={index} className="rounded-lg overflow-hidden">
                   <img
                     src={image.preview || image.url || ''}

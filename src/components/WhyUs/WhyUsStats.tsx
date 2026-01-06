@@ -15,9 +15,7 @@ const WhyUsStats: React.FC<WhyUsStatsProps> = ({
 }) => {
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-      <h3 className="text-sm font-medium text-gray-700 mb-4">
-        Statistics
-      </h3>
+      <h3 className="text-sm font-medium text-gray-700 mb-4">Statistics</h3>
       <div className="space-y-4">
         <div>
           <label className="block text-xs text-gray-600 mb-1">

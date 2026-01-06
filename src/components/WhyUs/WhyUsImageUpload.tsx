@@ -6,7 +6,10 @@ interface WhyUsImageUploadProps {
   image1: ImageData | null;
   image2: ImageData | null;
   image3: ImageData | null;
-  onImageChange: (imageKey: 'image1' | 'image2' | 'image3', file: File | null) => void;
+  onImageChange: (
+    imageKey: 'image1' | 'image2' | 'image3',
+    file: File | null,
+  ) => void;
   onRemoveImage: (imageKey: 'image1' | 'image2' | 'image3') => void;
 }
 

@@ -1,15 +1,14 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+import {
+  useCreateWhyUsMutation,
+  useDeleteWhyUsMutation,
+  useGetWhyUsQuery,
+  useUpdateWhyUsMutation,
+} from '@/redux/features/contentmanagement/contentmanagement';
 import React, { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import {
-  useGetWhyUsQuery,
-  useCreateWhyUsMutation,
-  useUpdateWhyUsMutation,
-  useDeleteWhyUsMutation,
-} from '@/redux/features/contentmanagement/contentmanagement';
-import {
-  WhyUsHeader,
   WhyUsForm,
+  WhyUsHeader,
   WhyUsPreview,
   WhyUsSidebar,
   type WhyUsFormData,
@@ -146,7 +145,10 @@ const WhyUs: React.FC = () => {
         if (formData.excellence.trim())
           formDataToSend.append('excellence', formData.excellence.trim());
         if (formData.boatsSoldPerYear.trim())
-          formDataToSend.append('boatsSoldPerYear', formData.boatsSoldPerYear.trim());
+          formDataToSend.append(
+            'boatsSoldPerYear',
+            formData.boatsSoldPerYear.trim(),
+          );
         if (formData.listingViewed.trim())
           formDataToSend.append('listingViewed', formData.listingViewed.trim());
         if (formData.buttonText.trim())
@@ -179,7 +181,10 @@ const WhyUs: React.FC = () => {
         if (formData.excellence.trim())
           formDataToSend.append('excellence', formData.excellence.trim());
         if (formData.boatsSoldPerYear.trim())
-          formDataToSend.append('boatsSoldPerYear', formData.boatsSoldPerYear.trim());
+          formDataToSend.append(
+            'boatsSoldPerYear',
+            formData.boatsSoldPerYear.trim(),
+          );
         if (formData.listingViewed.trim())
           formDataToSend.append('listingViewed', formData.listingViewed.trim());
         if (formData.buttonText.trim())
@@ -233,7 +238,11 @@ const WhyUs: React.FC = () => {
     if (result.isConfirmed) {
       try {
         await deleteWhyUs({ site: selectedSite }).unwrap();
-        Swal.fire('Deleted!', 'Why Us section has been deleted successfully', 'success');
+        Swal.fire(
+          'Deleted!',
+          'Why Us section has been deleted successfully',
+          'success',
+        );
         // Reset form
         setFormData({
           title: '',
