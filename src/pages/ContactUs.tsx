@@ -1,136 +1,255 @@
-import {
-  useGetContactUsQuery,
-  useUpdateContactUsMutation,
-} from '@/redux/features/contentmanagement/contentmanagement';
-import { ArrowLeft, Eye, Save } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { EditorPreview, RichTextEditor } from '../components/Editor';
-
-interface ContactUsFormData {
-  title: string;
-  content: string;
-  site: 'FLORIDA' | 'JUPITER';
-}
+import {
+  useGetContactInfoQuery,
+  useCreateContactInfoMutation,
+  useUpdateContactInfoMutation,
+} from '@/redux/features/contentmanagement/contentmanagement';
+import {
+  ContactUsHeader,
+  ContactInfoForm,
+  WorkingHoursSection,
+  SocialMediaSection,
+  ContactInfoPreview,
+  ContactInfoSidebar,
+  type ContactInfoFormData,
+  type SocialMedia,
+} from '../components/ContactUs';
 
 const ContactUs: React.FC = () => {
-  const navigate = useNavigate();
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [selectedSite, setSelectedSite] = useState<'FLORIDA' | 'JUPITER'>(
     'FLORIDA',
   );
-  const [formData, setFormData] = useState<ContactUsFormData>({
-    title: '',
-    content: '',
+  const [formData, setFormData] = useState<ContactInfoFormData>({
+    address: '',
+    email: '',
+    phone: '',
+    workingHours: [
+      { day: 'Monday', hours: '9am to 5pm' },
+      { day: 'Tuesday', hours: '9am to 5pm' },
+      { day: 'Wednesday', hours: '9am to 5pm' },
+      { day: 'Thursday', hours: '9am to 5pm' },
+      { day: 'Friday', hours: '9am to 5pm' },
+      { day: 'Weekend', hours: 'Closed - Contact by email for urgent requests' },
+    ],
+    socialMedia: {
+      twitter: '',
+      youtube: '',
+      facebook: '',
+      linkedin: '',
+    },
+    backgroundImage: null,
     site: 'FLORIDA',
   });
 
-  const { data: getContactUsData, isLoading } =
-    useGetContactUsQuery(selectedSite);
-  const [updateContactUs] = useUpdateContactUsMutation();
+  const { data: contactInfoData, isLoading } =
+    useGetContactInfoQuery(selectedSite);
+  const [createContactInfo, { isLoading: isCreating }] =
+    useCreateContactInfoMutation();
+  const [updateContactInfo, { isLoading: isUpdating }] =
+    useUpdateContactInfoMutation();
 
   // Load data when fetched or site changes
   useEffect(() => {
-    if (getContactUsData) {
+    if (contactInfoData?.data) {
+      const data = contactInfoData.data;
       setFormData({
-        title: getContactUsData.contactTitle || '',
-        content: getContactUsData.contactDescription || '',
+        address: data.address || '',
+        email: data.email || '',
+        phone: data.phone || '',
+        workingHours: data.workingHours || [
+          { day: 'Monday', hours: '9am to 5pm' },
+          { day: 'Tuesday', hours: '9am to 5pm' },
+          { day: 'Wednesday', hours: '9am to 5pm' },
+          { day: 'Thursday', hours: '9am to 5pm' },
+          { day: 'Friday', hours: '9am to 5pm' },
+          {
+            day: 'Weekend',
+            hours: 'Closed - Contact by email for urgent requests',
+          },
+        ],
+        socialMedia: data.socialMedia || {
+          twitter: '',
+          youtube: '',
+          facebook: '',
+          linkedin: '',
+        },
+        backgroundImage: data.backgroundImage?.url
+          ? { id: data.backgroundImage.id, url: data.backgroundImage.url }
+          : null,
+        site: selectedSite,
+      });
+    } else {
+      // Reset to default when no data
+      setFormData({
+        address: '',
+        email: '',
+        phone: '',
+        workingHours: [
+          { day: 'Monday', hours: '9am to 5pm' },
+          { day: 'Tuesday', hours: '9am to 5pm' },
+          { day: 'Wednesday', hours: '9am to 5pm' },
+          { day: 'Thursday', hours: '9am to 5pm' },
+          { day: 'Friday', hours: '9am to 5pm' },
+          {
+            day: 'Weekend',
+            hours: 'Closed - Contact by email for urgent requests',
+          },
+        ],
+        socialMedia: {
+          twitter: '',
+          youtube: '',
+          facebook: '',
+          linkedin: '',
+        },
+        backgroundImage: null,
         site: selectedSite,
       });
     }
-  }, [getContactUsData, selectedSite]);
+  }, [contactInfoData, selectedSite]);
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    if (name === 'site') {
-      setSelectedSite(value as 'FLORIDA' | 'JUPITER');
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleImageChange = (file: File | null) => {
+    if (file) {
+      const preview = URL.createObjectURL(file);
+      setFormData((prev) => ({
+        ...prev,
+        backgroundImage: { file, preview },
+      }));
     } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+      setFormData((prev) => ({
+        ...prev,
+        backgroundImage: null,
+      }));
     }
   };
 
-  const handleContentChange = (value: string) => {
-    setFormData((prev) => ({ ...prev, content: value }));
+  const removeImage = () => {
+    if (formData.backgroundImage?.preview) {
+      URL.revokeObjectURL(formData.backgroundImage.preview);
+    }
+    setFormData((prev) => ({
+      ...prev,
+      backgroundImage: null,
+    }));
+  };
+
+  const handleWorkingHoursChange = (
+    index: number,
+    field: 'day' | 'hours',
+    value: string,
+  ) => {
+    const updatedHours = [...formData.workingHours];
+    updatedHours[index] = { ...updatedHours[index], [field]: value };
+    setFormData((prev) => ({ ...prev, workingHours: updatedHours }));
+  };
+
+  const handleSocialMediaChange = (
+    platform: keyof SocialMedia,
+    value: string,
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      socialMedia: { ...prev.socialMedia, [platform]: value },
+    }));
   };
 
   const handleSave = async () => {
+    // Validation
+    if (!formData.address.trim()) {
+      Swal.fire('Error', 'Address is required', 'error');
+      return;
+    }
+    if (!formData.email.trim()) {
+      Swal.fire('Error', 'Email is required', 'error');
+      return;
+    }
+    if (!formData.phone.trim()) {
+      Swal.fire('Error', 'Phone is required', 'error');
+      return;
+    }
+    if (!formData.backgroundImage) {
+      Swal.fire('Error', 'Background image is required', 'error');
+      return;
+    }
+
     try {
-      const contactUs = {
-        contactTitle: formData.title,
-        contactDescription: formData.content,
-      };
+      const formDataToSend = new FormData();
 
-      await updateContactUs({
-        site: selectedSite,
-        contactUs,
-      }).unwrap();
+      if (contactInfoData?.data) {
+        // Update existing Contact Info
+        formDataToSend.append('address', formData.address.trim());
+        formDataToSend.append('email', formData.email.trim());
+        formDataToSend.append('phone', formData.phone.trim());
+        formDataToSend.append(
+          'workingHours',
+          JSON.stringify(formData.workingHours),
+        );
+        formDataToSend.append(
+          'socialMedia',
+          JSON.stringify(formData.socialMedia),
+        );
 
-      Swal.fire({
-        icon: 'success',
-        title: 'Contact Page Updated',
-        text: 'Contact page has been updated successfully!',
-      });
-      navigate('/content');
+        // Add new background image if selected
+        if (formData.backgroundImage?.file) {
+          formDataToSend.append('backgroundImage', formData.backgroundImage.file);
+        }
+
+        await updateContactInfo({
+          site: selectedSite,
+          contactInfo: formDataToSend,
+        }).unwrap();
+        Swal.fire('Success!', 'Contact information updated successfully', 'success');
+      } else {
+        // Create new Contact Info
+        formDataToSend.append('site', selectedSite);
+        formDataToSend.append('address', formData.address.trim());
+        formDataToSend.append('email', formData.email.trim());
+        formDataToSend.append('phone', formData.phone.trim());
+        formDataToSend.append(
+          'workingHours',
+          JSON.stringify(formData.workingHours),
+        );
+        formDataToSend.append(
+          'socialMedia',
+          JSON.stringify(formData.socialMedia),
+        );
+
+        // Background image is required for creation
+        if (formData.backgroundImage?.file) {
+          formDataToSend.append('backgroundImage', formData.backgroundImage.file);
+        }
+
+        await createContactInfo({
+          contactInfo: formDataToSend,
+        }).unwrap();
+        Swal.fire('Success!', 'Contact information created successfully', 'success');
+      }
     } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Update Failed',
-        text:
-          (error as { data?: { message?: string } })?.data?.message ||
-          'Failed to update Contact page',
-      });
+      Swal.fire(
+        'Error!',
+        (error as { data?: { message?: string } })?.data?.message ||
+          'Failed to save contact information',
+        'error',
+      );
     }
   };
 
-  const handleBack = () => {
-    navigate('/content');
-  };
+
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={handleBack}
-                className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-                aria-label="Go back"
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </button>
-              <div>
-                <h1 className="text-lg font-semibold text-gray-900">
-                  Contact Page
-                </h1>
-                <p className="text-sm text-gray-500">
-                  Edit your Contact page content
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setIsPreviewMode(!isPreviewMode)}
-                className="flex items-center gap-2 px-4 py-2 text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors"
-              >
-                <Eye className="w-4 h-4" />
-                {isPreviewMode ? 'Edit' : 'Preview'}
-              </button>
-              <button
-                onClick={handleSave}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-              >
-                <Save className="w-4 h-4" />
-                Save Changes
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <ContactUsHeader
+        isPreviewMode={isPreviewMode}
+        setIsPreviewMode={setIsPreviewMode}
+        onSave={handleSave}
+        isLoading={isCreating || isUpdating}
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {isLoading ? (
@@ -138,94 +257,37 @@ const ContactUs: React.FC = () => {
             <p className="text-gray-500">Loading...</p>
           </div>
         ) : isPreviewMode ? (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
-            <div className="max-w-4xl mx-auto">
-              <h1 className="text-4xl font-bold text-gray-900 mb-8">
-                {formData.title || 'Contact'}
-              </h1>
-              <EditorPreview content={formData.content} />
-            </div>
-          </div>
+          <ContactInfoPreview formData={formData} />
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Main Content */}
             <div className="lg:col-span-2 space-y-6">
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <label
-                  htmlFor="title"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Page Title *
-                </label>
-                <input
-                  type="text"
-                  id="title"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleInputChange}
-                  placeholder="Enter page title"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-                />
-              </div>
+              <ContactInfoForm
+                address={formData.address}
+                email={formData.email}
+                phone={formData.phone}
+                backgroundImage={formData.backgroundImage}
+                onInputChange={handleInputChange}
+                onImageChange={handleImageChange}
+                onRemoveImage={removeImage}
+              />
 
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <label className="block text-sm font-medium text-gray-700 mb-4">
-                  Page Content *
-                </label>
-                <RichTextEditor
-                  value={formData.content}
-                  onChange={handleContentChange}
-                  placeholder="Write your Contact page content here..."
-                  minHeight="500px"
-                />
-              </div>
+              <WorkingHoursSection
+                workingHours={formData.workingHours}
+                onChange={handleWorkingHoursChange}
+              />
+
+              <SocialMediaSection
+                socialMedia={formData.socialMedia}
+                onChange={handleSocialMediaChange}
+              />
             </div>
 
-            <div className="lg:col-span-1 space-y-6">
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <label
-                  htmlFor="site"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Select Site *
-                </label>
-                <select
-                  id="site"
-                  name="site"
-                  value={selectedSite}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="FLORIDA">Florida</option>
-                  <option value="JUPITER">Jupiter</option>
-                </select>
-                <p className="text-xs text-gray-500 mt-2">
-                  Select which site this content applies to
-                </p>
-              </div>
-
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h3 className="text-sm font-medium text-gray-700 mb-2">
-                  Page Info
-                </h3>
-                <div className="space-y-2 text-sm text-gray-600">
-                  <p>
-                    <span className="font-medium">Type:</span> Static Page
-                    {getContactUsData?.updatedAt && (
-                      <p>
-                        <span className="font-medium">Last Updated:</span>{' '}
-                        {new Date(
-                          getContactUsData.updatedAt,
-                        ).toLocaleDateString()}
-                      </p>
-                    )}
-                  </p>
-                  <p>
-                    <span className="font-medium">Site:</span> {selectedSite}
-                  </p>
-                </div>
-              </div>
-            </div>
+            {/* Sidebar */}
+            <ContactInfoSidebar
+              selectedSite={selectedSite}
+              onSiteChange={setSelectedSite}
+            />
           </div>
         )}
       </div>

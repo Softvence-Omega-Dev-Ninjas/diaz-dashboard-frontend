@@ -52,30 +52,30 @@ const contentManagementApi = baseApi.injectEndpoints({
       invalidatesTags: ['PrivacyPolicy'],
     }),
 
-    getContactUs: build.query({
-      query: (site) => ({
-        url: `/contactus?site=${site}`,
-        method: 'GET',
-      }),
-      providesTags: ['ContactUs'],
-    }),
-    createContactUs: build.mutation({
-      query: ({ site, contactUs }) => ({
-        url: `/contactus/create?site=${site}`,
-        method: 'POST',
-        body: contactUs,
-      }),
-      invalidatesTags: ['ContactUs'],
-    }),
+    // getContactUs: build.query({
+    //   query: (site) => ({
+    //     url: `/contactus?site=${site}`,
+    //     method: 'GET',
+    //   }),
+    //   providesTags: ['ContactUs'],
+    // }),
+    // createContactUs: build.mutation({
+    //   query: ({ site, contactUs }) => ({
+    //     url: `/contactus/create?site=${site}`,
+    //     method: 'POST',
+    //     body: contactUs,
+    //   }),
+    //   invalidatesTags: ['ContactUs'],
+    // }),
 
-    updateContactUs: build.mutation({
-      query: ({ site, contactUs }) => ({
-        url: `/contactus?site=${site}`,
-        method: 'PATCH',
-        body: contactUs,
-      }),
-      invalidatesTags: ['ContactUs'],
-    }),
+    // updateContactUs: build.mutation({
+    //   query: ({ site, contactUs }) => ({
+    //     url: `/contactus?site=${site}`,
+    //     method: 'PATCH',
+    //     body: contactUs,
+    //   }),
+    //   invalidatesTags: ['ContactUs'],
+    // }),
 
     getAboutUsContent: build.query({
       query: (site) => ({
@@ -196,6 +196,33 @@ const contentManagementApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['WhyUs'],
     }),
+
+
+    getContactInfo: build.query({
+      query: (site) => ({
+        url: `/contact/contact-info?site=${site}`,
+        method: 'GET',
+      }),
+      providesTags: ['ContactInfo'],
+    }), 
+
+    createContactInfo: build.mutation({
+      query: ({ contactInfo }) => ({
+        url: `/contact-info`,
+        method: 'POST',
+        body: contactInfo,
+      }),
+      invalidatesTags: ['ContactInfo'],
+    }),
+
+    updateContactInfo: build.mutation({
+      query: ({ site, contactInfo }) => ({
+        url: `/contact/contact-info?site=${site}`,
+        method: 'PATCH',
+        body: contactInfo,
+      }),
+      invalidatesTags: ['ContactInfo'],
+    }),
   }),
 });
 
@@ -208,9 +235,9 @@ export const {
   useCreatePrivacyPolicyMutation,
   useUpdatePrivacyPolicyMutation,
 
-  useGetContactUsQuery,
-  useCreateContactUsMutation,
-  useUpdateContactUsMutation,
+  // useGetContactUsQuery,
+  // useCreateContactUsMutation,
+  // useUpdateContactUsMutation,
 
   useGetAboutUsContentQuery,
   useCreateAboutUsMutation,
@@ -229,4 +256,8 @@ export const {
   useCreateWhyUsMutation,
   useUpdateWhyUsMutation,
   useDeleteWhyUsMutation,
+
+  useGetContactInfoQuery,
+  useCreateContactInfoMutation,
+  useUpdateContactInfoMutation,
 } = contentManagementApi;
