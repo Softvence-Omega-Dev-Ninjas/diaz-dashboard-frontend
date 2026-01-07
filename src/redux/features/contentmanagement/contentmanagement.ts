@@ -223,6 +223,41 @@ const contentManagementApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['ContactInfo'],
     }),
+
+
+    getFeaturedBrands: build.query({
+      query: (site) => ({
+        url: `/featured-brands?site=${site}`,
+        method: 'GET',
+      }),
+      providesTags: ['FeaturedBrands'],
+    }),
+
+    createFeaturedBrands: build.mutation({
+      query: ({ featuredBrands }) => ({
+        url: `/featured-brands`,
+        method: 'POST',
+        body: featuredBrands,
+      }),
+      invalidatesTags: ['FeaturedBrands'],
+    }),
+
+    updateFeaturedBrands: build.mutation({
+      query: ({ id, featuredBrands }) => ({
+        url: `/featured-brands/${id}`,
+        method: 'PATCH',
+        body: featuredBrands,
+      }),
+      invalidatesTags: ['FeaturedBrands'],
+    }),
+
+    deleteFeaturedBrands: build.mutation({
+      query: ({ id }) => ({
+        url: `/featured-brands/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['FeaturedBrands'],
+    }),
   }),
 });
 
@@ -260,4 +295,9 @@ export const {
   useGetContactInfoQuery,
   useCreateContactInfoMutation,
   useUpdateContactInfoMutation,
+
+  useGetFeaturedBrandsQuery,
+  useCreateFeaturedBrandsMutation,
+  useUpdateFeaturedBrandsMutation,
+  useDeleteFeaturedBrandsMutation,
 } = contentManagementApi;
