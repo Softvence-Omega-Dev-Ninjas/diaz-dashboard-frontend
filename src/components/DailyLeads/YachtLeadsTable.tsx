@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useUpdateBoatLeadsStatusMutation } from '@/redux/features/leads/leadsApi';
 import type { YachtLead } from '@/types/yacht-leads-types';
 import { ExternalLink, Mail, Phone } from 'lucide-react';
@@ -68,7 +69,7 @@ export const YachtLeadsTable: React.FC<YachtLeadsTableProps> = ({
 
     const listingId =
       lead.source === 'FLORIDA' && lead.floridaLeads.length > 0
-        ? lead.floridaLeads[0].boat.listingId
+        ? lead.floridaLeads[0].boatId
         : lead.listingId;
 
     window.open(`${baseUrl}/${listingId}`, '_blank');
