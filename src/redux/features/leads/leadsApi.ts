@@ -28,11 +28,15 @@ const leadsApi = baseApi.injectEndpoints({
       query: ({ leadId }) => ({
         url: `/contact/${leadId}/status`,
         method: 'PATCH',
-        body: { status : "Contacted" },
+        body: { status: 'Contacted' },
       }),
       invalidatesTags: ['Leads'],
     }),
   }),
 });
 
-export const { useGetCustomerContactedQuery, useGetBoatLeadsQuery, useUpdateBoatLeadsStatusMutation } = leadsApi;
+export const {
+  useGetCustomerContactedQuery,
+  useGetBoatLeadsQuery,
+  useUpdateBoatLeadsStatusMutation,
+} = leadsApi;

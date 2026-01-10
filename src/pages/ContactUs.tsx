@@ -31,7 +31,10 @@ const ContactUs: React.FC = () => {
       { day: 'Wednesday', hours: '9am to 5pm' },
       { day: 'Thursday', hours: '9am to 5pm' },
       { day: 'Friday', hours: '9am to 5pm' },
-      { day: 'Weekend', hours: 'Closed - Contact by email for urgent requests' },
+      {
+        day: 'Weekend',
+        hours: 'Closed - Contact by email for urgent requests',
+      },
     ],
     socialMedia: {
       twitter: '',
@@ -197,14 +200,21 @@ const ContactUs: React.FC = () => {
 
         // Add new background image if selected
         if (formData.backgroundImage?.file) {
-          formDataToSend.append('backgroundImage', formData.backgroundImage.file);
+          formDataToSend.append(
+            'backgroundImage',
+            formData.backgroundImage.file,
+          );
         }
 
         await updateContactInfo({
           site: selectedSite,
           contactInfo: formDataToSend,
         }).unwrap();
-        Swal.fire('Success!', 'Contact information updated successfully', 'success');
+        Swal.fire(
+          'Success!',
+          'Contact information updated successfully',
+          'success',
+        );
       } else {
         // Create new Contact Info
         formDataToSend.append('site', selectedSite);
@@ -222,13 +232,20 @@ const ContactUs: React.FC = () => {
 
         // Background image is required for creation
         if (formData.backgroundImage?.file) {
-          formDataToSend.append('backgroundImage', formData.backgroundImage.file);
+          formDataToSend.append(
+            'backgroundImage',
+            formData.backgroundImage.file,
+          );
         }
 
         await createContactInfo({
           contactInfo: formDataToSend,
         }).unwrap();
-        Swal.fire('Success!', 'Contact information created successfully', 'success');
+        Swal.fire(
+          'Success!',
+          'Contact information created successfully',
+          'success',
+        );
       }
     } catch (error) {
       Swal.fire(
@@ -239,8 +256,6 @@ const ContactUs: React.FC = () => {
       );
     }
   };
-
-
 
   return (
     <div className="min-h-screen bg-gray-50">

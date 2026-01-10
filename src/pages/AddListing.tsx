@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import FirstListingPage from '@/components/Listing/FirstListingPage';
 import { useCreateListingMutation } from '@/redux/features/listingManagement/listingManagement';
-import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
@@ -248,7 +247,6 @@ const compressImage = async (file: File): Promise<File> => {
 };
 
 const AddListing = () => {
-  const [formData, setFormData] = useState<FormData>({});
   const [createListing, { isLoading: isSubmitting }] =
     useCreateListingMutation();
   const navigate = useNavigate();
@@ -301,11 +299,7 @@ const AddListing = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 rounded-lg">
-      <FirstListingPage
-        onNext={handleSubmit}
-        initialData={formData}
-        isSubmitting={isSubmitting}
-      />
+      <FirstListingPage onNext={handleSubmit} isSubmitting={isSubmitting} />
     </div>
   );
 };

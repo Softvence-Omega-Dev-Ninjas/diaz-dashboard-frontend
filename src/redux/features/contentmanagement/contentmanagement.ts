@@ -128,7 +128,6 @@ const contentManagementApi = baseApi.injectEndpoints({
       invalidatesTags: ['Footer'],
     }),
 
-
     createFaq: build.mutation({
       query: ({ faqContent }) => ({
         url: `/faq`,
@@ -154,7 +153,7 @@ const contentManagementApi = baseApi.injectEndpoints({
       }),
       providesTags: ['FAQ'],
     }),
-    
+
     deleteFaq: build.mutation({
       query: ({ site }) => ({
         url: `/faq?site=${site}`,
@@ -186,7 +185,7 @@ const contentManagementApi = baseApi.injectEndpoints({
         method: 'PATCH',
         body: whyUsContent,
       }),
-      invalidatesTags: ['WhyUs'],  
+      invalidatesTags: ['WhyUs'],
     }),
 
     deleteWhyUs: build.mutation({
@@ -197,14 +196,13 @@ const contentManagementApi = baseApi.injectEndpoints({
       invalidatesTags: ['WhyUs'],
     }),
 
-
     getContactInfo: build.query({
       query: (site) => ({
         url: `/contact/contact-info?site=${site}`,
         method: 'GET',
       }),
       providesTags: ['ContactInfo'],
-    }), 
+    }),
 
     createContactInfo: build.mutation({
       query: ({ contactInfo }) => ({
@@ -223,7 +221,6 @@ const contentManagementApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['ContactInfo'],
     }),
-
 
     getFeaturedBrands: build.query({
       query: (site) => ({

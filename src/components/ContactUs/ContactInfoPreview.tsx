@@ -1,5 +1,14 @@
 import React from 'react';
-import { MapPin, Mail, Phone, Clock, Facebook, Twitter, Linkedin, Youtube } from 'lucide-react';
+import {
+  MapPin,
+  Mail,
+  Phone,
+  Clock,
+  Facebook,
+  Twitter,
+  Linkedin,
+  Youtube,
+} from 'lucide-react';
 import { type ContactInfoFormData } from './types';
 
 interface ContactInfoPreviewProps {
@@ -15,7 +24,11 @@ const ContactInfoPreview: React.FC<ContactInfoPreviewProps> = ({
       {formData.backgroundImage && (
         <div className="relative h-64 w-full">
           <img
-            src={formData.backgroundImage.preview || formData.backgroundImage.url || ''}
+            src={
+              formData.backgroundImage.preview ||
+              formData.backgroundImage.url ||
+              ''
+            }
             alt="Contact Background"
             className="w-full h-full object-cover"
           />
@@ -84,9 +97,7 @@ const ContactInfoPreview: React.FC<ContactInfoPreviewProps> = ({
               formData.socialMedia.linkedin ||
               formData.socialMedia.youtube) && (
               <div>
-                <h3 className="font-semibold text-gray-900 mb-3">
-                  Follow Us
-                </h3>
+                <h3 className="font-semibold text-gray-900 mb-3">Follow Us</h3>
                 <div className="flex gap-3">
                   {formData.socialMedia.facebook && (
                     <a
