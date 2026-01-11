@@ -23,13 +23,13 @@ interface FormData {
   numberOfCabins?: number;
   numberOfHeads?: number;
 
-  // Engine 1
-  engine1Hours?: number;
-  engine1Make?: string;
-  engine1Model?: string;
-  engine1TotalPower?: number;
-  engine1FuelType?: string;
-  engine1PropellerType?: string;
+  // Dynamic Engines (supports multiple engines)
+  [key: `engine${number}Hours`]: number | undefined;
+  [key: `engine${number}Make`]: string | undefined;
+  [key: `engine${number}Model`]: string | undefined;
+  [key: `engine${number}TotalPower`]: number | undefined;
+  [key: `engine${number}FuelType`]: string | undefined;
+  [key: `engine${number}PropellerType`]: string | undefined;
 
   // Basic Information
   condition?: string;
@@ -68,13 +68,15 @@ const createBoatRegistrationFormData = async (
   const formData = new FormData();
 
   // Helper to safely parse numbers
-  const toNumber = (value: number | string | undefined): number => {
+  const toNumber = (value: number | string | null | undefined): number => {
     if (typeof value === 'number') return value;
+    if (value === null || value === undefined) return 0;
     return parseInt(String(value || '0')) || 0;
   };
 
-  const toFloat = (value: number | string | undefined): number => {
+  const toFloat = (value: number | string | null | undefined): number => {
     if (typeof value === 'number') return value;
+    if (value === null || value === undefined) return 0;
     return parseFloat(String(value || '0')) || 0;
   };
 
@@ -102,16 +104,26 @@ const createBoatRegistrationFormData = async (
     make: data.make || '',
     fuelType: data.fuelType || '',
     state: data.state || '',
-    engines: [
-      {
-        hours: toNumber(data.engine1Hours),
-        horsepower: toNumber(data.engine1TotalPower),
-        make: data.engine1Make || '',
-        model: data.engine1Model || '',
-        fuelType: data.engine1FuelType || '',
-        propellerType: data.engine1PropellerType || '',
+    engines: Array.from(
+      { length: toNumber(data.numberOfEngines) || 1 },
+      (_, index) => {
+        const engineNum = index + 1;
+        return {
+          hours: toNumber(
+            (data as any)[`engine${engineNum}Hours`] as number | undefined,
+          ),
+          horsepower: toNumber(
+            (data as any)[`engine${engineNum}TotalPower`] as number | undefined,
+          ),
+          make: ((data as any)[`engine${engineNum}Make`] as string) || '',
+          model: ((data as any)[`engine${engineNum}Model`] as string) || '',
+          fuelType:
+            ((data as any)[`engine${engineNum}FuelType`] as string) || '',
+          propellerType:
+            ((data as any)[`engine${engineNum}PropellerType`] as string) || '',
+        };
       },
-    ],
+    ),
     extraDetails:
       data.moreDetails?.map((detail) => ({
         key: detail.title,
@@ -130,6 +142,11 @@ const createBoatRegistrationFormData = async (
     description: data.description || '',
     propType: data.propType || '',
   };
+
+  // Debug: Log engines array
+  console.log('\n🔧 Engines Array:', boatInfo.engines);
+  console.log(`📊 Number of Engines: ${boatInfo.enginesNumber}`);
+  console.log(`✅ Engines in Array: ${boatInfo.engines.length}`);
 
   // Add boatInfo as JSON string to FormData
   formData.append('boatInfo', JSON.stringify(boatInfo));
