@@ -5,14 +5,18 @@ import type { AboutUsPreviewProps } from './types';
 export const AboutUsPreview: React.FC<AboutUsPreviewProps> = ({
   formData,
   ourStoryData,
+  missionVisionData,
 }) => {
-  const getImageUrl = (imageKey: string): string | null => {
-    const fileKey = imageKey as keyof typeof ourStoryData;
+  const getImageUrl = (
+    data: typeof ourStoryData | typeof missionVisionData,
+    imageKey: string,
+  ): string | null => {
+    const fileKey = imageKey as keyof typeof data;
     const existingKey =
-      `existing${imageKey.charAt(0).toUpperCase() + imageKey.slice(1)}` as keyof typeof ourStoryData;
+      `existing${imageKey.charAt(0).toUpperCase() + imageKey.slice(1)}` as keyof typeof data;
 
-    const file = ourStoryData[fileKey];
-    const existingImage = ourStoryData[existingKey];
+    const file = data[fileKey];
+    const existingImage = data[existingKey];
 
     if (file && file instanceof File) {
       return URL.createObjectURL(file);
@@ -24,7 +28,11 @@ export const AboutUsPreview: React.FC<AboutUsPreviewProps> = ({
   };
 
   const ourStoryImages = [1, 2, 3, 4, 5]
-    .map((num) => getImageUrl(`image${num}`))
+    .map((num) => getImageUrl(ourStoryData, `image${num}`))
+    .filter((url): url is string => url !== null);
+
+  const missionVisionImages = [1, 2, 3]
+    .map((num) => getImageUrl(missionVisionData, `image${num}`))
     .filter((url): url is string => url !== null);
 
   return (
@@ -91,6 +99,70 @@ export const AboutUsPreview: React.FC<AboutUsPreviewProps> = ({
                 ))}
               </div>
             )}
+          </div>
+        )}
+
+        {/* Mission & Vision Section */}
+        {(missionVisionData.title ||
+          missionVisionData.missionTitle ||
+          missionVisionData.visionTitle ||
+          missionVisionData.description ||
+          missionVisionData.visionDescription ||
+          missionVisionImages.length > 0) && (
+          <div className="bg-white border border-gray-200 p-6 rounded-lg">
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">
+              {missionVisionData.title || 'Mission & Vision'}
+            </h2>
+
+            <div className="space-y-6">
+              {/* Mission */}
+              {(missionVisionData.missionTitle ||
+                missionVisionData.description) && (
+                <div className="bg-blue-50 border-l-4 border-blue-600 p-6 rounded-r-lg">
+                  <h3 className="text-2xl font-semibold text-gray-900 mb-3">
+                    {missionVisionData.missionTitle || 'Our Mission'}
+                  </h3>
+                  {missionVisionData.description && (
+                    <p className="text-gray-700 text-lg whitespace-pre-wrap">
+                      {missionVisionData.description}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {/* Vision */}
+              {(missionVisionData.visionTitle ||
+                missionVisionData.visionDescription) && (
+                <div className="bg-green-50 border-l-4 border-green-600 p-6 rounded-r-lg">
+                  <h3 className="text-2xl font-semibold text-gray-900 mb-3">
+                    {missionVisionData.visionTitle || 'Our Vision'}
+                  </h3>
+                  {missionVisionData.visionDescription && (
+                    <p className="text-gray-700 text-lg whitespace-pre-wrap">
+                      {missionVisionData.visionDescription}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {/* Images Gallery */}
+              {missionVisionImages.length > 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+                  {missionVisionImages.map((imageUrl, index) => (
+                    <div
+                      key={index}
+                      className="relative aspect-video rounded-lg overflow-hidden shadow-md"
+                    >
+                      <img
+                        src={imageUrl}
+                        alt={`Mission & Vision ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

@@ -48,6 +48,7 @@ export const baseApi = createApi({
     'Category',
     'ContactInfo',
     'OurStory',
+    'MissionVision',
   ],
 
   endpoints: () => ({}),

@@ -69,3 +69,10 @@ export {
   useGetOurStoryQuery,
   useUpdateOurStoryMutation,
 } from './ourStory';
+
+// Mission & Vision
+export {
+  useCreateMissionVisionMutation,
+  useGetMissionVisionQuery,
+  useUpdateMissionVisionMutation,
+} from './missionVision';

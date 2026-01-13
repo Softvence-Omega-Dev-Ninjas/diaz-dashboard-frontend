@@ -3,17 +3,22 @@ import {
   AboutUsHeader,
   AboutUsPreview,
   AboutUsSidebar,
+  MissionVisionSection,
   OurStorySection,
   type AboutUsFormData,
+  type MissionVisionFormData,
   type OurStoryFormData,
 } from '@/components/AboutUs';
 
 import {
   useCreateAboutUsMutation,
+  useCreateMissionVisionMutation,
   useCreateOurStoryMutation,
   useGetAboutUsContentQuery,
+  useGetMissionVisionQuery,
   useGetOurStoryQuery,
   useUpdateAboutUsMutation,
+  useUpdateMissionVisionMutation,
   useUpdateOurStoryMutation,
 } from '@/redux/features/contentmanagement/contentmanagement';
 import React, { useEffect, useState } from 'react';
@@ -31,6 +36,8 @@ const AboutUs: React.FC = () => {
     useGetAboutUsContentQuery(selectedSite);
   const { data: ourStoryData, isLoading: isOurStoryLoading } =
     useGetOurStoryQuery(selectedSite);
+  const { data: missionVisionData, isLoading: isMissionVisionLoading } =
+    useGetMissionVisionQuery(selectedSite);
 
   const [createAboutUs] = useCreateAboutUsMutation();
   const [updateAboutUs] = useUpdateAboutUsMutation();
@@ -39,6 +46,11 @@ const AboutUs: React.FC = () => {
     useCreateOurStoryMutation();
   const [updateOurStory, { isLoading: isUpdatingOurStory }] =
     useUpdateOurStoryMutation();
+
+  const [createMissionVision, { isLoading: isCreatingMissionVision }] =
+    useCreateMissionVisionMutation();
+  const [updateMissionVision, { isLoading: isUpdatingMissionVision }] =
+    useUpdateMissionVisionMutation();
 
   const [formData, setFormData] = useState<AboutUsFormData>({
     aboutTitle: '',
@@ -62,6 +74,21 @@ const AboutUs: React.FC = () => {
     existingImage4: '',
     existingImage5: '',
   });
+
+  const [missionVisionFormData, setMissionVisionFormData] =
+    useState<MissionVisionFormData>({
+      title: '',
+      missionTitle: '',
+      description: '',
+      visionTitle: '',
+      visionDescription: '',
+      image1: null,
+      image2: null,
+      image3: null,
+      existingImage1: '',
+      existingImage2: '',
+      existingImage3: '',
+    });
 
   // Load About Us data
   useEffect(() => {
@@ -119,6 +146,39 @@ const AboutUs: React.FC = () => {
     }
   }, [ourStoryData, selectedSite]);
 
+  // Load Mission & Vision data
+  useEffect(() => {
+    if (missionVisionData) {
+      setMissionVisionFormData({
+        title: missionVisionData.title || '',
+        missionTitle: missionVisionData.missionTitle || '',
+        description: missionVisionData.description || '',
+        visionTitle: missionVisionData.visionTitle || '',
+        visionDescription: missionVisionData.visionDescription || '',
+        image1: null,
+        image2: null,
+        image3: null,
+        existingImage1: missionVisionData.image1?.url || '',
+        existingImage2: missionVisionData.image2?.url || '',
+        existingImage3: missionVisionData.image3?.url || '',
+      });
+    } else {
+      setMissionVisionFormData({
+        title: '',
+        missionTitle: '',
+        description: '',
+        visionTitle: '',
+        visionDescription: '',
+        image1: null,
+        image2: null,
+        image3: null,
+        existingImage1: '',
+        existingImage2: '',
+        existingImage3: '',
+      });
+    }
+  }, [missionVisionData, selectedSite]);
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
@@ -136,6 +196,26 @@ const AboutUs: React.FC = () => {
   const handleOurStoryImageChange = (imageKey: string, file: File | null) => {
     const existingKey = `existing${imageKey.charAt(0).toUpperCase() + imageKey.slice(1)}`;
     setOurStoryFormData((prev) => ({
+      ...prev,
+      [imageKey]: file,
+      // Clear existing image URL when removing
+      ...(file === null && { [existingKey]: '' }),
+    }));
+  };
+
+  const handleMissionVisionInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target;
+    setMissionVisionFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleMissionVisionImageChange = (
+    imageKey: string,
+    file: File | null,
+  ) => {
+    const existingKey = `existing${imageKey.charAt(0).toUpperCase() + imageKey.slice(1)}`;
+    setMissionVisionFormData((prev) => ({
       ...prev,
       [imageKey]: file,
       // Clear existing image URL when removing
@@ -260,6 +340,71 @@ const AboutUs: React.FC = () => {
     }
   };
 
+  const handleSaveMissionVision = async () => {
+    // Validate Mission & Vision title
+    if (
+      !missionVisionFormData.title.trim() ||
+      !missionVisionFormData.missionTitle.trim() ||
+      !missionVisionFormData.description.trim() ||
+      !missionVisionFormData.visionTitle.trim() ||
+      !missionVisionFormData.visionDescription.trim()
+    ) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Missing Fields',
+        text: 'Please fill in all required Mission & Vision fields',
+      });
+      return;
+    }
+
+    try {
+      const formDataToSend = new FormData();
+      formDataToSend.append('title', missionVisionFormData.title);
+      formDataToSend.append('missionTitle', missionVisionFormData.missionTitle);
+      formDataToSend.append('description', missionVisionFormData.description);
+      formDataToSend.append('visionTitle', missionVisionFormData.visionTitle);
+      formDataToSend.append(
+        'visionDescription',
+        missionVisionFormData.visionDescription,
+      );
+
+      // Append images
+      [1, 2, 3].forEach((num) => {
+        const imageKey = `image${num}` as keyof MissionVisionFormData;
+        const file = missionVisionFormData[imageKey];
+        if (file instanceof File) {
+          formDataToSend.append(imageKey, file);
+        }
+      });
+
+      if (missionVisionData?.id) {
+        await updateMissionVision({
+          site: selectedSite,
+          formData: formDataToSend,
+        }).unwrap();
+      } else {
+        await createMissionVision({
+          site: selectedSite,
+          formData: formDataToSend,
+        }).unwrap();
+      }
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Mission & Vision section has been saved successfully!',
+      });
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Operation Failed',
+        text:
+          (error as { data?: { message?: string } })?.data?.message ||
+          'Failed to save Mission & Vision section',
+      });
+    }
+  };
+
   const handleBack = () => {
     navigate('/content');
   };
@@ -278,12 +423,16 @@ const AboutUs: React.FC = () => {
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {isLoading || isOurStoryLoading ? (
+        {isLoading || isOurStoryLoading || isMissionVisionLoading ? (
           <div className="flex items-center justify-center p-8">
             <p className="text-gray-500">Loading...</p>
           </div>
         ) : isPreviewMode ? (
-          <AboutUsPreview formData={formData} ourStoryData={ourStoryFormData} />
+          <AboutUsPreview
+            formData={formData}
+            ourStoryData={ourStoryFormData}
+            missionVisionData={missionVisionFormData}
+          />
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
@@ -298,6 +447,13 @@ const AboutUs: React.FC = () => {
                 onImageChange={handleOurStoryImageChange}
                 onSave={handleSaveOurStory}
                 isSaving={isCreatingOurStory || isUpdatingOurStory}
+              />
+              <MissionVisionSection
+                formData={missionVisionFormData}
+                onInputChange={handleMissionVisionInputChange}
+                onImageChange={handleMissionVisionImageChange}
+                onSave={handleSaveMissionVision}
+                isSaving={isCreatingMissionVision || isUpdatingMissionVision}
               />
             </div>
             <AboutUsSidebar

@@ -64,6 +64,38 @@ export interface OurStoryFormData {
   existingImage5?: string;
 }
 
+export interface MissionVisionData {
+  id?: string;
+  site: 'FLORIDA' | 'JUPITER';
+  title: string;
+  missionTitle: string;
+  description: string;
+  visionTitle: string;
+  visionDescription: string;
+  image1Id?: string;
+  image2Id?: string;
+  image3Id?: string;
+  image1?: ImageData;
+  image2?: ImageData;
+  image3?: ImageData;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface MissionVisionFormData {
+  title: string;
+  missionTitle: string;
+  description: string;
+  visionTitle: string;
+  visionDescription: string;
+  image1?: File | null;
+  image2?: File | null;
+  image3?: File | null;
+  existingImage1?: string;
+  existingImage2?: string;
+  existingImage3?: string;
+}
+
 export interface AboutUsHeaderProps {
   isPreviewMode: boolean;
   onTogglePreview: () => void;
@@ -89,6 +121,16 @@ export interface OurStorySectionProps {
   isSaving?: boolean;
 }
 
+export interface MissionVisionSectionProps {
+  formData: MissionVisionFormData;
+  onInputChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void;
+  onImageChange: (imageKey: string, file: File | null) => void;
+  onSave: () => void;
+  isSaving?: boolean;
+}
+
 export interface AboutUsSidebarProps {
   selectedSite: 'FLORIDA' | 'JUPITER';
   onSiteChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
@@ -98,4 +140,5 @@ export interface AboutUsSidebarProps {
 export interface AboutUsPreviewProps {
   formData: AboutUsFormData;
   ourStoryData: OurStoryFormData;
+  missionVisionData: MissionVisionFormData;
 }
