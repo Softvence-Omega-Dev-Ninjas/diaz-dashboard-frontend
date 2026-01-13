@@ -6,9 +6,13 @@ export const AboutUsPreview: React.FC<AboutUsPreviewProps> = ({
   formData,
   ourStoryData,
   missionVisionData,
+  whatSetsUsApartData,
 }) => {
   const getImageUrl = (
-    data: typeof ourStoryData | typeof missionVisionData,
+    data:
+      | typeof ourStoryData
+      | typeof missionVisionData
+      | typeof whatSetsUsApartData,
     imageKey: string,
   ): string | null => {
     const fileKey = imageKey as keyof typeof data;
@@ -33,6 +37,10 @@ export const AboutUsPreview: React.FC<AboutUsPreviewProps> = ({
 
   const missionVisionImages = [1, 2, 3]
     .map((num) => getImageUrl(missionVisionData, `image${num}`))
+    .filter((url): url is string => url !== null);
+
+  const whatSetsUsApartImages = [1, 2]
+    .map((num) => getImageUrl(whatSetsUsApartData, `image${num}`))
     .filter((url): url is string => url !== null);
 
   return (
@@ -163,6 +171,84 @@ export const AboutUsPreview: React.FC<AboutUsPreviewProps> = ({
                 </div>
               )}
             </div>
+          </div>
+        )}
+
+        {/* What Sets Us Apart Section */}
+        {(whatSetsUsApartData.title ||
+          whatSetsUsApartData.description ||
+          whatSetsUsApartData.yearsOfYachtingExcellence ||
+          whatSetsUsApartData.boatsSoldIn2024 ||
+          whatSetsUsApartData.listingsViewedMonthly ||
+          whatSetsUsApartImages.length > 0) && (
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 p-6 rounded-lg">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              {whatSetsUsApartData.title || 'What Sets Us Apart'}
+            </h2>
+
+            {whatSetsUsApartData.description && (
+              <p className="text-gray-700 text-lg mb-6 whitespace-pre-wrap">
+                {whatSetsUsApartData.description}
+              </p>
+            )}
+
+            {/* Statistics Grid */}
+            {(whatSetsUsApartData.yearsOfYachtingExcellence ||
+              whatSetsUsApartData.boatsSoldIn2024 ||
+              whatSetsUsApartData.listingsViewedMonthly) && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                {whatSetsUsApartData.yearsOfYachtingExcellence && (
+                  <div className="bg-white p-6 rounded-lg shadow-md text-center">
+                    <div className="text-4xl font-bold text-blue-600 mb-2">
+                      {whatSetsUsApartData.yearsOfYachtingExcellence}
+                    </div>
+                    <div className="text-sm text-gray-600 uppercase tracking-wide">
+                      Years of Yachting Excellence
+                    </div>
+                  </div>
+                )}
+
+                {whatSetsUsApartData.boatsSoldIn2024 && (
+                  <div className="bg-white p-6 rounded-lg shadow-md text-center">
+                    <div className="text-4xl font-bold text-green-600 mb-2">
+                      {whatSetsUsApartData.boatsSoldIn2024}
+                    </div>
+                    <div className="text-sm text-gray-600 uppercase tracking-wide">
+                      Boats Sold in 2024
+                    </div>
+                  </div>
+                )}
+
+                {whatSetsUsApartData.listingsViewedMonthly && (
+                  <div className="bg-white p-6 rounded-lg shadow-md text-center">
+                    <div className="text-4xl font-bold text-purple-600 mb-2">
+                      {whatSetsUsApartData.listingsViewedMonthly}
+                    </div>
+                    <div className="text-sm text-gray-600 uppercase tracking-wide">
+                      Listings Viewed Monthly
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Images Gallery */}
+            {whatSetsUsApartImages.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                {whatSetsUsApartImages.map((imageUrl, index) => (
+                  <div
+                    key={index}
+                    className="relative aspect-video rounded-lg overflow-hidden shadow-md"
+                  >
+                    <img
+                      src={imageUrl}
+                      alt={`What Sets Us Apart ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>

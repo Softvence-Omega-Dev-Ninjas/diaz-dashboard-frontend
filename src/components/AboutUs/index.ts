@@ -5,3 +5,4 @@ export { AboutUsSidebar } from './AboutUsSidebar';
 export { MissionVisionSection } from './MissionVisionSection';
 export { OurStorySection } from './OurStorySection';
 export * from './types';
+export { WhatSetsUsApartSection } from './WhatSetsUsApartSection';

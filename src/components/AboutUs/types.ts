@@ -96,6 +96,34 @@ export interface MissionVisionFormData {
   existingImage3?: string;
 }
 
+export interface WhatSetsUsApartData {
+  id?: string;
+  site: 'FLORIDA' | 'JUPITER';
+  title: string;
+  description: string;
+  yearsOfYachtingExcellence: string;
+  boatsSoldIn2024: string;
+  listingsViewedMonthly: string;
+  image1Id?: string;
+  image2Id?: string;
+  image1?: ImageData;
+  image2?: ImageData;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface WhatSetsUsApartFormData {
+  title: string;
+  description: string;
+  yearsOfYachtingExcellence: string;
+  boatsSoldIn2024: string;
+  listingsViewedMonthly: string;
+  image1?: File | null;
+  image2?: File | null;
+  existingImage1?: string;
+  existingImage2?: string;
+}
+
 export interface AboutUsHeaderProps {
   isPreviewMode: boolean;
   onTogglePreview: () => void;
@@ -131,6 +159,16 @@ export interface MissionVisionSectionProps {
   isSaving?: boolean;
 }
 
+export interface WhatSetsUsApartSectionProps {
+  formData: WhatSetsUsApartFormData;
+  onInputChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void;
+  onImageChange: (imageKey: string, file: File | null) => void;
+  onSave: () => void;
+  isSaving?: boolean;
+}
+
 export interface AboutUsSidebarProps {
   selectedSite: 'FLORIDA' | 'JUPITER';
   onSiteChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
@@ -141,4 +179,5 @@ export interface AboutUsPreviewProps {
   formData: AboutUsFormData;
   ourStoryData: OurStoryFormData;
   missionVisionData: MissionVisionFormData;
+  whatSetsUsApartData: WhatSetsUsApartFormData;
 }

@@ -5,21 +5,26 @@ import {
   AboutUsSidebar,
   MissionVisionSection,
   OurStorySection,
+  WhatSetsUsApartSection,
   type AboutUsFormData,
   type MissionVisionFormData,
   type OurStoryFormData,
+  type WhatSetsUsApartFormData,
 } from '@/components/AboutUs';
 
 import {
   useCreateAboutUsMutation,
   useCreateMissionVisionMutation,
   useCreateOurStoryMutation,
+  useCreateWhatSetsUsApartMutation,
   useGetAboutUsContentQuery,
   useGetMissionVisionQuery,
   useGetOurStoryQuery,
+  useGetWhatSetsUsApartQuery,
   useUpdateAboutUsMutation,
   useUpdateMissionVisionMutation,
   useUpdateOurStoryMutation,
+  useUpdateWhatSetsUsApartMutation,
 } from '@/redux/features/contentmanagement/contentmanagement';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -38,6 +43,12 @@ const AboutUs: React.FC = () => {
     useGetOurStoryQuery(selectedSite);
   const { data: missionVisionData, isLoading: isMissionVisionLoading } =
     useGetMissionVisionQuery(selectedSite);
+  const {
+    data: whatSetsUsApartData,
+    isLoading: isWhatSetsUsApartLoading,
+  } = useGetWhatSetsUsApartQuery(selectedSite);
+
+ 
 
   const [createAboutUs] = useCreateAboutUsMutation();
   const [updateAboutUs] = useUpdateAboutUsMutation();
@@ -51,6 +62,11 @@ const AboutUs: React.FC = () => {
     useCreateMissionVisionMutation();
   const [updateMissionVision, { isLoading: isUpdatingMissionVision }] =
     useUpdateMissionVisionMutation();
+
+  const [createWhatSetsUsApart, { isLoading: isCreatingWhatSetsUsApart }] =
+    useCreateWhatSetsUsApartMutation();
+  const [updateWhatSetsUsApart, { isLoading: isUpdatingWhatSetsUsApart }] =
+    useUpdateWhatSetsUsApartMutation();
 
   const [formData, setFormData] = useState<AboutUsFormData>({
     aboutTitle: '',
@@ -88,6 +104,19 @@ const AboutUs: React.FC = () => {
       existingImage1: '',
       existingImage2: '',
       existingImage3: '',
+    });
+
+  const [whatSetsUsApartFormData, setWhatSetsUsApartFormData] =
+    useState<WhatSetsUsApartFormData>({
+      title: '',
+      description: '',
+      yearsOfYachtingExcellence: '',
+      boatsSoldIn2024: '',
+      listingsViewedMonthly: '',
+      image1: null,
+      image2: null,
+      existingImage1: '',
+      existingImage2: '',
     });
 
   // Load About Us data
@@ -179,6 +208,36 @@ const AboutUs: React.FC = () => {
     }
   }, [missionVisionData, selectedSite]);
 
+  // Load What Sets Us Apart data
+  useEffect(() => {
+    if (whatSetsUsApartData) {
+      setWhatSetsUsApartFormData({
+        title: whatSetsUsApartData.title || '',
+        description: whatSetsUsApartData.description || '',
+        yearsOfYachtingExcellence:
+          whatSetsUsApartData.yearsOfYachtingExcellence || '',
+        boatsSoldIn2024: whatSetsUsApartData.boatsSoldIn2024 || '',
+        listingsViewedMonthly: whatSetsUsApartData.listingsViewedMonthly || '',
+        image1: null,
+        image2: null,
+        existingImage1: whatSetsUsApartData.image1?.url || '',
+        existingImage2: whatSetsUsApartData.image2?.url || '',
+      });
+    } else {
+      setWhatSetsUsApartFormData({
+        title: '',
+        description: '',
+        yearsOfYachtingExcellence: '',
+        boatsSoldIn2024: '',
+        listingsViewedMonthly: '',
+        image1: null,
+        image2: null,
+        existingImage1: '',
+        existingImage2: '',
+      });
+    }
+  }, [whatSetsUsApartData, selectedSite]);
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
@@ -216,6 +275,26 @@ const AboutUs: React.FC = () => {
   ) => {
     const existingKey = `existing${imageKey.charAt(0).toUpperCase() + imageKey.slice(1)}`;
     setMissionVisionFormData((prev) => ({
+      ...prev,
+      [imageKey]: file,
+      // Clear existing image URL when removing
+      ...(file === null && { [existingKey]: '' }),
+    }));
+  };
+
+  const handleWhatSetsUsApartInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target;
+    setWhatSetsUsApartFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleWhatSetsUsApartImageChange = (
+    imageKey: string,
+    file: File | null,
+  ) => {
+    const existingKey = `existing${imageKey.charAt(0).toUpperCase() + imageKey.slice(1)}`;
+    setWhatSetsUsApartFormData((prev) => ({
       ...prev,
       [imageKey]: file,
       // Clear existing image URL when removing
@@ -405,6 +484,86 @@ const AboutUs: React.FC = () => {
     }
   };
 
+  const handleSaveWhatSetsUsApart = async () => {
+    // Validate What Sets Us Apart title
+    if (!whatSetsUsApartFormData.title.trim()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Missing Title',
+        text: 'Please enter a title for the What Sets Us Apart section',
+      });
+      return;
+    }
+
+    try {
+      const formDataToSend = new FormData();
+      formDataToSend.append('title', whatSetsUsApartFormData.title);
+
+      if (whatSetsUsApartFormData.description) {
+        formDataToSend.append(
+          'description',
+          whatSetsUsApartFormData.description,
+        );
+      }
+
+      if (whatSetsUsApartFormData.yearsOfYachtingExcellence) {
+        formDataToSend.append(
+          'yearsOfYachtingExcellence',
+          whatSetsUsApartFormData.yearsOfYachtingExcellence,
+        );
+      }
+
+      if (whatSetsUsApartFormData.boatsSoldIn2024) {
+        formDataToSend.append(
+          'boatsSoldIn2024',
+          whatSetsUsApartFormData.boatsSoldIn2024,
+        );
+      }
+
+      if (whatSetsUsApartFormData.listingsViewedMonthly) {
+        formDataToSend.append(
+          'listingsViewedMonthly',
+          whatSetsUsApartFormData.listingsViewedMonthly,
+        );
+      }
+
+      // Append images
+      [1, 2].forEach((num) => {
+        const imageKey = `image${num}` as keyof WhatSetsUsApartFormData;
+        const file = whatSetsUsApartFormData[imageKey];
+        if (file instanceof File) {
+          formDataToSend.append(imageKey, file);
+        }
+      });
+
+      if (whatSetsUsApartData?.id) {
+        await updateWhatSetsUsApart({
+          site: selectedSite,
+          formData: formDataToSend,
+        }).unwrap();
+      } else {
+        await createWhatSetsUsApart({
+          site: selectedSite,
+          formData: formDataToSend,
+        }).unwrap();
+      }
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'What Sets Us Apart section has been saved successfully!',
+      });
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Operation Failed',
+        text:
+          (error as { data?: { message?: string } })?.data?.message ||
+          'Failed to save What Sets Us Apart section',
+      });
+    }
+  };
+
   const handleBack = () => {
     navigate('/content');
   };
@@ -423,7 +582,10 @@ const AboutUs: React.FC = () => {
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {isLoading || isOurStoryLoading || isMissionVisionLoading ? (
+        {isLoading ||
+        isOurStoryLoading ||
+        isMissionVisionLoading ||
+        isWhatSetsUsApartLoading ? (
           <div className="flex items-center justify-center p-8">
             <p className="text-gray-500">Loading...</p>
           </div>
@@ -432,6 +594,7 @@ const AboutUs: React.FC = () => {
             formData={formData}
             ourStoryData={ourStoryFormData}
             missionVisionData={missionVisionFormData}
+            whatSetsUsApartData={whatSetsUsApartFormData}
           />
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -454,6 +617,15 @@ const AboutUs: React.FC = () => {
                 onImageChange={handleMissionVisionImageChange}
                 onSave={handleSaveMissionVision}
                 isSaving={isCreatingMissionVision || isUpdatingMissionVision}
+              />
+              <WhatSetsUsApartSection
+                formData={whatSetsUsApartFormData}
+                onInputChange={handleWhatSetsUsApartInputChange}
+                onImageChange={handleWhatSetsUsApartImageChange}
+                onSave={handleSaveWhatSetsUsApart}
+                isSaving={
+                  isCreatingWhatSetsUsApart || isUpdatingWhatSetsUsApart
+                }
               />
             </div>
             <AboutUsSidebar

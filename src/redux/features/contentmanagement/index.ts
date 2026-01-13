@@ -76,3 +76,10 @@ export {
   useGetMissionVisionQuery,
   useUpdateMissionVisionMutation,
 } from './missionVision';
+
+// What Sets Us Apart
+export {
+  useCreateWhatSetsUsApartMutation,
+  useGetWhatSetsUsApartQuery,
+  useUpdateWhatSetsUsApartMutation,
+} from './whatSetsUsApart';
