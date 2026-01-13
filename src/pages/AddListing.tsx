@@ -305,7 +305,6 @@ const AddListing = () => {
       console.log('✅ Submission successful:', result);
       toast.success('Boat listing created successfully!');
       navigate('/listings');
-
       // Reset form or redirect
       // router.push('/listings');
     } catch (error: any) {
