@@ -62,3 +62,10 @@ export {
   useGetAboutUsQuery,
   useUpdateAboutUsMutation,
 } from './aboutUs';
+
+// Our Story
+export {
+  useCreateOurStoryMutation,
+  useGetOurStoryQuery,
+  useUpdateOurStoryMutation,
+} from './ourStory';
