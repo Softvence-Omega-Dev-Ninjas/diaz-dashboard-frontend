@@ -83,3 +83,12 @@ export {
   useGetWhatSetsUsApartQuery,
   useUpdateWhatSetsUsApartMutation,
 } from './whatSetsUsApart';
+
+// Category
+export {
+  useCreateCategoryMutation,
+  useDeleteCategoryMutation,
+  useGetCategoryListsQuery,
+  useGetSingleCategoryQuery,
+  useUpdateCategoryMutation,
+} from './category';
