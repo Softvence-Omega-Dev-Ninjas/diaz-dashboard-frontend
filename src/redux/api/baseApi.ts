@@ -50,6 +50,7 @@ export const baseApi = createApi({
     'OurStory',
     'MissionVision',
     'WhatSetsUsApart',
+    'Subscription',
   ],
 
   endpoints: () => ({}),

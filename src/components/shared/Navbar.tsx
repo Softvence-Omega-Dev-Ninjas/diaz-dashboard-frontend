@@ -9,6 +9,7 @@ import { IoIosLogOut } from 'react-icons/io';
 import {
   LuChartColumn,
   LuClipboardList,
+  LuCreditCard,
   LuFileText,
   LuLayoutDashboard,
   LuLayoutGrid,
@@ -51,6 +52,11 @@ const navItems = [
     label: 'Content Management',
     path: '/content',
     icon: <LuFileText className="text-lg" />,
+  },
+  {
+    label: 'Subscription Management',
+    path: '/subscription',
+    icon: <LuCreditCard className="text-lg" />,
   },
   {
     label: 'Users & Permissions',

@@ -21,6 +21,7 @@ import ListingManagement from '../pages/ListingManagement';
 import Overview from '../pages/Overview';
 import SellerManagement from '../pages/SellerManagement';
 import Settings from '../pages/Settings';
+import SubscriptionManagement from '../pages/SubscriptionManagement';
 import UsersAndPermission from '../pages/UsersAndPermission';
 import LoginPage from '../pages/login/Login';
 import ProtectedRoute from './ProtectedRoute';
@@ -46,6 +47,7 @@ const router = createBrowserRouter([
           { path: 'yacht-leads', element: <AllLeads /> },
           { path: 'featured', element: <FeaturedAndHomeManagement /> },
           { path: 'content', element: <ContentManagement /> },
+          { path: 'subscription', element: <SubscriptionManagement /> },
           { path: 'content/new-article', element: <CreateNewArticle /> },
           { path: 'content/edit/:id', element: <UpdateBlogPost /> },
           { path: 'content/about-us', element: <AboutUs /> },
@@ -66,5 +68,6 @@ const router = createBrowserRouter([
     ],
   },
 ]);
+
 
 export default router;
