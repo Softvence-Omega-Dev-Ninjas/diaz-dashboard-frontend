@@ -45,6 +45,35 @@ export interface CreateSubscriptionPlanPayload {
   billingPeriodMonths: number;
 }
 
+export interface EmailSubscription {
+  id: string;
+  email: string;
+  site: string;
+  isActive: boolean;
+  subscribedAt: string;
+  unsubscribedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface EmailSubscriptionResponse {
+  success: boolean;
+  message: string;
+  data: EmailSubscription[];
+  metadata: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPage: number;
+  };
+}
+
+export interface EmailSubscriptionQueryParams {
+  site?: string;
+  page?: number;
+  limit?: number;
+}
+
 const subscriptionApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     getSubscriptionPlans: build.query<SubscriptionPlan[], void>({
@@ -98,6 +127,34 @@ const subscriptionApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Subscription'],
     }),
+
+    // Email Subscription Endpoints
+    getEmailSubscriptions: build.query<EmailSubscriptionResponse, EmailSubscriptionQueryParams>({
+      query: (params = {}) => {
+        const { site = 'FLORIDA', page = 1, limit = 10 } = params;
+        return {
+          url: `/email-subscribe/list`,
+          method: 'GET',
+          params: { site, page, limit },
+        };
+      },
+      providesTags: ['Subscription'],
+    }),
+
+    getActiveEmailSubscriptions: build.query<
+      EmailSubscriptionResponse,
+      EmailSubscriptionQueryParams
+    >({
+      query: (params = {}) => {
+        const { site = 'FLORIDA', page = 1, limit = 10 } = params;
+        return {
+          url: `/email-subscribe/active`,
+          method: 'GET',
+          params: { site, page, limit },
+        };
+      },
+      providesTags: ['Subscription'],
+    }),
   }),
 });
 
@@ -107,4 +164,6 @@ export const {
   useCreateSubscriptionPlanMutation,
   useUpdateSubscriptionPlanMutation,
   useDeleteSubscriptionPlanMutation,
+  useGetEmailSubscriptionsQuery,
+  useGetActiveEmailSubscriptionsQuery,
 } = subscriptionApi;

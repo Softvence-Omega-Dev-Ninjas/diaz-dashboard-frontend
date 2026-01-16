@@ -1,4 +1,7 @@
-import { PlanList } from '@/components/SubscriptionManagement';
+import {
+  EmailSubscriptionList,
+  PlanList,
+} from '@/components/SubscriptionManagement';
 import React, { useState } from 'react';
 
 type Tab = 'plan' | 'email';
@@ -28,7 +31,7 @@ const SubscriptionManagement: React.FC = () => {
               : 'bg-transparent text-gray-600 hover:text-gray-900'
               }`}
           >
-            Subscription Plan
+             Plan
           </button>
           <button
             onClick={() => setActiveTab('email')}
@@ -37,22 +40,13 @@ const SubscriptionManagement: React.FC = () => {
               : 'bg-transparent text-gray-600 hover:text-gray-900'
               }`}
           >
-            Subscription Email
+             Email
           </button>
         </div>
       </div>
 
       {/* Content */}
-      {activeTab === 'plan' ? (
-        <PlanList />
-      ) : (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            Subscription Emails
-          </h2>
-          <p className="text-gray-500">Subscription email content will go here.</p>
-        </div>
-      )}
+      {activeTab === 'plan' ? <PlanList /> : <EmailSubscriptionList />}
     </div>
   );
 };

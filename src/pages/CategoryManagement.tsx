@@ -89,10 +89,10 @@ const CategoryManagement: React.FC = () => {
         prev.map((category) =>
           category.id === id
             ? {
-                ...category,
-                imageFile: file,
-                imagePreview: reader.result as string,
-              }
+              ...category,
+              imageFile: file,
+              imagePreview: reader.result as string,
+            }
             : category,
         ),
       );
@@ -105,10 +105,10 @@ const CategoryManagement: React.FC = () => {
       prev.map((category) =>
         category.id === id
           ? {
-              ...category,
-              imageFile: undefined,
-              imagePreview: '',
-            }
+            ...category,
+            imageFile: undefined,
+            imagePreview: '',
+          }
           : category,
       ),
     );

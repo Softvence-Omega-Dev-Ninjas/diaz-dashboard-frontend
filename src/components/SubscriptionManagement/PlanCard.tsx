@@ -118,16 +118,6 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, onEdit, onDelete }) => {
             <Calendar className="w-3 h-3" />
             <span>Updated: {formatDate(plan.updatedAt)}</span>
           </div>
-          {plan.stripeProductId && (
-            <div className="text-xs text-gray-500">
-              <span className="font-medium">Stripe Product:</span> {plan.stripeProductId}
-            </div>
-          )}
-          {plan.stripePriceId && (
-            <div className="text-xs text-gray-500">
-              <span className="font-medium">Stripe Price:</span> {plan.stripePriceId}
-            </div>
-          )}
         </div>
 
         {/* Actions - At the end of card */}
