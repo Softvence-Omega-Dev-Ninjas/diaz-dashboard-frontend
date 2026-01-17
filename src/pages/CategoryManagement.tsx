@@ -251,57 +251,57 @@ const CategoryManagement: React.FC = () => {
     }
   };
 
-  const handleSave = async () => {
-    // Only save new (temp) categories
-    const tempCategories = categories.filter((category) =>
-      category.id?.startsWith('temp-'),
-    );
+  // const handleSave = async () => {
+  //   // Only save new (temp) categories
+  //   const tempCategories = categories.filter((category) =>
+  //     category.id?.startsWith('temp-'),
+  //   );
 
-    if (tempCategories.length === 0) {
-      Swal.fire(
-        'Info',
-        'No new categories to save. Existing categories are updated automatically.',
-        'info',
-      );
-      return;
-    }
+  //   if (tempCategories.length === 0) {
+  //     Swal.fire(
+  //       'Info',
+  //       'No new categories to save. Existing categories are updated automatically.',
+  //       'info',
+  //     );
+  //     return;
+  //   }
 
-    // Validate new categories
-    const hasEmptyFields = tempCategories.some(
-      (category) => !category.title.trim() || !category.imageFile,
-    );
+  //   // Validate new categories
+  //   const hasEmptyFields = tempCategories.some(
+  //     (category) => !category.title.trim() || !category.imageFile,
+  //   );
 
-    if (hasEmptyFields) {
-      Swal.fire(
-        'Error',
-        'Please fill in all category titles and upload images for new categories',
-        'error',
-      );
-      return;
-    }
+  //   if (hasEmptyFields) {
+  //     Swal.fire(
+  //       'Error',
+  //       'Please fill in all category titles and upload images for new categories',
+  //       'error',
+  //     );
+  //     return;
+  //   }
 
-    try {
-      const promises = tempCategories.map(async (category) => {
-        const formData = new FormData();
-        formData.append('title', category.title);
-        if (category.imageFile) {
-          formData.append('image', category.imageFile);
-        }
-        return createCategory(formData).unwrap();
-      });
+  //   try {
+  //     const promises = tempCategories.map(async (category) => {
+  //       const formData = new FormData();
+  //       formData.append('title', category.title);
+  //       if (category.imageFile) {
+  //         formData.append('image', category.imageFile);
+  //       }
+  //       return createCategory(formData).unwrap();
+  //     });
 
-      await Promise.all(promises);
-      await refetch();
-      Swal.fire('Success!', 'New categories created successfully', 'success');
-    } catch (error: any) {
-      console.error('Error saving categories:', error);
-      Swal.fire(
-        'Error!',
-        error?.message || 'Failed to save categories',
-        'error',
-      );
-    }
-  };
+  //     await Promise.all(promises);
+  //     await refetch();
+  //     Swal.fire('Success!', 'New categories created successfully', 'success');
+  //   } catch (error: any) {
+  //     console.error('Error saving categories:', error);
+  //     Swal.fire(
+  //       'Error!',
+  //       error?.message || 'Failed to save categories',
+  //       'error',
+  //     );
+  //   }
+  // };
 
   const handleBack = () => {
     navigate('/content');
