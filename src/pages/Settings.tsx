@@ -1,23 +1,27 @@
-import React, { useEffect, useState } from "react";
-import Branding from "@/components/Settings/Branding";
-import General from "@/components/Settings/General";
-import Notifications from "@/components/Settings/Notifications";
-import type { UpdateAdminSettingsPayload } from "@/redux/features/adminBannerApi/adminBannerApi";
-import { useGetAdminSettingsQuery, useUpdateAdminSettingsMutation } from "@/redux/features/adminSettingApis/adminSettingsApi";
-import toast from "react-hot-toast";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useEffect, useState } from 'react';
+import Branding from '@/components/Settings/Branding';
+import General from '@/components/Settings/General';
+import Notifications from '@/components/Settings/Notifications';
+import type { UpdateAdminSettingsPayload } from '@/redux/features/adminBannerApi/adminBannerApi';
+import {
+  useGetAdminSettingsQuery,
+  useUpdateAdminSettingsMutation,
+} from '@/redux/features/adminSettingApis/adminSettingsApi';
+import toast from 'react-hot-toast';
 
-type Tab = "general" | "branding" | "notifications";
+type Tab = 'general' | 'branding' | 'notifications';
 
 const Settings: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<Tab>("general");
+  const [activeTab, setActiveTab] = useState<Tab>('general');
 
   const { data, isLoading } = useGetAdminSettingsQuery();
   const [updateSettings, { isLoading: isSaving }] =
     useUpdateAdminSettingsMutation();
 
   const [formData, setFormData] = useState<UpdateAdminSettingsPayload>({
-    siteName: "",
-    currency: "USD",
+    siteName: '',
+    currency: 'USD',
     maintenanceMode: false,
     logo: null,
     newListingSubmitted: false,
@@ -37,18 +41,16 @@ const Settings: React.FC = () => {
     }
   }, [data]);
 
-const handleSave = async () => {
-  // const toastId = toast.loading("Saving settings...");
+  const handleSave = async () => {
+    // const toastId = toast.loading("Saving settings...");
 
-  try {
-    await updateSettings(formData).unwrap();
-    toast.success("Settings updated successfully");
-  } catch (error: any) {
-    toast.error(
-      error?.data?.message || "Failed to update settings"
-    );
-  }
-};
+    try {
+      await updateSettings(formData).unwrap();
+      toast.success('Settings updated successfully');
+    } catch (error: any) {
+      toast.error(error?.data?.message || 'Failed to update settings');
+    }
+  };
   if (isLoading) return <div>Loading settings...</div>;
 
   return (
@@ -66,21 +68,19 @@ const handleSave = async () => {
           disabled={isSaving}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50 cursor-pointer"
         >
-          {isSaving ? "Saving..." : "Save Changes"}
+          {isSaving ? 'Saving...' : 'Save Changes'}
         </button>
       </div>
 
       {/* Tabs */}
       <div className="mb-6">
         <div className="flex gap-2 p-1 bg-gray-100 rounded-lg">
-          {(["general", "branding", "notifications"] as Tab[]).map((tab) => (
+          {(['general', 'branding', 'notifications'] as Tab[]).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`px-4 py-2 text-sm font-medium rounded-md ${
-                activeTab === tab
-                  ? "bg-white shadow-sm"
-                  : "text-gray-600"
+                activeTab === tab ? 'bg-white shadow-sm' : 'text-gray-600'
               }`}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -89,13 +89,13 @@ const handleSave = async () => {
         </div>
       </div>
 
-      {activeTab === "general" && (
+      {activeTab === 'general' && (
         <General formData={formData} setFormData={setFormData} />
       )}
-      {activeTab === "branding" && (
+      {activeTab === 'branding' && (
         <Branding formData={formData} setFormData={setFormData} />
       )}
-      {activeTab === "notifications" && (
+      {activeTab === 'notifications' && (
         <Notifications formData={formData} setFormData={setFormData} />
       )}
     </div>

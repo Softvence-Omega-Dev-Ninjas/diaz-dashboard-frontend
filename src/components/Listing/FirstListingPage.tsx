@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { firstStepSchema } from '@/lib/formValidation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus } from 'lucide-react';
@@ -6,26 +7,20 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import {
   CABIN_COUNT_OPTIONS,
-  CITY_OPTIONS,
-  CLASS_OPTIONS,
-  CONDITION_OPTIONS,
   ENGINE_COUNT_OPTIONS,
-  FUEL_TYPE_OPTIONS,
   HEAD_COUNT_OPTIONS,
-  MAKE_OPTIONS,
-  MATERIAL_OPTIONS,
-  MODEL_OPTIONS,
-  STATE_OPTIONS,
   YEAR_OPTIONS,
 } from '../../lib/formConfig';
 import { combineMeasurements } from '../../lib/formUtils';
+import { CityField } from './CityField';
+import { DynamicFormSelect } from './DynamicFormSelect';
 import { EngineSection } from './EngineSection';
 import { FormField } from './FormField';
 import { GalleryUpload } from './GalleryUpload';
 import { ImageUpload } from './ImageUpload';
 import { MeasurementField } from './MeasurementField';
-import ProgressBar from './ProgressBar';
 import RightPreviewSection from './RightPreviewSection';
+import { StateField } from './StateField';
 
 type FirstStepFormData = z.infer<typeof firstStepSchema>;
 
@@ -43,18 +38,19 @@ interface FirstListingPageProps {
     },
   ) => void;
   initialData?: Partial<FirstStepFormData>;
-  currentStep: number;
+  isSubmitting?: boolean;
 }
 
 const FirstListingPage = ({
   onNext,
   initialData,
-  currentStep,
+  isSubmitting = false,
 }: FirstListingPageProps) => {
-  const { register, handleSubmit, watch } = useForm<FirstStepFormData>({
-    resolver: zodResolver(firstStepSchema),
-    defaultValues: initialData || {},
-  });
+  const { register, handleSubmit, watch, setValue } =
+    useForm<FirstStepFormData>({
+      resolver: zodResolver(firstStepSchema) as any,
+      defaultValues: initialData || {},
+    });
 
   const [coverPhoto, setCoverPhoto] = useState<string | null>(null);
   const [galleryPhotos, setGalleryPhotos] = useState<string[]>([]);
@@ -125,9 +121,6 @@ const FirstListingPage = ({
         {/* Left Form Section */}
         <div className="lg:col-span-2">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* Progress Bar */}
-            <ProgressBar currentStep={currentStep} />
-
             {/* Specifications Section */}
             <div className="bg-white rounded-lg border border-gray-200 p-4 md:p-6">
               <h2 className="text-lg font-semibold mb-4">Specifications</h2>
@@ -141,20 +134,22 @@ const FirstListingPage = ({
                   options={YEAR_OPTIONS}
                   required
                 />
-                <FormField
+                <DynamicFormSelect
                   label="Make:"
                   name="make"
+                  type="MAKE"
                   register={register}
-                  type="select"
-                  options={MAKE_OPTIONS}
+                  value={formValues.make}
+                  onChange={(value) => setValue('make', value)}
                   required
                 />
-                <FormField
+                <DynamicFormSelect
                   label="Model:"
                   name="model"
+                  type="MODEL"
                   register={register}
-                  type="select"
-                  options={MODEL_OPTIONS}
+                  value={formValues.model}
+                  onChange={(value) => setValue('model', value)}
                   required
                 />
               </div>
@@ -181,28 +176,43 @@ const FirstListingPage = ({
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <FormField
+                <DynamicFormSelect
                   label="Class:"
                   name="class"
+                  type="CLASS"
                   register={register}
-                  type="select"
-                  options={CLASS_OPTIONS}
+                  value={formValues.class}
+                  onChange={(value) => setValue('class', value)}
                   required
                 />
-                <FormField
+                <DynamicFormSelect
                   label="Material:"
                   name="material"
+                  type="MATERIAL"
                   register={register}
-                  type="select"
-                  options={MATERIAL_OPTIONS}
+                  value={formValues.material}
+                  onChange={(value) => setValue('material', value)}
                   required
                 />
-                <FormField
+                <DynamicFormSelect
                   label="Fuel Type:"
                   name="fuelType"
+                  type="FUEL_TYPE"
                   register={register}
-                  type="select"
-                  options={FUEL_TYPE_OPTIONS}
+                  value={formValues.fuelType}
+                  onChange={(value) => setValue('fuelType', value)}
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <DynamicFormSelect
+                  label="Propeller Material:"
+                  name="propMaterial"
+                  type="PROP_MATERIAL"
+                  register={register}
+                  value={formValues.propMaterial}
+                  onChange={(value) => setValue('propMaterial', value)}
                   required
                 />
               </div>
@@ -235,45 +245,56 @@ const FirstListingPage = ({
               </div>
             </div>
 
-            {/* Engine 1 Section */}
-            <EngineSection register={register} engineNumber={1} />
+            {/* Dynamic Engine Sections */}
+            {Array.from(
+              { length: Number(formValues.numberOfEngines) || 1 },
+              (_, index) => (
+                <EngineSection
+                  key={index + 1}
+                  register={register}
+                  setValue={setValue}
+                  watch={watch}
+                  engineNumber={index + 1}
+                />
+              ),
+            )}
 
             {/* Basic Information Section */}
             <div className="bg-white rounded-lg border border-gray-200 p-4 md:p-6">
               <h2 className="text-lg font-semibold mb-4">Basic Information</h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <FormField
+                <DynamicFormSelect
                   label="Condition:"
                   name="condition"
+                  type="CONDITION"
                   register={register}
-                  type="select"
-                  options={CONDITION_OPTIONS}
+                  value={formValues.condition}
+                  onChange={(value) => setValue('condition', value)}
                   required
                 />
                 <FormField
                   label="Price:"
                   name="price"
                   register={register}
+                  type="number"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <FormField
-                  label="City:"
-                  name="city"
-                  register={register}
-                  type="select"
-                  options={CITY_OPTIONS}
-                  required
-                />
-                <FormField
-                  label="State:"
+                <StateField
                   name="state"
                   register={register}
-                  type="select"
-                  options={STATE_OPTIONS}
+                  setValue={setValue}
+                  watch={watch}
+                  required
+                />
+                <CityField
+                  name="city"
+                  register={register}
+                  setValue={setValue}
+                  watch={watch}
                   required
                 />
                 <FormField
@@ -351,8 +372,11 @@ const FirstListingPage = ({
                   label="Enter Embed URL (YouTube or Vimeo):"
                   name="embedUrl"
                   register={register}
-                  placeholder="url"
+                  placeholder="https://youtube.com/embed/... or https://vimeo.com/..."
                 />
+                <p className="text-xs text-gray-500 mt-1">
+                  Optional: Add a YouTube or Vimeo embed URL for video preview
+                </p>
               </div>
 
               <div className="mb-4">
@@ -383,10 +407,39 @@ const FirstListingPage = ({
               </button>
               <button
                 type="submit"
-                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors flex items-center gap-2"
+                disabled={isSubmitting}
+                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Next
-                <span>→</span>
+                {isSubmitting ? (
+                  <>
+                    <svg
+                      className="animate-spin h-5 w-5 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    Submitting...
+                  </>
+                ) : (
+                  <>
+                    Post Now
+                    <span>→</span>
+                  </>
+                )}
               </button>
             </div>
           </form>

@@ -2,13 +2,16 @@
 // Utility functions for form data processing
 
 export const formatMeasurement = (
-  ft?: string,
-  inches?: string,
+  ft?: number | string,
+  inches?: number | string,
 ): string | undefined => {
-  if (!ft && !inches) return undefined;
+  if (ft === undefined && inches === undefined) return undefined;
 
-  const ftPart = ft ? `${ft}ft` : '';
-  const inPart = inches ? `${inches}in` : '';
+  const ftNum = typeof ft === 'string' ? parseInt(ft) : ft;
+  const inNum = typeof inches === 'string' ? parseInt(inches) : inches;
+
+  const ftPart = ftNum ? `${ftNum}ft` : '';
+  const inPart = inNum ? `${inNum}in` : '';
 
   return `${ftPart} ${inPart}`.trim();
 };

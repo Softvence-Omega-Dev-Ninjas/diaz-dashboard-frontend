@@ -1,4 +1,5 @@
 import { LuCircleCheckBig, LuFileText, LuPlus, LuStar } from 'react-icons/lu';
+import { Link } from 'react-router-dom';
 
 const QuickActions = () => {
   return (
@@ -6,20 +7,28 @@ const QuickActions = () => {
       <h2 className="text-lg font-semibold">Quick Actions</h2>
       <ul className="mt-5 space-y-3 border-b border-gray-200 pb-5 shrink-0">
         <li className="bg-[#006EF0] text-white flex items-center gap-2 px-4 py-2 rounded-lg cursor-pointer hover:bg-[#005acc] transition-colors">
-          <LuPlus className="h-4 w-4 text-white" />
-          <span className="">Add New Yacht</span>
+          <Link to="/listings/add" className="flex items-center gap-2">
+            <LuPlus className="h-4 w-4" />
+            <span className="">Add New Listing</span>
+          </Link>
         </li>
         <li className="border border-gray-200  flex items-center gap-2 px-4 py-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
-          <LuCircleCheckBig className="h-4 w-4" />
-          <span className="">Approve Listings</span>
+          <Link to="/listings" className="flex items-center gap-2">
+            <LuCircleCheckBig className="h-4 w-4" />
+            <span className="">Manage Listings</span>
+          </Link>
         </li>
         <li className="border border-gray-200  flex items-center gap-2 px-4 py-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
-          <LuFileText className="h-4 w-4" />
-          <span className="">Manage Blog Post</span>
+          <Link to="/content" className="flex items-center gap-2">
+            <LuFileText className="h-4 w-4" />
+            <span className="">Manage Content</span>
+          </Link>
         </li>
         <li className="border border-gray-200  flex items-center gap-2 px-4 py-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
-          <LuStar className="h-4 w-4" />
-          <span className="">Update Featured</span>
+          <Link to="/featured" className="flex items-center gap-2">
+            <LuStar className="h-4 w-4" />
+            <span className="">Update Featured</span>
+          </Link>
         </li>
       </ul>
       <div className="flex-1 flex flex-col">

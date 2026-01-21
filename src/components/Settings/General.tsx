@@ -1,6 +1,7 @@
-import type { UpdateAdminSettingsPayload } from "@/redux/features/adminBannerApi/adminBannerApi";
-import React from "react";
-import currencyCodes from "currency-codes";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import type { UpdateAdminSettingsPayload } from '@/redux/features/adminBannerApi/adminBannerApi';
+import React from 'react';
+import currencyCodes from 'currency-codes';
 
 interface CurrencyOption {
   code: string;
@@ -11,8 +12,7 @@ const CURRENCIES: CurrencyOption[] = currencyCodes.data
   .filter((c) => c.countries && c.countries.length > 0)
   .map((c) => ({
     code: c.code,
-    // @ts-ignore: currency-codes has no symbol property officially
-    label: `${c.code} (${(c as any).symbol || ""}) - ${c.currency}`,
+    label: `${c.code} (${(c as any).symbol || ''}) - ${c.currency}`,
   }))
   .sort((a, b) => a.code.localeCompare(b.code));
 
@@ -22,20 +22,17 @@ interface GeneralProps {
 }
 
 const General: React.FC<GeneralProps> = ({ formData, setFormData }) => {
-  const renderSwitch = (
-    value: boolean,
-    onChange: () => void
-  ) => (
+  const renderSwitch = (value: boolean, onChange: () => void) => (
     <button
       type="button"
       onClick={onChange}
       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none cursor-pointer ${
-        value ? "bg-blue-600" : "bg-gray-300"
+        value ? 'bg-blue-600' : 'bg-gray-300'
       }`}
     >
       <span
         className={`inline-block h-4 w-4 transform bg-white rounded-full transition-transform ${
-          value ? "translate-x-6" : "translate-x-1"
+          value ? 'translate-x-6' : 'translate-x-1'
         }`}
       />
     </button>
@@ -89,7 +86,7 @@ const General: React.FC<GeneralProps> = ({ formData, setFormData }) => {
             setFormData((prev) => ({
               ...prev,
               maintenanceMode: !prev.maintenanceMode,
-            }))
+            })),
           )}
         </div>
       </div>

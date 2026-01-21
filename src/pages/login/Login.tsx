@@ -1,16 +1,17 @@
-import React, { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
-import { useAppDispatch } from "@/redux/typeHook";
-import { useNavigate } from "react-router-dom";
-import { useLoginMutation } from "@/redux/features/auth/authApi";
-import { setCredentials } from "@/redux/features/auth/authSlice";
-import toast from "react-hot-toast";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useState } from 'react';
+import { Eye, EyeOff } from 'lucide-react';
+import { useAppDispatch } from '@/redux/typeHook';
+import { useNavigate } from 'react-router-dom';
+import { useLoginMutation } from '@/redux/features/auth/authApi';
+import { setCredentials } from '@/redux/features/auth/authSlice';
+import toast from 'react-hot-toast';
 
 const LoginPage: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe , setRememberMe] = useState(false)
+  const [rememberMe, setRememberMe] = useState(false);
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -18,8 +19,8 @@ const LoginPage: React.FC = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if(!rememberMe) {
-        return toast.error("Please Click On rememberMe!")
+    if (!rememberMe) {
+      return toast.error('Please Click On rememberMe!');
     }
 
     try {
@@ -29,24 +30,22 @@ const LoginPage: React.FC = () => {
         setCredentials({
           token: res.data.token,
           user: res.data.user,
-        })
+        }),
       );
 
-      navigate("/");
-      toast("Welcome Back!")
+      navigate('/');
+      toast('Welcome Back!');
     } catch (err: any) {
-      toast.error(err?.data?.message || "Login failed");
+      toast.error(err?.data?.message || 'Login failed');
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center  px-4">
       <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
-            Welcome Back
-          </h1>
+          <h1 className="text-3xl font-bold text-gray-900">Welcome Back</h1>
           <p className="text-sm text-gray-500 mt-2">
             Please sign in to continue to your dashboard
           </p>
@@ -76,7 +75,7 @@ const LoginPage: React.FC = () => {
 
             <div className="relative">
               <input
-                type={showPassword ? "text" : "password"}
+                type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
@@ -105,10 +104,7 @@ const LoginPage: React.FC = () => {
               Remember me
             </label>
 
-            <a
-              href="#"
-              className="text-sm text-blue-600 hover:underline"
-            >
+            <a href="#" className="text-sm text-blue-600 hover:underline">
               Forgot password?
             </a>
           </div>
@@ -119,7 +115,7 @@ const LoginPage: React.FC = () => {
             disabled={isLoading}
             className="w-full cursor-pointer py-2.5 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition disabled:opacity-50"
           >
-            {isLoading ? "Signing in..." : "Sign In"}
+            {isLoading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
 

@@ -9,6 +9,7 @@ import { IoIosLogOut } from 'react-icons/io';
 import {
   LuChartColumn,
   LuClipboardList,
+  LuCreditCard,
   LuFileText,
   LuLayoutDashboard,
   LuLayoutGrid,
@@ -38,8 +39,8 @@ const navItems = [
     icon: <LuUsers className="text-lg" />,
   },
   {
-    label: 'Daily Leads',
-    path: '/daily-leads',
+    label: 'Yacht Leads',
+    path: '/yacht-leads',
     icon: <LuClipboardList className="text-lg" />,
   },
   {
@@ -51,6 +52,16 @@ const navItems = [
     label: 'Content Management',
     path: '/content',
     icon: <LuFileText className="text-lg" />,
+  },
+  {
+    label: 'Subscription Management',
+    path: '/subscription',
+    icon: <LuCreditCard className="text-lg" />,
+  },
+  {
+    label: 'Promo Code Management',
+    path: '/promoCodeManagement',
+    icon: <LuLayoutGrid className="text-lg" />,
   },
   {
     label: 'Users & Permissions',
@@ -97,21 +108,19 @@ const Navbar = () => {
     };
   }, [isMobileMenuOpen]);
 
-  const navigate = useNavigate()
-const handleLogout = () => {
+  const navigate = useNavigate();
+  const handleLogout = () => {
     dispatch(logout());
 
     // persistor.purge();
 
+    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
 
-    localStorage.removeItem("token");
-    sessionStorage.removeItem("token");
+    toast.success('Logout Successfully');
 
-    toast.success("Logout Successfully");
-
-    navigate("/admin-login", { replace: true });
+    navigate('/admin-login', { replace: true });
   };
-
 
   const toggleMobileMenu = useCallback(() => {
     setIsMobileMenuOpen((prev) => !prev);

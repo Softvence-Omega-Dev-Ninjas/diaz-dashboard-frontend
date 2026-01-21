@@ -1,4 +1,4 @@
-import { baseApi } from "@/redux/api/baseApi";
+import { baseApi } from '@/redux/api/baseApi';
 
 export interface Banner {
   _id: string;
@@ -6,7 +6,7 @@ export interface Banner {
   site: string;
   bannerTitle: string;
   subtitle?: string;
-  background?: string; 
+  background?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -40,7 +40,7 @@ export interface AdminSettings {
   maintenanceMode: boolean;
   logoId: string | null;
   newListingSubmitted: boolean;
-  newSellerRegistration: boolean ;
+  newSellerRegistration: boolean;
   createdAt: string;
   updatedAt: string;
   logo: string | null;
@@ -55,7 +55,6 @@ export interface UpdateAdminSettingsPayload {
   newSellerRegistration?: boolean;
   logo?: File | null | string;
 }
-
 
 export const adminBannerApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -105,7 +104,7 @@ export const adminBannerApi = baseApi.injectEndpoints({
 
         return {
           url: `/banners/${id}`,
-          method: 'PATCH', 
+          method: 'PATCH',
           body: formData,
         };
       },
@@ -113,7 +112,6 @@ export const adminBannerApi = baseApi.injectEndpoints({
     }),
   }),
 });
-
 
 export const {
   useCreateBannerMutation,

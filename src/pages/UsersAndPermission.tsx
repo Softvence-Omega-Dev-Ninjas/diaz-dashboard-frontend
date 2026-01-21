@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AddAdminModal, UpdateRoleModal } from '@/components/UserPermission';
 import {
   useChangeRoleMutation,
