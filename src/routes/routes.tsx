@@ -25,6 +25,7 @@ import SubscriptionManagement from '../pages/SubscriptionManagement';
 import UsersAndPermission from '../pages/UsersAndPermission';
 import LoginPage from '../pages/login/Login';
 import ProtectedRoute from './ProtectedRoute';
+import ManagePromoCodes from '@/pages/ManagePromoCodes';
 
 const router = createBrowserRouter([
   {
@@ -63,6 +64,7 @@ const router = createBrowserRouter([
           { path: 'users', element: <UsersAndPermission /> },
           { path: 'analytics', element: <AnalyticsAndReports /> },
           { path: 'settings', element: <Settings /> },
+          { path: 'promoCodeManagement', element: <ManagePromoCodes /> }
         ],
       },
     ],

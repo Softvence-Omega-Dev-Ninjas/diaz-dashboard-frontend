@@ -59,6 +59,11 @@ const navItems = [
     icon: <LuCreditCard className="text-lg" />,
   },
   {
+    label: 'Promo Code Management',
+    path: '/promoCodeManagement',
+    icon: <LuLayoutGrid className="text-lg" />,
+  },
+  {
     label: 'Users & Permissions',
     path: '/users',
     icon: <LuShield className="text-lg" />,

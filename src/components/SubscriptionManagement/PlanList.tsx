@@ -12,6 +12,7 @@ import Swal from 'sweetalert2';
 import CreatePlanForm from './CreatePlanForm';
 import EditPlanForm from './EditPlanForm';
 import PlanCard from './PlanCard';
+import { Link } from 'react-router-dom';
 
 const PlanList: React.FC = () => {
   const { data: plans = [], isLoading } = useGetSubscriptionPlansQuery();
@@ -123,7 +124,11 @@ const PlanList: React.FC = () => {
               {plans.length} of 3 plans created
             </p>
           </div>
-          <button
+          <div className='flex items-center gap-2'>
+            <Link to="/promoCodeManagement" className="px-4 py-2 mr-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium">
+              Manage Promo Codes
+            </Link>
+            <button
             onClick={() => setShowCreateForm(true)}
             disabled={plans.length >= 3}
             className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors w-full sm:w-auto justify-center ${
@@ -135,6 +140,7 @@ const PlanList: React.FC = () => {
             <Plus className="w-4 h-4" />
             Create New Plan
           </button>
+          </div>
         </div>
 
         {/* Plans Grid */}
