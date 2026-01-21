@@ -2,27 +2,41 @@ import { baseApi } from '@/redux/api/baseApi';
 
 const leadsApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
-    getYachtLeads: build.query({
-      query: () => ({
-        url: `/admin/dashboard/summary`,
+    getCustomerContacted: build.query({
+      query: ({ page, limit }) => ({
+        url: `/contact/contact-us?page=${page}&limit=${limit}`,
         method: 'GET',
       }),
+      providesTags: ['Leads'],
     }),
 
-    getRecentActivity: build.query({
-      query: () => ({
-        url: `/admin/dashboard/recent-activity`,
-        method: 'GET',
-      }),
+    getBoatLeads: build.query({
+      query: ({ page, limit, source }) => {
+        let url = `/contact?page=${page}&limit=${limit}&type=INDIVIDUAL_LISTING`;
+        if (source) {
+          url += `&source=${source}`;
+        }
+        return {
+          url,
+          method: 'GET',
+        };
+      },
+      providesTags: ['Leads'],
     }),
 
-    getPerformanceOverview: build.query({
-      query: () => ({
-        url: `/admin/dashboard/performance-overview`,
-        method: 'GET',
+    updateBoatLeadsStatus: build.mutation({
+      query: ({ leadId }) => ({
+        url: `/contact/${leadId}/status`,
+        method: 'PATCH',
+        body: { status: 'Contacted' },
       }),
+      invalidatesTags: ['Leads'],
     }),
   }),
 });
 
-export const {} = leadsApi;
+export const {
+  useGetCustomerContactedQuery,
+  useGetBoatLeadsQuery,
+  useUpdateBoatLeadsStatusMutation,
+} = leadsApi;

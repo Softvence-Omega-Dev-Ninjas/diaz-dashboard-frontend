@@ -25,3 +25,12 @@ export type {
   PermissionUser,
   UpdateRoleRequest,
 } from './permission-types';
+
+// Promo Code types
+export type {
+  CreatePromoCodeRequest,
+  PromoCode,
+  PromoCodeResponse,
+  SinglePromoCodeResponse,
+  UpdatePromoCodeRequest,
+} from './promo-code-types';

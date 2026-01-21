@@ -1,277 +1,308 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { ArrowLeft, Eye, Plus, Save, Trash2 } from 'lucide-react';
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {
+  useCreateWhyUsMutation,
+  useDeleteWhyUsMutation,
+  useGetWhyUsQuery,
+  useUpdateWhyUsMutation,
+} from '@/redux/features/contentmanagement/contentmanagement';
+import React, { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
-import { EditorPreview, RichTextEditor } from '../components/Editor';
-
-interface WhyUsItem {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-}
-
-interface WhyUsFormData {
-  mainTitle: string;
-  subtitle: string;
-  items: WhyUsItem[];
-}
+import {
+  WhyUsForm,
+  WhyUsHeader,
+  WhyUsPreview,
+  WhyUsSidebar,
+  type WhyUsFormData,
+} from '../components/WhyUs';
 
 const WhyUs: React.FC = () => {
-  const navigate = useNavigate();
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [selectedSite, setSelectedSite] = useState<'FLORIDA' | 'JUPITER'>(
+    'FLORIDA',
+  );
   const [formData, setFormData] = useState<WhyUsFormData>({
-    mainTitle: 'Why Choose Us',
-    subtitle: 'Discover what makes us the best choice for your needs',
-    items: [{ id: '1', title: '', description: '', icon: '✓' }],
+    title: '',
+    description: '',
+    excellence: '',
+    boatsSoldPerYear: '',
+    listingViewed: '',
+    buttonText: '',
+    buttonLink: '',
+    image1: null,
+    image2: null,
+    image3: null,
+    site: 'FLORIDA',
   });
 
+  const { data: whyUsData, isLoading: isWhyUsLoading } =
+    useGetWhyUsQuery(selectedSite);
+  const [createWhyUs, { isLoading: isCreating }] = useCreateWhyUsMutation();
+  const [updateWhyUs, { isLoading: isUpdating }] = useUpdateWhyUsMutation();
+  const [deleteWhyUs] = useDeleteWhyUsMutation();
+
+  // Load data when fetched or site changes
+  useEffect(() => {
+    if (whyUsData?.data) {
+      const data = whyUsData.data;
+      setFormData({
+        title: data.title || '',
+        description: data.description || '',
+        excellence: data.excellence || '',
+        boatsSoldPerYear: data.boatsSoldPerYear || '',
+        listingViewed: data.listingViewed || '',
+        buttonText: data.buttonText || '',
+        buttonLink: data.buttonLink || '',
+        image1: data.image1?.url
+          ? { id: data.image1.id, url: data.image1.url }
+          : null,
+        image2: data.image2?.url
+          ? { id: data.image2.id, url: data.image2.url }
+          : null,
+        image3: data.image3?.url
+          ? { id: data.image3.id, url: data.image3.url }
+          : null,
+        site: selectedSite,
+      });
+    } else {
+      // Reset to default when no data
+      setFormData({
+        title: '',
+        description: '',
+        excellence: '',
+        boatsSoldPerYear: '',
+        listingViewed: '',
+        buttonText: '',
+        buttonLink: '',
+        image1: null,
+        image2: null,
+        image3: null,
+        site: selectedSite,
+      });
+    }
+  }, [whyUsData, selectedSite]);
+
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (name === 'site') {
+      setSelectedSite(value as 'FLORIDA' | 'JUPITER');
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
-  const handleItemChange = (
-    id: string,
-    field: keyof WhyUsItem,
-    value: string,
+  const handleImageChange = (
+    imageKey: 'image1' | 'image2' | 'image3',
+    file: File | null,
   ) => {
-    setFormData((prev) => ({
-      ...prev,
-      items: prev.items.map((item) =>
-        item.id === id ? { ...item, [field]: value } : item,
-      ),
-    }));
+    if (file) {
+      const preview = URL.createObjectURL(file);
+      setFormData((prev) => ({
+        ...prev,
+        [imageKey]: { file, preview },
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [imageKey]: null,
+      }));
+    }
   };
 
-  const addItem = () => {
-    const newId = Date.now().toString();
-    setFormData((prev) => ({
-      ...prev,
-      items: [
-        ...prev.items,
-        { id: newId, title: '', description: '', icon: '✓' },
-      ],
-    }));
-  };
-
-  const removeItem = (id: string) => {
-    if (formData.items.length <= 1) {
-      Swal.fire('Error', 'At least one item is required', 'error');
-      return;
+  const removeImage = (imageKey: 'image1' | 'image2' | 'image3') => {
+    if (formData[imageKey]?.preview) {
+      URL.revokeObjectURL(formData[imageKey]!.preview!);
     }
     setFormData((prev) => ({
       ...prev,
-      items: prev.items.filter((item) => item.id !== id),
+      [imageKey]: null,
     }));
   };
 
   const handleSave = async () => {
-    const hasEmptyFields = formData.items.some(
-      (item) => !item.title.trim() || !item.description.trim(),
-    );
+    // Validation
+    if (!formData.title.trim()) {
+      Swal.fire('Error', 'Title is required', 'error');
+      return;
+    }
 
-    if (!formData.mainTitle.trim() || hasEmptyFields) {
-      Swal.fire('Error', 'Please fill in all required fields', 'error');
+    // Check that all 3 images are present (either existing or new)
+    if (!formData.image1 || !formData.image2 || !formData.image3) {
+      Swal.fire('Error', 'All 3 images are required', 'error');
       return;
     }
 
     try {
-      // TODO: Implement API call to save Why Us data
-      Swal.fire('Success!', 'Why Us page updated successfully', 'success');
+      const formDataToSend = new FormData();
+
+      if (whyUsData?.data) {
+        // Update existing Why Us
+        formDataToSend.append('title', formData.title.trim());
+        if (formData.description.trim())
+          formDataToSend.append('description', formData.description.trim());
+        if (formData.excellence.trim())
+          formDataToSend.append('excellence', formData.excellence.trim());
+        if (formData.boatsSoldPerYear.trim())
+          formDataToSend.append(
+            'boatsSoldPerYear',
+            formData.boatsSoldPerYear.trim(),
+          );
+        if (formData.listingViewed.trim())
+          formDataToSend.append('listingViewed', formData.listingViewed.trim());
+        if (formData.buttonText.trim())
+          formDataToSend.append('buttonText', formData.buttonText.trim());
+        if (formData.buttonLink.trim())
+          formDataToSend.append('buttonLink', formData.buttonLink.trim());
+
+        // Add new images if selected (replaces existing)
+        if (formData.image1?.file) {
+          formDataToSend.append('image1', formData.image1.file);
+        }
+        if (formData.image2?.file) {
+          formDataToSend.append('image2', formData.image2.file);
+        }
+        if (formData.image3?.file) {
+          formDataToSend.append('image3', formData.image3.file);
+        }
+
+        await updateWhyUs({
+          site: selectedSite,
+          whyUsContent: formDataToSend,
+        }).unwrap();
+        Swal.fire('Success!', 'Why Us section updated successfully', 'success');
+      } else {
+        // Create new Why Us
+        formDataToSend.append('site', selectedSite);
+        formDataToSend.append('title', formData.title.trim());
+        if (formData.description.trim())
+          formDataToSend.append('description', formData.description.trim());
+        if (formData.excellence.trim())
+          formDataToSend.append('excellence', formData.excellence.trim());
+        if (formData.boatsSoldPerYear.trim())
+          formDataToSend.append(
+            'boatsSoldPerYear',
+            formData.boatsSoldPerYear.trim(),
+          );
+        if (formData.listingViewed.trim())
+          formDataToSend.append('listingViewed', formData.listingViewed.trim());
+        if (formData.buttonText.trim())
+          formDataToSend.append('buttonText', formData.buttonText.trim());
+        if (formData.buttonLink.trim())
+          formDataToSend.append('buttonLink', formData.buttonLink.trim());
+
+        // All 3 images are required for creation
+        if (formData.image1?.file) {
+          formDataToSend.append('image1', formData.image1.file);
+        }
+        if (formData.image2?.file) {
+          formDataToSend.append('image2', formData.image2.file);
+        }
+        if (formData.image3?.file) {
+          formDataToSend.append('image3', formData.image3.file);
+        }
+
+        await createWhyUs({
+          whyUsContent: formDataToSend,
+        }).unwrap();
+        Swal.fire('Success!', 'Why Us section created successfully', 'success');
+      }
     } catch (error) {
-      Swal.fire('Error!', 'Failed to update Why Us page', 'error');
+      Swal.fire(
+        'Error!',
+        (error as { data?: { message?: string } })?.data?.message ||
+          'Failed to save Why Us section',
+        'error',
+      );
     }
   };
 
-  const handleBack = () => {
-    navigate('/content');
+  const handleDelete = async () => {
+    if (!whyUsData?.data) {
+      Swal.fire('Error', 'No Why Us data to delete', 'error');
+      return;
+    }
+
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: `Do you want to delete the Why Us section for ${selectedSite}? This action cannot be undone!`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc2626',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await deleteWhyUs({ site: selectedSite }).unwrap();
+        Swal.fire(
+          'Deleted!',
+          'Why Us section has been deleted successfully',
+          'success',
+        );
+        // Reset form
+        setFormData({
+          title: '',
+          description: '',
+          excellence: '',
+          boatsSoldPerYear: '',
+          listingViewed: '',
+          buttonText: '',
+          buttonLink: '',
+          image1: null,
+          image2: null,
+          image3: null,
+          site: selectedSite,
+        });
+      } catch (error) {
+        Swal.fire(
+          'Error!',
+          (error as { data?: { message?: string } })?.data?.message ||
+            'Failed to delete Why Us section',
+          'error',
+        );
+      }
+    }
   };
 
   return (
-    <div className="p-4 md:p-6 max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={handleBack}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <div>
-            <h1 className="text-xl md:text-2xl font-semibold text-gray-900">
-              Why Us Content
-            </h1>
-            <p className="text-sm text-gray-500 mt-1">
-              Highlight your competitive advantages
-            </p>
+    <div className="min-h-screen bg-gray-50">
+      <WhyUsHeader
+        isPreviewMode={isPreviewMode}
+        setIsPreviewMode={setIsPreviewMode}
+        onSave={handleSave}
+        isLoading={isCreating || isUpdating}
+      />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {isWhyUsLoading ? (
+          <div className="flex items-center justify-center p-8">
+            <p className="text-gray-500">Loading...</p>
           </div>
-        </div>
-
-        <div className="flex items-center gap-3 w-full sm:w-auto">
-          <button
-            onClick={() => setIsPreviewMode(!isPreviewMode)}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors"
-          >
-            <Eye className="w-4 h-4" />
-            {isPreviewMode ? 'Edit' : 'Preview'}
-          </button>
-          <button
-            onClick={handleSave}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-          >
-            <Save className="w-4 h-4" />
-            Save Changes
-          </button>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        {!isPreviewMode ? (
-          <div className="space-y-6">
-            {/* Main Title */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Main Title <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                name="mainTitle"
-                value={formData.mainTitle}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter main title..."
-              />
-            </div>
-
-            {/* Subtitle */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Subtitle
-              </label>
-              <input
-                type="text"
-                name="subtitle"
-                value={formData.subtitle}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter subtitle..."
-              />
-            </div>
-
-            {/* Items */}
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-medium text-gray-700">
-                  Why Us Items <span className="text-red-500">*</span>
-                </h3>
-                <button
-                  onClick={addItem}
-                  className="flex items-center gap-2 px-3 py-1.5 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-                >
-                  <Plus className="w-4 h-4" />
-                  Add Item
-                </button>
-              </div>
-
-              <div className="space-y-4">
-                {formData.items.map((item, index) => (
-                  <div
-                    key={item.id}
-                    className="p-4 border border-gray-200 rounded-lg space-y-3"
-                  >
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-medium text-gray-700">
-                        Item {index + 1}
-                      </h4>
-                      {formData.items.length > 1 && (
-                        <button
-                          onClick={() => removeItem(item.id)}
-                          className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      )}
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-xs text-gray-600 mb-1">
-                          Icon/Emoji
-                        </label>
-                        <input
-                          type="text"
-                          value={item.icon}
-                          onChange={(e) =>
-                            handleItemChange(item.id, 'icon', e.target.value)
-                          }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          placeholder="✓"
-                          maxLength={2}
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs text-gray-600 mb-1">
-                          Title
-                        </label>
-                        <input
-                          type="text"
-                          value={item.title}
-                          onChange={(e) =>
-                            handleItemChange(item.id, 'title', e.target.value)
-                          }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          placeholder="Enter title..."
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs text-gray-600 mb-1">
-                        Description
-                      </label>
-                      <RichTextEditor
-                        value={item.description}
-                        onChange={(value) =>
-                          handleItemChange(item.id, 'description', value)
-                        }
-                        placeholder="Enter description..."
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+        ) : isPreviewMode ? (
+          <WhyUsPreview formData={formData} />
         ) : (
-          <div className="prose max-w-none">
-            <h1 className="text-3xl font-bold mb-2 text-center">
-              {formData.mainTitle}
-            </h1>
-            {formData.subtitle && (
-              <p className="text-gray-600 mb-8 text-center">
-                {formData.subtitle}
-              </p>
-            )}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {formData.items.map((item) => (
-                <div
-                  key={item.id}
-                  className="p-6 border border-gray-200 rounded-lg"
-                >
-                  <div className="text-4xl mb-3">{item.icon}</div>
-                  <h3 className="text-lg font-semibold mb-2">
-                    {item.title || 'Title'}
-                  </h3>
-                  <EditorPreview content={item.description || 'Description'} />
-                </div>
-              ))}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Main Content */}
+            <div className="lg:col-span-2">
+              <WhyUsForm
+                formData={formData}
+                onInputChange={handleInputChange}
+                onImageChange={handleImageChange}
+                onRemoveImage={removeImage}
+              />
             </div>
+
+            {/* Sidebar */}
+            <WhyUsSidebar
+              selectedSite={selectedSite}
+              onSiteChange={setSelectedSite}
+              hasData={!!whyUsData?.data}
+              onDelete={handleDelete}
+            />
           </div>
         )}
       </div>

@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import FirstListingPage from '@/components/Listing/FirstListingPage';
-import SecondListingPage from '@/components/Listing/SecondListingPage';
 import { useCreateListingMutation } from '@/redux/features/listingManagement/listingManagement';
-import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
@@ -25,13 +23,13 @@ interface FormData {
   numberOfCabins?: number;
   numberOfHeads?: number;
 
-  // Engine 1
-  engine1Hours?: number;
-  engine1Make?: string;
-  engine1Model?: string;
-  engine1TotalPower?: number;
-  engine1FuelType?: string;
-  engine1PropellerType?: string;
+  // Dynamic Engines (supports multiple engines)
+  [key: `engine${number}Hours`]: number | undefined;
+  [key: `engine${number}Make`]: string | undefined;
+  [key: `engine${number}Model`]: string | undefined;
+  [key: `engine${number}TotalPower`]: number | undefined;
+  [key: `engine${number}FuelType`]: string | undefined;
+  [key: `engine${number}PropellerType`]: string | undefined;
 
   // Basic Information
   condition?: string;
@@ -58,16 +56,6 @@ interface FormData {
   // Engine Types
   engineType?: string;
   propType?: string;
-
-  // Step 2 - Seller Information
-  firstName?: string;
-  lastName?: string;
-  contactNumber?: string;
-  email?: string;
-  country?: string;
-  sellerCity?: string;
-  sellerState?: string;
-  sellerZip?: string;
 }
 
 /**
@@ -80,13 +68,15 @@ const createBoatRegistrationFormData = async (
   const formData = new FormData();
 
   // Helper to safely parse numbers
-  const toNumber = (value: number | string | undefined): number => {
+  const toNumber = (value: number | string | null | undefined): number => {
     if (typeof value === 'number') return value;
+    if (value === null || value === undefined) return 0;
     return parseInt(String(value || '0')) || 0;
   };
 
-  const toFloat = (value: number | string | undefined): number => {
+  const toFloat = (value: number | string | null | undefined): number => {
     if (typeof value === 'number') return value;
+    if (value === null || value === undefined) return 0;
     return parseFloat(String(value || '0')) || 0;
   };
 
@@ -114,16 +104,26 @@ const createBoatRegistrationFormData = async (
     make: data.make || '',
     fuelType: data.fuelType || '',
     state: data.state || '',
-    engines: [
-      {
-        hours: toNumber(data.engine1Hours),
-        horsepower: toNumber(data.engine1TotalPower),
-        make: data.engine1Make || '',
-        model: data.engine1Model || '',
-        fuelType: data.engine1FuelType || '',
-        propellerType: data.engine1PropellerType || '',
+    engines: Array.from(
+      { length: toNumber(data.numberOfEngines) || 1 },
+      (_, index) => {
+        const engineNum = index + 1;
+        return {
+          hours: toNumber(
+            (data as any)[`engine${engineNum}Hours`] as number | undefined,
+          ),
+          horsepower: toNumber(
+            (data as any)[`engine${engineNum}TotalPower`] as number | undefined,
+          ),
+          make: ((data as any)[`engine${engineNum}Make`] as string) || '',
+          model: ((data as any)[`engine${engineNum}Model`] as string) || '',
+          fuelType:
+            ((data as any)[`engine${engineNum}FuelType`] as string) || '',
+          propellerType:
+            ((data as any)[`engine${engineNum}PropellerType`] as string) || '',
+        };
       },
-    ],
+    ),
     extraDetails:
       data.moreDetails?.map((detail) => ({
         key: detail.title,
@@ -142,6 +142,11 @@ const createBoatRegistrationFormData = async (
     description: data.description || '',
     propType: data.propType || '',
   };
+
+  // Debug: Log engines array
+  console.log('\n🔧 Engines Array:', boatInfo.engines);
+  console.log(`📊 Number of Engines: ${boatInfo.enginesNumber}`);
+  console.log(`✅ Engines in Array: ${boatInfo.engines.length}`);
 
   // Add boatInfo as JSON string to FormData
   formData.append('boatInfo', JSON.stringify(boatInfo));
@@ -259,23 +264,12 @@ const compressImage = async (file: File): Promise<File> => {
 };
 
 const AddListing = () => {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState<FormData>({});
   const [createListing, { isLoading: isSubmitting }] =
     useCreateListingMutation();
   const navigate = useNavigate();
 
-  const handleNextStep = (data: Partial<FormData>) => {
-    setFormData({ ...formData, ...data });
-    setCurrentStep(2);
-  };
-
-  const handleBackStep = () => {
-    setCurrentStep(1);
-  };
-
   const handleSubmit = async (data: Partial<FormData>) => {
-    const finalData = { ...formData, ...data };
+    const finalData = data;
 
     // Create FormData object with compression
     const formDataToSubmit = await createBoatRegistrationFormData(finalData);
@@ -311,7 +305,6 @@ const AddListing = () => {
       console.log('✅ Submission successful:', result);
       toast.success('Boat listing created successfully!');
       navigate('/listings');
-
       // Reset form or redirect
       // router.push('/listings');
     } catch (error: any) {
@@ -322,31 +315,7 @@ const AddListing = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 rounded-lg">
-      {currentStep === 1 ? (
-        <FirstListingPage
-          onNext={handleNextStep}
-          initialData={formData}
-          currentStep={currentStep}
-        />
-      ) : (
-        <SecondListingPage
-          onBack={handleBackStep}
-          onSubmit={handleSubmit}
-          initialData={formData}
-          currentStep={currentStep}
-          previewData={{
-            coverPhoto: formData.coverPhoto,
-            city: formData.city,
-            state: formData.state,
-            name: formData.name,
-            make: formData.make,
-            model: formData.model,
-            buildYear: formData.buildYear?.toString(),
-            price: formData.price?.toString(),
-          }}
-          isSubmitting={isSubmitting}
-        />
-      )}
+      <FirstListingPage onNext={handleSubmit} isSubmitting={isSubmitting} />
     </div>
   );
 };

@@ -1,5 +1,6 @@
-import { Eye, Plus, Save, Trash2 } from 'lucide-react';
+import { ArrowLeft, Eye, Plus, Save, Trash2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import {
   useCreateFooterMutation,
@@ -28,6 +29,7 @@ const Footer: React.FC = () => {
     'FLORIDA',
   );
   const [isPreview, setIsPreview] = useState(false);
+  const navigate = useNavigate();
 
   // Fetch footer data for selected site
   const {
@@ -243,6 +245,10 @@ const Footer: React.FC = () => {
     }
   };
 
+  const handleBack = () => {
+    navigate('/content');
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -269,13 +275,23 @@ const Footer: React.FC = () => {
     <div className="p-4 md:p-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
-            Footer Management
-          </h1>
-          <p className="text-gray-600 mt-1">
-            {footerExists ? 'Update' : 'Create'} footer content for your website
-          </p>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={handleBack}
+            className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+            aria-label="Go back"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+              Footer Management
+            </h1>
+            <p className="text-gray-600 mt-1">
+              {footerExists ? 'Update' : 'Create'} footer content for your
+              website
+            </p>
+          </div>
         </div>
 
         <div className="flex items-center gap-3">
@@ -461,7 +477,7 @@ const Footer: React.FC = () => {
                       placeholder="Link text"
                     />
                     <input
-                      type="url"
+                      type="text"
                       value={link.url}
                       onChange={(e) =>
                         handleQuickLinkChange(index, 'url', e.target.value)
@@ -511,7 +527,7 @@ const Footer: React.FC = () => {
                       placeholder="Link text"
                     />
                     <input
-                      type="url"
+                      type="text"
                       value={link.url}
                       onChange={(e) =>
                         handlePolicyLinkChange(index, 'url', e.target.value)
@@ -594,7 +610,7 @@ const Footer: React.FC = () => {
                       placeholder="Platform (e.g., Facebook)"
                     />
                     <input
-                      type="url"
+                      type="text"
                       value={link.url}
                       onChange={(e) =>
                         handleSocialLinkChange(index, 'url', e.target.value)

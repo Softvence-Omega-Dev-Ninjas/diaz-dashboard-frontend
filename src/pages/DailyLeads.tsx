@@ -1,12 +1,52 @@
-import { DailyLeadsHeader, DailyLeadsTable } from '@/components/DailyLeads';
+import {
+  CustomerContactedTable,
+  DailyLeadsHeader,
+  DailyLeadsTable,
+  YachtLeadsTable,
+} from '@/components/DailyLeads';
+import { Pagination } from '@/components/ListingManagement';
 import { useGetDailyLeadsQuery } from '@/redux/features/dailyLeads/dailyLeads';
+import {
+  useGetBoatLeadsQuery,
+  useGetCustomerContactedQuery,
+} from '@/redux/features/leads/leadsApi';
+import type { CustomerContacted } from '@/types/customer-contacted-types';
+import type { YachtLead } from '@/types/yacht-leads-types';
+import { Download, Filter } from 'lucide-react';
 import React, { useState } from 'react';
 
 type TabType = 'daily-leads-ai' | 'yacht-leads' | 'customer-contacted';
 
 const AllLeads: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('daily-leads-ai');
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [yachtSource, setYachtSource] = useState<string>('');
+  const [yachtStatus, setYachtStatus] = useState<string>('');
+
   const { data: leadsData, isLoading, isError } = useGetDailyLeadsQuery();
+  const {
+    data: customerContactedData,
+    isLoading: isLoadingContacts,
+    isError: isErrorContacts,
+  } = useGetCustomerContactedQuery({ page, limit });
+
+  const {
+    data: yachtLeadsData,
+    isLoading: isLoadingYachtLeads,
+    isError: isErrorYachtLeads,
+  } = useGetBoatLeadsQuery({
+    page,
+    limit,
+    source: yachtSource || undefined,
+  });
+
+  // Client-side filtering for status
+  const filteredYachtLeads =
+    yachtLeadsData?.data?.filter((lead: YachtLead) => {
+      if (!yachtStatus) return true;
+      return lead.status === yachtStatus;
+    }) || [];
 
   const handleExportCSV = () => {
     if (!leadsData?.leads) return;
@@ -36,6 +76,116 @@ const AllLeads: React.FC = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const handleExportYachtLeadsCSV = () => {
+    if (!filteredYachtLeads || filteredYachtLeads.length === 0) return;
+
+    const csvHeaders = [
+      'Serial',
+      'Name',
+      'Email',
+      'Phone',
+      'Boat Name',
+      'Price',
+      'Message',
+      'Source',
+      'Status',
+      'Date',
+    ];
+    const csvRows = filteredYachtLeads.map((lead: YachtLead, index: number) => {
+      const boatName =
+        lead.source === 'FLORIDA' && lead.floridaLeads.length > 0
+          ? lead.floridaLeads[0].boat.name
+          : 'N/A';
+      const boatPrice =
+        lead.source === 'FLORIDA' && lead.floridaLeads.length > 0
+          ? lead.floridaLeads[0].boat.price
+          : 'N/A';
+
+      return [
+        index + 1,
+        lead.name,
+        lead.email,
+        lead.phone,
+        boatName,
+        boatPrice,
+        lead.message,
+        lead.source,
+        lead.status,
+        new Date(lead.createdAt).toLocaleDateString(),
+      ];
+    });
+
+    const csvContent = [
+      csvHeaders.join(','),
+      ...csvRows.map((row) => row.map((cell) => `"${cell}"`).join(',')),
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute(
+      'download',
+      `yacht-leads-${new Date().toISOString().split('T')[0]}.csv`,
+    );
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleExportContactsCSV = () => {
+    if (!customerContactedData?.data) return;
+
+    const csvHeaders = [
+      'Serial',
+      'Full Name',
+      'Email',
+      'Phone',
+      'Boat Information',
+      'Comments',
+      'Date',
+    ];
+    const csvRows = customerContactedData.data.map(
+      (contact: CustomerContacted, index: number) => [
+        index + 1,
+        contact.fullName,
+        contact.email,
+        contact.phone,
+        contact.boatInformation,
+        contact.comments,
+        new Date(contact.createdAt).toLocaleDateString(),
+      ],
+    );
+
+    const csvContent = [
+      csvHeaders.join(','),
+      ...csvRows.map((row) => row.map((cell) => `"${cell}"`).join(',')),
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute(
+      'download',
+      `customer-contacted-${new Date().toISOString().split('T')[0]}.csv`,
+    );
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleLimitChange = (newLimit: number) => {
+    setLimit(newLimit);
+    setPage(1); // Reset to first page when limit changes
   };
 
   if (isLoading) {
@@ -86,10 +236,7 @@ const AllLeads: React.FC = () => {
 
   return (
     <div className="p-4 md:p-6">
-      <DailyLeadsHeader
-        totalLeads={leadsData?.total_leads || 0}
-        onExportCSV={handleExportCSV}
-      />
+      <DailyLeadsHeader totalLeads={leadsData?.total_leads || 0} />
 
       {/* Tabs */}
       <div className="bg-white rounded-lg shadow mb-4">
@@ -99,10 +246,9 @@ const AllLeads: React.FC = () => {
               onClick={() => setActiveTab('daily-leads-ai')}
               className={`
                 flex-1 py-4 px-1 text-center border-b-2 font-medium text-sm flex items-center justify-center gap-2
-                ${
-                  activeTab === 'daily-leads-ai'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ${activeTab === 'daily-leads-ai'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }
               `}
             >
@@ -126,10 +272,9 @@ const AllLeads: React.FC = () => {
               onClick={() => setActiveTab('yacht-leads')}
               className={`
                 flex-1 py-4 px-1 text-center border-b-2 font-medium text-sm flex items-center justify-center gap-2
-                ${
-                  activeTab === 'yacht-leads'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ${activeTab === 'yacht-leads'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }
               `}
             >
@@ -153,10 +298,9 @@ const AllLeads: React.FC = () => {
               onClick={() => setActiveTab('customer-contacted')}
               className={`
                 flex-1 py-4 px-1 text-center border-b-2 font-medium text-sm flex items-center justify-center gap-2
-                ${
-                  activeTab === 'customer-contacted'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ${activeTab === 'customer-contacted'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }
               `}
             >
@@ -183,17 +327,171 @@ const AllLeads: React.FC = () => {
       {/* Tab Content */}
       <div className="bg-white rounded-lg shadow">
         {activeTab === 'daily-leads-ai' && (
-          <DailyLeadsTable leads={leadsData?.leads || []} />
+          <>
+            {/* Export Button */}
+            <div className="p-4 border-b border-gray-200 flex justify-end">
+              <button
+                onClick={handleExportCSV}
+                disabled={!leadsData?.leads || leadsData.leads.length === 0}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Download className="w-4 h-4" />
+                Export CSV
+              </button>
+            </div>
+            <DailyLeadsTable leads={leadsData?.leads || []} />
+          </>
         )}
         {activeTab === 'yacht-leads' && (
-          <div className="p-6 text-center text-gray-500">
-            <p>Yacht Leads content will be displayed here</p>
-          </div>
+          <>
+            {/* Filters and Export Section */}
+            <div className="p-4 border-b border-gray-200">
+              <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+                {/* Filters */}
+                <div className="flex flex-wrap gap-3 items-center">
+                  <Filter className="w-5 h-5 text-gray-500" />
+                  <div className="flex gap-3">
+                    <select
+                      value={yachtSource}
+                      onChange={(e) => {
+                        setYachtSource(e.target.value);
+                        setPage(1);
+                      }}
+                      className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">All Sources</option>
+                      <option value="FLORIDA">Florida</option>
+                      <option value="JUPITER">Jupiter</option>
+                    </select>
+                    <select
+                      value={yachtStatus}
+                      onChange={(e) => {
+                        setYachtStatus(e.target.value);
+                        setPage(1);
+                      }}
+                      className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">All Status</option>
+                      <option value="Not Contacted">Not Contacted</option>
+                      <option value="Contacted">Contacted</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Export Button */}
+                <button
+                  onClick={handleExportYachtLeadsCSV}
+                  disabled={
+                    !filteredYachtLeads || filteredYachtLeads.length === 0
+                  }
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Download className="w-4 h-4" />
+                  Export CSV
+                </button>
+              </div>
+            </div>
+
+            {/* Loading State */}
+            {isLoadingYachtLeads && (
+              <div className="p-6 text-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                <p className="mt-2 text-gray-600">Loading yacht leads...</p>
+              </div>
+            )}
+
+            {/* Error State */}
+            {isErrorYachtLeads && (
+              <div className="p-6 text-center text-red-600">
+                <p>Error loading yacht leads. Please try again.</p>
+              </div>
+            )}
+
+            {/* Table */}
+            {!isLoadingYachtLeads && !isErrorYachtLeads && (
+              <>
+                <YachtLeadsTable
+                  leads={filteredYachtLeads}
+                  currentPage={page}
+                  limit={limit}
+                />
+
+                {/* Pagination */}
+                {yachtLeadsData?.metadata && (
+                  <Pagination
+                    currentPage={page}
+                    totalPages={yachtLeadsData.metadata.totalPage}
+                    onPageChange={handlePageChange}
+                    hasNextPage={page < yachtLeadsData.metadata.totalPage}
+                    hasPrevPage={page > 1}
+                    limit={limit}
+                    onLimitChange={handleLimitChange}
+                    totalItems={yachtLeadsData.metadata.total}
+                  />
+                )}
+              </>
+            )}
+          </>
         )}
         {activeTab === 'customer-contacted' && (
-          <div className="p-6 text-center text-gray-500">
-            <p>Customer Contacted content will be displayed here</p>
-          </div>
+          <>
+            {/* Export Button */}
+            <div className="p-4 border-b border-gray-200 flex justify-end">
+              <button
+                onClick={handleExportContactsCSV}
+                disabled={
+                  !customerContactedData?.data ||
+                  customerContactedData.data.length === 0
+                }
+                className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Download className="w-4 h-4" />
+                Export CSV
+              </button>
+            </div>
+
+            {/* Loading State */}
+            {isLoadingContacts && (
+              <div className="p-6 text-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                <p className="mt-2 text-gray-600">Loading contacts...</p>
+              </div>
+            )}
+
+            {/* Error State */}
+            {isErrorContacts && (
+              <div className="p-6 text-center text-red-600">
+                <p>Error loading customer contacts. Please try again.</p>
+              </div>
+            )}
+
+            {/* Table */}
+            {!isLoadingContacts && !isErrorContacts && (
+              <>
+                <CustomerContactedTable
+                  contacts={customerContactedData?.data || []}
+                  currentPage={page}
+                  limit={limit}
+                />
+
+                {/* Pagination */}
+                {customerContactedData?.metadata && (
+                  <Pagination
+                    currentPage={page}
+                    totalPages={customerContactedData.metadata.totalPage}
+                    onPageChange={handlePageChange}
+                    hasNextPage={
+                      page < customerContactedData.metadata.totalPage
+                    }
+                    hasPrevPage={page > 1}
+                    limit={limit}
+                    onLimitChange={handleLimitChange}
+                    totalItems={customerContactedData.metadata.total}
+                  />
+                )}
+              </>
+            )}
+          </>
         )}
       </div>
     </div>

@@ -1,421 +1,351 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-
-import { ArrowLeft, Eye, Plus, Save, Trash2, Upload } from 'lucide-react';
-import React, { useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import type {
+  Category,
+  CategoryFormData,
+} from '@/components/CategoryManagement';
+import {
+  CategoryManagementForm,
+  CategoryManagementHeader,
+  CategoryManagementPreview,
+} from '@/components/CategoryManagement';
+import {
+  useCreateCategoryMutation,
+  useDeleteCategoryMutation,
+  useGetCategoryListsQuery,
+  useUpdateCategoryMutation,
+} from '@/redux/features/contentmanagement/contentmanagement';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  description: string;
-  image: string;
-  isActive: boolean;
-  displayOrder: number;
-}
-
-interface CategoryFormData {
-  title: string;
-  subtitle: string;
-  categories: Category[];
-}
-
 const CategoryManagement: React.FC = () => {
+  const {
+    data: categoryListData,
+    isLoading: isCategoryLoading,
+    refetch,
+  } = useGetCategoryListsQuery({});
+
+  const [createCategory, { isLoading: isCreating }] =
+    useCreateCategoryMutation();
+  const [updateCategory, { isLoading: isUpdating }] =
+    useUpdateCategoryMutation();
+  const [deleteCategory, { isLoading: isDeleting }] =
+    useDeleteCategoryMutation();
+
   const navigate = useNavigate();
   const [isPreviewMode, setIsPreviewMode] = useState(false);
-  const [formData, setFormData] = useState<CategoryFormData>({
-    title: 'Browse by Category',
-    subtitle: 'Explore our yacht categories',
-    categories: [
-      {
-        id: '1',
-        name: '',
-        slug: '',
-        description: '',
-        image: '',
-        isActive: true,
-        displayOrder: 1,
-      },
-    ],
-  });
+  const [categories, setCategories] = useState<CategoryFormData[]>([]);
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  // Load categories from API
+  useEffect(() => {
+    console.log('Category List Data:', categoryListData);
+
+    // Check if data is directly an array or nested under 'data'
+    const categoriesArray = Array.isArray(categoryListData)
+      ? categoryListData
+      : categoryListData?.data;
+
+    if (categoriesArray && Array.isArray(categoriesArray)) {
+      const loadedCategories: CategoryFormData[] = categoriesArray.map(
+        (category: Category) => ({
+          id: category.id,
+          title: category.title,
+          imagePreview: category.image?.url || '',
+        }),
+      );
+      console.log('Loaded Categories:', loadedCategories);
+      setCategories(loadedCategories);
+    }
+  }, [categoryListData]);
+
+  const handleAddCategory = () => {
+    const newCategory: CategoryFormData = {
+      id: `temp-${Date.now()}`,
+      title: '',
+      imagePreview: '',
+    };
+    setCategories((prev) => [...prev, newCategory]);
   };
 
-  const handleCategoryChange = (
+  const handleUpdateCategory = (
     id: string,
-    field: keyof Category,
-    value: string | boolean | number,
+    field: keyof CategoryFormData,
+    value: string | File,
   ) => {
-    setFormData((prev) => ({
-      ...prev,
-      categories: prev.categories.map((category) =>
+    // Only update local state - no API call until user clicks Update button
+    setCategories((prev) =>
+      prev.map((category) =>
         category.id === id ? { ...category, [field]: value } : category,
       ),
-    }));
-
-    // Auto-generate slug from name
-    if (field === 'name' && typeof value === 'string') {
-      const slug = value
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '');
-      handleCategoryChange(id, 'slug', slug);
-    }
-  };
-
-  const handleImageUpload = (
-    id: string,
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        handleCategoryChange(id, 'image', reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const addCategory = () => {
-    const newId = Date.now().toString();
-    const maxOrder = Math.max(
-      ...formData.categories.map((c) => c.displayOrder),
-      0,
     );
-    setFormData((prev) => ({
-      ...prev,
-      categories: [
-        ...prev.categories,
-        {
-          id: newId,
-          name: '',
-          slug: '',
-          description: '',
-          image: '',
-          isActive: true,
-          displayOrder: maxOrder + 1,
-        },
-      ],
-    }));
   };
 
-  const removeCategory = (id: string) => {
-    if (formData.categories.length <= 1) {
-      Swal.fire('Error', 'At least one category is required', 'error');
+  const handleImageUpload = (id: string, file: File) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      // Update local state only - no API call until user clicks Update button
+      setCategories((prev) =>
+        prev.map((category) =>
+          category.id === id
+            ? {
+              ...category,
+              imageFile: file,
+              imagePreview: reader.result as string,
+            }
+            : category,
+        ),
+      );
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveImage = (id: string) => {
+    setCategories((prev) =>
+      prev.map((category) =>
+        category.id === id
+          ? {
+            ...category,
+            imageFile: undefined,
+            imagePreview: '',
+          }
+          : category,
+      ),
+    );
+  };
+
+  const handleSaveCategory = async (id: string) => {
+    console.log('handleSaveCategory called with id:', id);
+    console.log('Current categories state:', categories);
+
+    if (!id || id === 'undefined') {
+      Swal.fire('Error', 'Invalid category ID', 'error');
+      console.error('Invalid category ID:', id);
       return;
     }
-    setFormData((prev) => ({
-      ...prev,
-      categories: prev.categories.filter((category) => category.id !== id),
-    }));
+
+    const category = categories.find((c) => {
+      console.log(
+        'Checking category:',
+        c,
+        'c.id:',
+        c.id,
+        'matches:',
+        c.id === id,
+      );
+      return c.id === id;
+    });
+
+    if (!category) {
+      Swal.fire('Error', 'Category not found', 'error');
+      console.error(
+        'Category not found for ID:',
+        id,
+        'Available categories:',
+        categories,
+      );
+      return;
+    }
+
+    if (!category.title.trim()) {
+      Swal.fire('Error', 'Please fill in the category title', 'error');
+      return;
+    }
+
+    console.log('Updating category:', {
+      id,
+      title: category.title,
+      hasImage: !!category.imageFile,
+    });
+
+    try {
+      const formData = new FormData();
+      formData.append('title', category.title);
+
+      if (category.imageFile) {
+        formData.append('image', category.imageFile);
+      }
+
+      const result = await updateCategory({
+        categoryId: id,
+        categoryContent: formData,
+      }).unwrap();
+      console.log('Update result:', result);
+      await refetch();
+      Swal.fire('Success!', 'Category updated successfully', 'success');
+    } catch (error: any) {
+      console.error('Error updating category:', error);
+      Swal.fire(
+        'Error!',
+        error?.message || 'Failed to update category',
+        'error',
+      );
+    }
   };
 
-  const handleSave = async () => {
-    const hasEmptyFields = formData.categories.some(
-      (category) => !category.name.trim() || !category.slug.trim(),
-    );
+  const handleCreateCategory = async (id: string) => {
+    const category = categories.find((c) => c.id === id);
 
-    if (!formData.title.trim() || hasEmptyFields) {
-      Swal.fire('Error', 'Please fill in all required fields', 'error');
+    if (!category) {
+      Swal.fire('Error', 'Category not found', 'error');
+      return;
+    }
+
+    if (!category.title.trim()) {
+      Swal.fire('Error', 'Please fill in the category title', 'error');
+      return;
+    }
+
+    if (!category.imageFile) {
+      Swal.fire(
+        'Error',
+        'Please upload an image for the new category',
+        'error',
+      );
       return;
     }
 
     try {
-      // TODO: Implement API call to save categories
-      Swal.fire('Success!', 'Categories updated successfully', 'success');
-    } catch (error) {
-      Swal.fire('Error!', 'Failed to update categories', 'error');
+      const formData = new FormData();
+      formData.append('title', category.title);
+      formData.append('image', category.imageFile);
+
+      await createCategory(formData).unwrap();
+      await refetch();
+      Swal.fire('Success!', 'Category created successfully', 'success');
+    } catch (error: any) {
+      console.error('Error creating category:', error);
+      Swal.fire(
+        'Error!',
+        error?.message || 'Failed to create category',
+        'error',
+      );
     }
   };
+
+  const handleRemoveCategory = async (id: string) => {
+    // If it's an existing category from the backend
+    if (!id.startsWith('temp-')) {
+      const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: 'This category will be permanently deleted!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Yes, delete it!',
+      });
+
+      if (result.isConfirmed) {
+        try {
+          await deleteCategory(id).unwrap();
+          await refetch();
+          Swal.fire('Deleted!', 'Category has been deleted.', 'success');
+        } catch (error) {
+          Swal.fire('Error!', 'Failed to delete category.', 'error');
+        }
+      }
+    } else {
+      // Just remove from local state if it's a temporary category
+      setCategories((prev) => prev.filter((category) => category.id !== id));
+    }
+  };
+
+  // const handleSave = async () => {
+  //   // Only save new (temp) categories
+  //   const tempCategories = categories.filter((category) =>
+  //     category.id?.startsWith('temp-'),
+  //   );
+
+  //   if (tempCategories.length === 0) {
+  //     Swal.fire(
+  //       'Info',
+  //       'No new categories to save. Existing categories are updated automatically.',
+  //       'info',
+  //     );
+  //     return;
+  //   }
+
+  //   // Validate new categories
+  //   const hasEmptyFields = tempCategories.some(
+  //     (category) => !category.title.trim() || !category.imageFile,
+  //   );
+
+  //   if (hasEmptyFields) {
+  //     Swal.fire(
+  //       'Error',
+  //       'Please fill in all category titles and upload images for new categories',
+  //       'error',
+  //     );
+  //     return;
+  //   }
+
+  //   try {
+  //     const promises = tempCategories.map(async (category) => {
+  //       const formData = new FormData();
+  //       formData.append('title', category.title);
+  //       if (category.imageFile) {
+  //         formData.append('image', category.imageFile);
+  //       }
+  //       return createCategory(formData).unwrap();
+  //     });
+
+  //     await Promise.all(promises);
+  //     await refetch();
+  //     Swal.fire('Success!', 'New categories created successfully', 'success');
+  //   } catch (error: any) {
+  //     console.error('Error saving categories:', error);
+  //     Swal.fire(
+  //       'Error!',
+  //       error?.message || 'Failed to save categories',
+  //       'error',
+  //     );
+  //   }
+  // };
 
   const handleBack = () => {
     navigate('/content');
   };
 
-  return (
-    <div className="p-4 md:p-6 max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={handleBack}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <div>
-            <h1 className="text-xl md:text-2xl font-semibold text-gray-900">
-              Category Management
-            </h1>
-            <p className="text-sm text-gray-500 mt-1">
-              Manage yacht categories and their display
-            </p>
-          </div>
-        </div>
+  const handleTogglePreview = () => {
+    setIsPreviewMode(!isPreviewMode);
+  };
 
-        <div className="flex items-center gap-3 w-full sm:w-auto">
-          <button
-            onClick={() => setIsPreviewMode(!isPreviewMode)}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors"
-          >
-            <Eye className="w-4 h-4" />
-            {isPreviewMode ? 'Edit' : 'Preview'}
-          </button>
-          <button
-            onClick={handleSave}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-          >
-            <Save className="w-4 h-4" />
-            Save Changes
-          </button>
+  const isSaving = isCreating || isUpdating || isDeleting;
+
+  if (isCategoryLoading) {
+    return (
+      <div className="p-4 md:p-6 max-w-7xl mx-auto">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-gray-500">Loading categories...</div>
         </div>
       </div>
+    );
+  }
 
-      {/* Content */}
+  return (
+    <div className="p-4 md:p-6 max-w-7xl mx-auto">
+      <CategoryManagementHeader
+        isPreviewMode={isPreviewMode}
+        onTogglePreview={handleTogglePreview}
+        onBack={handleBack}
+      />
+
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         {!isPreviewMode ? (
-          <div className="space-y-6">
-            {/* Title */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Page Title <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                name="title"
-                value={formData.title}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter page title..."
-              />
-            </div>
-
-            {/* Subtitle */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Subtitle
-              </label>
-              <input
-                type="text"
-                name="subtitle"
-                value={formData.subtitle}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter subtitle..."
-              />
-            </div>
-
-            {/* Categories */}
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-medium text-gray-700">
-                  Categories <span className="text-red-500">*</span>
-                </h3>
-                <button
-                  onClick={addCategory}
-                  className="flex items-center gap-2 px-3 py-1.5 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-                >
-                  <Plus className="w-4 h-4" />
-                  Add Category
-                </button>
-              </div>
-
-              <div className="space-y-4">
-                {formData.categories
-                  .sort((a, b) => a.displayOrder - b.displayOrder)
-                  .map((category, index) => (
-                    <div
-                      key={category.id}
-                      className="p-4 border border-gray-200 rounded-lg space-y-3"
-                    >
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-medium text-gray-700">
-                          Category {index + 1}
-                        </h4>
-                        <div className="flex items-center gap-2">
-                          <label className="flex items-center gap-2 text-xs text-gray-600">
-                            <input
-                              type="checkbox"
-                              checked={category.isActive}
-                              onChange={(e) =>
-                                handleCategoryChange(
-                                  category.id,
-                                  'isActive',
-                                  e.target.checked,
-                                )
-                              }
-                              className="rounded"
-                            />
-                            Active
-                          </label>
-                          {formData.categories.length > 1 && (
-                            <button
-                              onClick={() => removeCategory(category.id)}
-                              className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Image Upload */}
-                      <div>
-                        <label className="block text-xs text-gray-600 mb-2">
-                          Category Image
-                        </label>
-                        <div className="flex items-center gap-4">
-                          {category.image && (
-                            <img
-                              src={category.image}
-                              alt={category.name}
-                              className="w-20 h-20 object-cover rounded border border-gray-200"
-                            />
-                          )}
-                          <label className="flex items-center gap-2 px-4 py-2 border border-gray-300 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
-                            <Upload className="w-4 h-4" />
-                            <span className="text-sm">Upload Image</span>
-                            <input
-                              type="file"
-                              accept="image/*"
-                              onChange={(e) =>
-                                handleImageUpload(category.id, e)
-                              }
-                              className="hidden"
-                            />
-                          </label>
-                        </div>
-                      </div>
-
-                      {/* Category Details */}
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <div>
-                          <label className="block text-xs text-gray-600 mb-1">
-                            Name <span className="text-red-500">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            value={category.name}
-                            onChange={(e) =>
-                              handleCategoryChange(
-                                category.id,
-                                'name',
-                                e.target.value,
-                              )
-                            }
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            placeholder="Enter name..."
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-xs text-gray-600 mb-1">
-                            Slug <span className="text-red-500">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            value={category.slug}
-                            onChange={(e) =>
-                              handleCategoryChange(
-                                category.id,
-                                'slug',
-                                e.target.value,
-                              )
-                            }
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50"
-                            placeholder="auto-generated..."
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-xs text-gray-600 mb-1">
-                            Display Order
-                          </label>
-                          <input
-                            type="number"
-                            value={category.displayOrder}
-                            onChange={(e) =>
-                              handleCategoryChange(
-                                category.id,
-                                'displayOrder',
-                                parseInt(e.target.value) || 1,
-                              )
-                            }
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            min="1"
-                          />
-                        </div>
-                      </div>
-
-                      {/* Description */}
-                      <div>
-                        <label className="block text-xs text-gray-600 mb-1">
-                          Description
-                        </label>
-                        <textarea
-                          value={category.description}
-                          onChange={(e) =>
-                            handleCategoryChange(
-                              category.id,
-                              'description',
-                              e.target.value,
-                            )
-                          }
-                          rows={2}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          placeholder="Enter description..."
-                        />
-                      </div>
-                    </div>
-                  ))}
-              </div>
-            </div>
-          </div>
+          <CategoryManagementForm
+            categories={categories}
+            onAddCategory={handleAddCategory}
+            onUpdateCategory={handleUpdateCategory}
+            onRemoveCategory={handleRemoveCategory}
+            onImageUpload={handleImageUpload}
+            onRemoveImage={handleRemoveImage}
+            onSaveCategory={handleSaveCategory}
+            onCreateCategory={handleCreateCategory}
+            isLoading={isSaving}
+          />
         ) : (
-          <div className="prose max-w-none">
-            <h1 className="text-3xl font-bold mb-2 text-center">
-              {formData.title}
-            </h1>
-            {formData.subtitle && (
-              <p className="text-gray-600 mb-8 text-center">
-                {formData.subtitle}
-              </p>
-            )}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {formData.categories
-                .filter((c) => c.isActive)
-                .sort((a, b) => a.displayOrder - b.displayOrder)
-                .map((category) => (
-                  <div
-                    key={category.id}
-                    className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
-                  >
-                    {category.image && (
-                      <img
-                        src={category.image}
-                        alt={category.name}
-                        className="w-full h-32 object-cover"
-                      />
-                    )}
-                    <div className="p-4">
-                      <h3 className="font-semibold mb-1">
-                        {category.name || 'Category Name'}
-                      </h3>
-                      {category.description && (
-                        <p className="text-sm text-gray-600">
-                          {category.description}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                ))}
-            </div>
-          </div>
+          <CategoryManagementPreview categories={categories} />
         )}
       </div>
     </div>

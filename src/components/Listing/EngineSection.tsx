@@ -22,6 +22,16 @@ export function EngineSection({
 }: EngineSectionProps) {
   const formValues = watch();
 
+  // Dynamic field names based on engine number
+  const engineFields = {
+    hours: `engine${engineNumber}Hours`,
+    make: `engine${engineNumber}Make`,
+    model: `engine${engineNumber}Model`,
+    totalPower: `engine${engineNumber}TotalPower`,
+    fuelType: `engine${engineNumber}FuelType`,
+    propellerType: `engine${engineNumber}PropellerType`,
+  };
+
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-4 md:p-6">
       <h2 className="text-lg font-semibold mb-4">Engine {engineNumber}</h2>
@@ -29,14 +39,14 @@ export function EngineSection({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <FormField
           label="Hours:"
-          name="engine1Hours"
+          name={engineFields.hours}
           register={register}
           type="number"
           required
         />
         <FormField
           label="Make:"
-          name="engine1Make"
+          name={engineFields.make}
           register={register}
           required
         />
@@ -45,13 +55,13 @@ export function EngineSection({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <FormField
           label="Model:"
-          name="engine1Model"
+          name={engineFields.model}
           register={register}
           required
         />
         <FormField
           label="Total Power (HP):"
-          name="engine1TotalPower"
+          name={engineFields.totalPower}
           register={register}
           type="number"
           required
@@ -61,20 +71,20 @@ export function EngineSection({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <DynamicFormSelect
           label="Engine Fuel Type:"
-          name="engine1FuelType"
+          name={engineFields.fuelType}
           type="ENGINE_TYPE"
           register={register}
-          value={formValues.engine1FuelType}
-          onChange={(value) => setValue('engine1FuelType', value)}
+          value={formValues[engineFields.fuelType]}
+          onChange={(value) => setValue(engineFields.fuelType, value)}
           required
         />
         <DynamicFormSelect
           label="Propeller Type:"
-          name="engine1PropellerType"
+          name={engineFields.propellerType}
           type="PROP_TYPE"
           register={register}
-          value={formValues.engine1PropellerType}
-          onChange={(value) => setValue('engine1PropellerType', value)}
+          value={formValues[engineFields.propellerType]}
+          onChange={(value) => setValue(engineFields.propellerType, value)}
           required
         />
       </div>

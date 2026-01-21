@@ -68,7 +68,6 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       'background',
       'script',
       'list',
-      'bullet',
       'indent',
       'direction',
       'align',

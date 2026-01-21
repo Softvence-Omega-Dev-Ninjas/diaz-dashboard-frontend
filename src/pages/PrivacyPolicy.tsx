@@ -211,15 +211,15 @@ const PrivacyPolicy: React.FC = () => {
                 <div className="space-y-2 text-sm text-gray-600">
                   <p>
                     <span className="font-medium">Type:</span> Static Page
-                    {getPrivacyPolicyData?.updatedAt && (
-                      <p>
-                        <span className="font-medium">Last Updated:</span>{' '}
-                        {new Date(
-                          getPrivacyPolicyData.updatedAt,
-                        ).toLocaleDateString()}
-                      </p>
-                    )}
                   </p>
+                  {getPrivacyPolicyData?.updatedAt && (
+                    <p>
+                      <span className="font-medium">Last Updated:</span>{' '}
+                      {new Date(
+                        getPrivacyPolicyData.updatedAt,
+                      ).toLocaleDateString()}
+                    </p>
+                  )}
                   <p>
                     <span className="font-medium">Site:</span> {selectedSite}
                   </p>
