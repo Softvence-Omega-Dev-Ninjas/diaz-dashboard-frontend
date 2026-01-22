@@ -119,7 +119,9 @@ const AllLeads: React.FC = () => {
 
     const csvContent = [
       csvHeaders.join(','),
-      ...csvRows.map((row) => row.map((cell) => `"${cell}"`).join(',')),
+      ...csvRows.map((row: (string | number)[]) =>
+        row.map((cell: string | number) => `"${cell}"`).join(','),
+      ),
     ].join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -162,7 +164,9 @@ const AllLeads: React.FC = () => {
 
     const csvContent = [
       csvHeaders.join(','),
-      ...csvRows.map((row) => row.map((cell) => `"${cell}"`).join(',')),
+      ...csvRows.map((row: (string | number)[]) =>
+        row.map((cell: string | number) => `"${cell}"`).join(','),
+      ),
     ].join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -246,9 +250,10 @@ const AllLeads: React.FC = () => {
               onClick={() => setActiveTab('daily-leads-ai')}
               className={`
                 flex-1 py-4 px-1 text-center border-b-2 font-medium text-sm flex items-center justify-center gap-2
-                ${activeTab === 'daily-leads-ai'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ${
+                  activeTab === 'daily-leads-ai'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }
               `}
             >
@@ -272,9 +277,10 @@ const AllLeads: React.FC = () => {
               onClick={() => setActiveTab('yacht-leads')}
               className={`
                 flex-1 py-4 px-1 text-center border-b-2 font-medium text-sm flex items-center justify-center gap-2
-                ${activeTab === 'yacht-leads'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ${
+                  activeTab === 'yacht-leads'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }
               `}
             >
@@ -298,9 +304,10 @@ const AllLeads: React.FC = () => {
               onClick={() => setActiveTab('customer-contacted')}
               className={`
                 flex-1 py-4 px-1 text-center border-b-2 font-medium text-sm flex items-center justify-center gap-2
-                ${activeTab === 'customer-contacted'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ${
+                  activeTab === 'customer-contacted'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }
               `}
             >

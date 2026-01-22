@@ -43,12 +43,8 @@ const AboutUs: React.FC = () => {
     useGetOurStoryQuery(selectedSite);
   const { data: missionVisionData, isLoading: isMissionVisionLoading } =
     useGetMissionVisionQuery(selectedSite);
-  const {
-    data: whatSetsUsApartData,
-    isLoading: isWhatSetsUsApartLoading,
-  } = useGetWhatSetsUsApartQuery(selectedSite);
-
- 
+  const { data: whatSetsUsApartData, isLoading: isWhatSetsUsApartLoading } =
+    useGetWhatSetsUsApartQuery(selectedSite);
 
   const [createAboutUs] = useCreateAboutUsMutation();
   const [updateAboutUs] = useUpdateAboutUsMutation();

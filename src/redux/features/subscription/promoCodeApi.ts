@@ -18,9 +18,8 @@ const promoCodeApi = baseApi.injectEndpoints({
       providesTags: ['PromoCodes'],
     }),
 
-
     createPromoCodes: build.mutation({
-     query: ({ promoData }) => ({
+      query: ({ promoData }) => ({
         url: `/admin/subscriptions/promo-codes`,
         method: 'POST',
         body: promoData,
@@ -29,7 +28,7 @@ const promoCodeApi = baseApi.injectEndpoints({
     }),
 
     deletePromoCodes: build.mutation({
-        query: ({ promoId }) => ({
+      query: ({ promoId }) => ({
         url: `/admin/subscriptions/promo-codes/${promoId}`,
         method: 'DELETE',
       }),
@@ -37,7 +36,7 @@ const promoCodeApi = baseApi.injectEndpoints({
     }),
 
     updatePromoCodes: build.mutation({
-        query: ({ promoId, promoData }) => ({
+      query: ({ promoId, promoData }) => ({
         url: `/admin/subscriptions/promo-codes/${promoId}`,
         method: 'PATCH',
         body: promoData,
@@ -48,10 +47,9 @@ const promoCodeApi = baseApi.injectEndpoints({
 });
 
 export const {
-    useGetAllPromoCodesQuery,
-    useGetSinglePromoCodeQuery,
-    useCreatePromoCodesMutation,
-    useDeletePromoCodesMutation,
-    useUpdatePromoCodesMutation
+  useGetAllPromoCodesQuery,
+  useGetSinglePromoCodeQuery,
+  useCreatePromoCodesMutation,
+  useDeletePromoCodesMutation,
+  useUpdatePromoCodesMutation,
 } = promoCodeApi;
-

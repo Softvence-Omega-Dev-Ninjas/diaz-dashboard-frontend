@@ -90,7 +90,8 @@ const subscriptionApi = baseApi.injectEndpoints({
         url: `/subscription/plans/${id}`,
         method: 'GET',
       }),
-      transformResponse: (response: SingleSubscriptionPlanResponse) => response.data,
+      transformResponse: (response: SingleSubscriptionPlanResponse) =>
+        response.data,
       providesTags: ['Subscription'],
     }),
 
@@ -103,7 +104,8 @@ const subscriptionApi = baseApi.injectEndpoints({
         method: 'POST',
         body: plan,
       }),
-      transformResponse: (response: SingleSubscriptionPlanResponse) => response.data,
+      transformResponse: (response: SingleSubscriptionPlanResponse) =>
+        response.data,
       invalidatesTags: ['Subscription'],
     }),
 
@@ -116,7 +118,8 @@ const subscriptionApi = baseApi.injectEndpoints({
         method: 'PATCH',
         body: plan,
       }),
-      transformResponse: (response: SingleSubscriptionPlanResponse) => response.data,
+      transformResponse: (response: SingleSubscriptionPlanResponse) =>
+        response.data,
       invalidatesTags: ['Subscription'],
     }),
 
@@ -129,7 +132,10 @@ const subscriptionApi = baseApi.injectEndpoints({
     }),
 
     // Email Subscription Endpoints
-    getEmailSubscriptions: build.query<EmailSubscriptionResponse, EmailSubscriptionQueryParams>({
+    getEmailSubscriptions: build.query<
+      EmailSubscriptionResponse,
+      EmailSubscriptionQueryParams
+    >({
       query: (params = {}) => {
         const { site = 'FLORIDA', page = 1, limit = 10 } = params;
         return {

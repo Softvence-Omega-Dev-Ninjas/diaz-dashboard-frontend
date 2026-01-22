@@ -64,12 +64,11 @@ const router = createBrowserRouter([
           { path: 'users', element: <UsersAndPermission /> },
           { path: 'analytics', element: <AnalyticsAndReports /> },
           { path: 'settings', element: <Settings /> },
-          { path: 'promoCodeManagement', element: <ManagePromoCodes /> }
+          { path: 'promoCodeManagement', element: <ManagePromoCodes /> },
         ],
       },
     ],
   },
 ]);
-
 
 export default router;

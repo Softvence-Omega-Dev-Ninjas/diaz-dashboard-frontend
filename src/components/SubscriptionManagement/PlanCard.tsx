@@ -74,7 +74,10 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, onEdit, onDelete }) => {
             </span>
           </div>
           <div className="text-sm text-gray-600">
-            per {plan.billingPeriodMonths === 1 ? 'month' : `${plan.billingPeriodMonths} months`}
+            per{' '}
+            {plan.billingPeriodMonths === 1
+              ? 'month'
+              : `${plan.billingPeriodMonths} months`}
           </div>
         </div>
 
@@ -100,7 +103,10 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, onEdit, onDelete }) => {
         <div className="mb-4">
           <ul className="space-y-2">
             {plan.benefits.map((benefit, index) => (
-              <li key={index} className="flex items-start gap-2 text-sm text-gray-700">
+              <li
+                key={index}
+                className="flex items-start gap-2 text-sm text-gray-700"
+              >
                 <Check className="w-5 h-5 text-gray-500 shrink-0 mt-0.5" />
                 <span>{benefit}</span>
               </li>
