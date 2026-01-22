@@ -217,33 +217,33 @@ const ContentManagement: React.FC = () => {
                           className="w-28 h-24 object-cover rounded-lg"
                         />
                       )}
-                      <div className='flex justify-between items-center gap-5 w-full'>
+                      <div className="flex justify-between items-center gap-5 w-full">
                         <div className="min-w-0">
-                        <h3 className="text-sm font-medium text-gray-900 line-clamp-2">
-                          {post.blogTitle}
-                        </h3>
-                        <p className="text-xs text-gray-500 mt-1">
-                          {post.postStatus} • {post.pageViewCount} views •{' '}
-                          {post.readTime} min read
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => handleEditPost(post.id)}
-                          className="flex-1 px-3 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm flex items-center justify-center gap-2"
-                          aria-label="Edit post"
-                        >
-                          <FaEdit className="text-base" />
-                          Edit
-                        </button>
-                        <button
-                          onClick={handleDeleteBlog(post.id)}
-                          className="flex-1 px-3 py-2 text-red-600 border border-red-300 rounded-lg hover:bg-red-50 transition-colors text-sm flex items-center justify-center gap-2"
-                        >
-                          <FaTrash className="text-base" />
-                          Delete
-                        </button>
-                      </div>
+                          <h3 className="text-sm font-medium text-gray-900 line-clamp-2">
+                            {post.blogTitle}
+                          </h3>
+                          <p className="text-xs text-gray-500 mt-1">
+                            {post.postStatus} • {post.pageViewCount} views •{' '}
+                            {post.readTime} min read
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleEditPost(post.id)}
+                            className="flex-1 px-3 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm flex items-center justify-center gap-2"
+                            aria-label="Edit post"
+                          >
+                            <FaEdit className="text-base" />
+                            Edit
+                          </button>
+                          <button
+                            onClick={handleDeleteBlog(post.id)}
+                            className="flex-1 px-3 py-2 text-red-600 border border-red-300 rounded-lg hover:bg-red-50 transition-colors text-sm flex items-center justify-center gap-2"
+                          >
+                            <FaTrash className="text-base" />
+                            Delete
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
