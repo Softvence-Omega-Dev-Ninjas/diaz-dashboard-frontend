@@ -1,48 +1,50 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { ArrowLeft, Eye, Plus, Save, Trash2, Upload } from 'lucide-react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {
+  useCreateOurTeamMutation,
+  useDeleteOurTeamMutation,
+  useGetOurTeamQuery,
+  useUpdateOurTeamMutation,
+  type TeamMember,
+} from '@/redux/features/ourTeam/outTeamApi';
+import { ArrowLeft, Edit2, Plus, Trash2, Upload } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { EditorPreview, RichTextEditor } from '../components/Editor';
 
-interface TeamMember {
-  id: string;
+interface TeamMemberFormData {
   name: string;
-  position: string;
-  bio: string;
-  image: string;
-  email: string;
-  phone: string;
-  socialLinks: {
-    linkedin: string;
-    twitter: string;
-  };
+  designation: string;
+  image: File | null;
+  isActive: boolean;
 }
 
-interface OurTeamFormData {
-  title: string;
-  subtitle: string;
-  members: TeamMember[];
+interface EditingMember extends TeamMemberFormData {
+  id?: string;
+  existingImageUrl?: string;
 }
 
 const OurTeam: React.FC = () => {
   const navigate = useNavigate();
-  const [isPreviewMode, setIsPreviewMode] = useState(false);
-  const [formData, setFormData] = useState<OurTeamFormData>({
-    title: 'Meet Our Team',
-    subtitle: 'The talented people behind our success',
-    members: [
-      {
-        id: '1',
-        name: '',
-        position: '',
-        bio: '',
-        image: '',
-        email: '',
-        phone: '',
-        socialLinks: { linkedin: '', twitter: '' },
-      },
-    ],
+  const { data: ourTeamData, isLoading: isOurTeamLoading } =
+    useGetOurTeamQuery();
+  const [createTeamMember, { isLoading: isCreating }] =
+    useCreateOurTeamMutation();
+  const [updateTeamMember, { isLoading: isUpdating }] =
+    useUpdateOurTeamMutation();
+  const [deleteTeamMember, { isLoading: isDeleting }] =
+    useDeleteOurTeamMutation();
+
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingMember, setEditingMember] = useState<EditingMember | null>(
+    null,
+  );
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  const [formData, setFormData] = useState<TeamMemberFormData>({
+    name: '',
+    designation: '',
+    image: null,
+    isActive: true,
   });
 
   const handleInputChange = (
@@ -52,87 +54,123 @@ const OurTeam: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleMemberChange = (id: string, field: string, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      members: prev.members.map((member) => {
-        if (member.id === id) {
-          if (field.startsWith('social.')) {
-            const socialKey = field.split(
-              '.',
-            )[1] as keyof TeamMember['socialLinks'];
-            return {
-              ...member,
-              socialLinks: { ...member.socialLinks, [socialKey]: value },
-            };
-          }
-          return { ...member, [field]: value };
-        }
-        return member;
-      }),
-    }));
-  };
-
-  const handleImageUpload = (
-    id: string,
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setFormData((prev) => ({ ...prev, image: file }));
       const reader = new FileReader();
       reader.onloadend = () => {
-        handleMemberChange(id, 'image', reader.result as string);
+        setImagePreview(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const addMember = () => {
-    const newId = Date.now().toString();
-    setFormData((prev) => ({
-      ...prev,
-      members: [
-        ...prev.members,
-        {
-          id: newId,
-          name: '',
-          position: '',
-          bio: '',
-          image: '',
-          email: '',
-          phone: '',
-          socialLinks: { linkedin: '', twitter: '' },
-        },
-      ],
-    }));
+  const openCreateForm = () => {
+    setFormData({
+      name: '',
+      designation: '',
+      image: null,
+      isActive: true,
+    });
+    setImagePreview(null);
+    setEditingMember(null);
+    setIsFormOpen(true);
   };
 
-  const removeMember = (id: string) => {
-    if (formData.members.length <= 1) {
-      Swal.fire('Error', 'At least one team member is required', 'error');
-      return;
-    }
-    setFormData((prev) => ({
-      ...prev,
-      members: prev.members.filter((member) => member.id !== id),
-    }));
+  const openEditForm = (member: TeamMember) => {
+    setFormData({
+      name: member.name,
+      designation: member.designation,
+      image: null,
+      isActive: member.isActive,
+    });
+    setEditingMember({
+      id: member.id,
+      name: member.name,
+      designation: member.designation,
+      image: null,
+      isActive: member.isActive,
+      existingImageUrl: member.image?.url,
+    });
+    setImagePreview(member.image?.url || null);
+    setIsFormOpen(true);
   };
 
-  const handleSave = async () => {
-    const hasEmptyFields = formData.members.some(
-      (member) => !member.name.trim() || !member.position.trim(),
-    );
+  const closeForm = () => {
+    setIsFormOpen(false);
+    setEditingMember(null);
+    setFormData({
+      name: '',
+      designation: '',
+      image: null,
+      isActive: true,
+    });
+    setImagePreview(null);
+  };
 
-    if (!formData.title.trim() || hasEmptyFields) {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!formData.name.trim() || !formData.designation.trim()) {
       Swal.fire('Error', 'Please fill in all required fields', 'error');
       return;
     }
 
+    if (!editingMember && !formData.image) {
+      Swal.fire('Error', 'Please upload an image', 'error');
+      return;
+    }
+
     try {
-      // TODO: Implement API call to save team data
-      Swal.fire('Success!', 'Team page updated successfully', 'success');
-    } catch (error) {
-      Swal.fire('Error!', 'Failed to update team page', 'error');
+      const formDataToSend = new FormData();
+      formDataToSend.append('name', formData.name);
+      formDataToSend.append('designation', formData.designation);
+      // Backend expects boolean - send as string representation
+      formDataToSend.append('isActive', formData.isActive ? 'true' : 'false');
+
+      if (formData.image) {
+        formDataToSend.append('image', formData.image);
+      }
+
+      if (editingMember?.id) {
+        await updateTeamMember({
+          id: editingMember.id,
+          data: formDataToSend,
+        }).unwrap();
+        Swal.fire('Success!', 'Team member updated successfully', 'success');
+      } else {
+        await createTeamMember(formDataToSend).unwrap();
+        Swal.fire('Success!', 'Team member created successfully', 'success');
+      }
+      closeForm();
+    } catch (error: any) {
+      Swal.fire('Error!', error?.data?.message || 'Operation failed', 'error');
+    }
+  };
+
+  const handleDelete = async (id: string, name: string) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: `Do you want to delete ${name}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await deleteTeamMember(id).unwrap();
+        Swal.fire('Deleted!', 'Team member has been deleted.', 'success');
+      } catch (error: any) {
+        Swal.fire(
+          'Error!',
+          error?.data?.message || 'Failed to delete team member',
+          'error',
+        );
+      }
     }
   };
 
@@ -153,306 +191,225 @@ const OurTeam: React.FC = () => {
           </button>
           <div>
             <h1 className="text-xl md:text-2xl font-semibold text-gray-900">
-              Our Team Content
+              Our Team Management
             </h1>
             <p className="text-sm text-gray-500 mt-1">
-              Manage team member information
+              Manage team members and their information
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3 w-full sm:w-auto">
+        <button
+          onClick={openCreateForm}
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+        >
+          <Plus className="w-4 h-4" />
+          Add Team Member
+        </button>
+      </div>
+
+      {/* Team Members List */}
+      {isOurTeamLoading ? (
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <p className="mt-4 text-gray-600">Loading team members...</p>
+        </div>
+      ) : ourTeamData?.data && ourTeamData.data.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...ourTeamData.data]
+            .sort((a, b) => a.order - b.order)
+            .map((member) => (
+              <div
+                key={member.id}
+                className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
+              >
+                {member.image?.url && (
+                  <img
+                    src={member.image.url}
+                    alt={member.name}
+                    className="w-full h-64 object-cover"
+                  />
+                )}
+                <div className="p-6">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1">
+                      <h3 className="text-xl font-semibold text-gray-900 mb-1">
+                        {member.name}
+                      </h3>
+                      <p className="text-blue-600 text-sm font-medium">
+                        {member.designation}
+                      </p>
+                    </div>
+                    <span
+                      className={`px-2 py-1 text-xs rounded-full ${
+                        member.isActive
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-gray-100 text-gray-800'
+                      }`}
+                    >
+                      {member.isActive ? 'Active' : 'Inactive'}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2 mt-4">
+                    <button
+                      onClick={() => openEditForm(member)}
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors"
+                    >
+                      <Edit2 className="w-4 h-4" />
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(member.id, member.name)}
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+                      disabled={isDeleting}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+        </div>
+      ) : (
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+          <p className="text-gray-600 mb-4">No team members found</p>
           <button
-            onClick={() => setIsPreviewMode(!isPreviewMode)}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors"
+            onClick={openCreateForm}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
           >
-            <Eye className="w-4 h-4" />
-            {isPreviewMode ? 'Edit' : 'Preview'}
-          </button>
-          <button
-            onClick={handleSave}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-          >
-            <Save className="w-4 h-4" />
-            Save Changes
+            <Plus className="w-4 h-4" />
+            Add First Team Member
           </button>
         </div>
-      </div>
+      )}
 
-      {/* Content */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        {!isPreviewMode ? (
-          <div className="space-y-6">
-            {/* Title */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Page Title <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                name="title"
-                value={formData.title}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter page title..."
-              />
+      {/* Create/Edit Form Modal */}
+      {isFormOpen && (
+        <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4">
+              <h2 className="text-xl font-semibold text-gray-900">
+                {editingMember ? 'Edit Team Member' : 'Add New Team Member'}
+              </h2>
             </div>
 
-            {/* Subtitle */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Subtitle
-              </label>
-              <input
-                type="text"
-                name="subtitle"
-                value={formData.subtitle}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter subtitle..."
-              />
-            </div>
-
-            {/* Team Members */}
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-medium text-gray-700">
-                  Team Members <span className="text-red-500">*</span>
-                </h3>
-                <button
-                  onClick={addMember}
-                  className="flex items-center gap-2 px-3 py-1.5 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-                >
-                  <Plus className="w-4 h-4" />
-                  Add Member
-                </button>
-              </div>
-
-              <div className="space-y-6">
-                {formData.members.map((member, index) => (
-                  <div
-                    key={member.id}
-                    className="p-4 border border-gray-200 rounded-lg space-y-4"
-                  >
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-medium text-gray-700">
-                        Team Member {index + 1}
-                      </h4>
-                      {formData.members.length > 1 && (
-                        <button
-                          onClick={() => removeMember(member.id)}
-                          className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      )}
-                    </div>
-
-                    {/* Image Upload */}
-                    <div>
-                      <label className="block text-xs text-gray-600 mb-2">
-                        Profile Photo
-                      </label>
-                      <div className="flex items-center gap-4">
-                        {member.image && (
-                          <img
-                            src={member.image}
-                            alt={member.name}
-                            className="w-20 h-20 rounded-full object-cover"
-                          />
-                        )}
-                        <label className="flex items-center gap-2 px-4 py-2 border border-gray-300 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
-                          <Upload className="w-4 h-4" />
-                          <span className="text-sm">Upload Photo</span>
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => handleImageUpload(member.id, e)}
-                            className="hidden"
-                          />
-                        </label>
-                      </div>
-                    </div>
-
-                    {/* Basic Info */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-xs text-gray-600 mb-1">
-                          Name <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          value={member.name}
-                          onChange={(e) =>
-                            handleMemberChange(
-                              member.id,
-                              'name',
-                              e.target.value,
-                            )
-                          }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          placeholder="Enter name..."
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs text-gray-600 mb-1">
-                          Position <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          value={member.position}
-                          onChange={(e) =>
-                            handleMemberChange(
-                              member.id,
-                              'position',
-                              e.target.value,
-                            )
-                          }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          placeholder="Enter position..."
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs text-gray-600 mb-1">
-                          Email
-                        </label>
-                        <input
-                          type="email"
-                          value={member.email}
-                          onChange={(e) =>
-                            handleMemberChange(
-                              member.id,
-                              'email',
-                              e.target.value,
-                            )
-                          }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          placeholder="Enter email..."
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs text-gray-600 mb-1">
-                          Phone
-                        </label>
-                        <input
-                          type="tel"
-                          value={member.phone}
-                          onChange={(e) =>
-                            handleMemberChange(
-                              member.id,
-                              'phone',
-                              e.target.value,
-                            )
-                          }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          placeholder="Enter phone..."
-                        />
-                      </div>
-                    </div>
-
-                    {/* Bio */}
-                    <div>
-                      <label className="block text-xs text-gray-600 mb-1">
-                        Bio
-                      </label>
-                      <RichTextEditor
-                        value={member.bio}
-                        onChange={(value) =>
-                          handleMemberChange(member.id, 'bio', value)
-                        }
-                        placeholder="Enter bio..."
-                      />
-                    </div>
-
-                    {/* Social Links */}
-                    <div>
-                      <label className="block text-xs text-gray-600 mb-2">
-                        Social Links
-                      </label>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <div>
-                          <input
-                            type="url"
-                            value={member.socialLinks.linkedin}
-                            onChange={(e) =>
-                              handleMemberChange(
-                                member.id,
-                                'social.linkedin',
-                                e.target.value,
-                              )
-                            }
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            placeholder="LinkedIn URL..."
-                          />
-                        </div>
-                        <div>
-                          <input
-                            type="url"
-                            value={member.socialLinks.twitter}
-                            onChange={(e) =>
-                              handleMemberChange(
-                                member.id,
-                                'social.twitter',
-                                e.target.value,
-                              )
-                            }
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            placeholder="Twitter URL..."
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="prose max-w-none">
-            <h1 className="text-3xl font-bold mb-2 text-center">
-              {formData.title}
-            </h1>
-            {formData.subtitle && (
-              <p className="text-gray-600 mb-8 text-center">
-                {formData.subtitle}
-              </p>
-            )}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {formData.members.map((member) => (
-                <div
-                  key={member.id}
-                  className="text-center p-6 border border-gray-200 rounded-lg"
-                >
-                  {member.image && (
+            <form onSubmit={handleSubmit} className="p-6 space-y-6">
+              {/* Image Upload */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Profile Photo{' '}
+                  {!editingMember && <span className="text-red-500">*</span>}
+                </label>
+                <div className="flex items-center gap-4">
+                  {imagePreview && (
                     <img
-                      src={member.image}
-                      alt={member.name}
-                      className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
+                      src={imagePreview}
+                      alt="Preview"
+                      className="w-24 h-24 rounded-full object-cover border-2 border-gray-200"
                     />
                   )}
-                  <h3 className="text-xl font-semibold mb-1">
-                    {member.name || 'Name'}
-                  </h3>
-                  <p className="text-blue-600 mb-3">
-                    {member.position || 'Position'}
-                  </p>
-                  {member.bio && (
-                    <div className="text-left mb-3">
-                      <EditorPreview content={member.bio} />
-                    </div>
-                  )}
-                  {(member.email || member.phone) && (
-                    <div className="text-sm text-gray-600 mb-2">
-                      {member.email && <p>{member.email}</p>}
-                      {member.phone && <p>{member.phone}</p>}
-                    </div>
-                  )}
+                  <label className="flex items-center gap-2 px-4 py-2 border border-gray-300 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
+                    <Upload className="w-4 h-4" />
+                    <span className="text-sm">
+                      {imagePreview ? 'Change Photo' : 'Upload Photo'}
+                    </span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                  </label>
                 </div>
-              ))}
-            </div>
+              </div>
+
+              {/* Name */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Name <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter name..."
+                  required
+                />
+              </div>
+
+              {/* Designation */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Designation <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="designation"
+                  value={formData.designation}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter designation..."
+                  required
+                />
+              </div>
+
+              {/* Active Status */}
+              <div className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  id="isActive"
+                  checked={formData.isActive}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      isActive: e.target.checked,
+                    }))
+                  }
+                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                />
+                <label
+                  htmlFor="isActive"
+                  className="text-sm font-medium text-gray-700"
+                >
+                  Active Status (Display on website)
+                </label>
+              </div>
+
+              {/* Form Actions */}
+              <div className="flex items-center gap-3 pt-4 border-t border-gray-200">
+                <button
+                  type="button"
+                  onClick={closeForm}
+                  className="flex-1 px-4 py-2 border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors"
+                  disabled={isCreating || isUpdating}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:bg-blue-400"
+                  disabled={isCreating || isUpdating}
+                >
+                  {isCreating || isUpdating ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      {editingMember ? 'Updating...' : 'Creating...'}
+                    </span>
+                  ) : (
+                    <span>
+                      {editingMember ? 'Update Member' : 'Create Member'}
+                    </span>
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
