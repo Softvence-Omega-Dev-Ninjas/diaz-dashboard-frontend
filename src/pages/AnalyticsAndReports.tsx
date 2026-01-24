@@ -14,30 +14,6 @@ interface MetricCard {
   isPositive: boolean;
 }
 
-const DEMO_METRICS: MetricCard[] = [
-  {
-    id: 1,
-    title: 'Total Visitors',
-    value: '24,891',
-    change: '+12.5% from last month',
-    isPositive: true,
-  },
-  {
-    id: 2,
-    title: 'Page Views',
-    value: '145,672',
-    change: '+8.2% from last month',
-    isPositive: true,
-  },
-  {
-    id: 3,
-    title: 'Avg. Session Time',
-    value: '4:32',
-    change: '+15% from last month',
-    isPositive: true,
-  },
-];
-
 const AnalyticsAndReports: React.FC = () => {
   const {
     data: metricsData,
@@ -47,20 +23,23 @@ const AnalyticsAndReports: React.FC = () => {
   const { data: topViewedYachtsData, isLoading: isLoadingYachts } =
     useGetTopViewedBoatsQuery({});
 
+  console.log('Top Viewed Yachts Data:', topViewedYachtsData);
+  console.log('Metrics Data:', metricsData);
+
   // Transform API metrics data to match the display format
   const metrics: MetricCard[] = metricsData
     ? [
         {
           id: 1,
           title: 'Total Visitors',
-          value: metricsData.totalVisitors?.value?.toLocaleString() || '0',
+          value: metricsData.totalVisitors?.value?.toString() || '0',
           change: `${metricsData.totalVisitors?.growth >= 0 ? '+' : ''}${metricsData.totalVisitors?.growth || 0}% from last month`,
           isPositive: (metricsData.totalVisitors?.growth || 0) >= 0,
         },
         {
           id: 2,
           title: 'Page Views',
-          value: metricsData.pageViews?.value?.toLocaleString() || '0',
+          value: metricsData.pageViews?.value?.toString() || '0',
           change: `${metricsData.pageViews?.growth >= 0 ? '+' : ''}${metricsData.pageViews?.growth || 0}% from last month`,
           isPositive: (metricsData.pageViews?.growth || 0) >= 0,
         },
@@ -72,7 +51,7 @@ const AnalyticsAndReports: React.FC = () => {
           isPositive: (metricsData.avgSessionTime?.growth || 0) >= 0,
         },
       ]
-    : DEMO_METRICS;
+    : [];
 
   // Transform yacht data to match ProductCard expectations
   const transformedYachts =
@@ -170,7 +149,7 @@ const AnalyticsAndReports: React.FC = () => {
             </>
           ) : transformedYachts.length > 0 ? (
             transformedYachts
-              .slice(0, 4)
+              .slice(0, 6)
               .map((data: any) => (
                 <ProductCard key={data.id} product={data} isPremium={true} />
               ))
