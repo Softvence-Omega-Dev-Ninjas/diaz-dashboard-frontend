@@ -55,17 +55,20 @@ const AnalyticsAndReports: React.FC = () => {
 
   // Transform yacht data to match ProductCard expectations
   const transformedYachts =
-    topViewedYachtsData?.map((yacht: any) => ({
-      id: yacht.id,
-      name: yacht.name,
-      image: yacht.images?.[0]?.file?.url || '',
-      location: `${yacht.city}, ${yacht.state}`,
-      brand_make: yacht.make,
-      model: yacht.model,
-      built_year: yacht.buildYear,
-      price: yacht.price,
-      views: yacht.pageViewCount || 0,
-    })) || [];
+    topViewedYachtsData
+      ?.map((yacht: any) => ({
+        id: yacht.id,
+        name: yacht.name,
+        image: yacht.images?.[0]?.file?.url || '',
+        location: `${yacht.city}, ${yacht.state}`,
+        brand_make: yacht.make,
+        model: yacht.model,
+        built_year: yacht.buildYear,
+        price: yacht.price,
+        views: yacht.pageViewCount || 0,
+      }))
+      .sort((a: any, b: any) => b.views - a.views) // Sort by views descending
+      .slice(0, 4) || []; // Get top 4
 
   return (
     <div className="p-4 md:p-6">
@@ -128,8 +131,10 @@ const AnalyticsAndReports: React.FC = () => {
         )}
       </div>
       <div className="p-4 md:p-5 border border-gray-200 rounded-lg mt-4 md:mt-5">
-        <h1 className="text-lg md:text-xl">Top Viewed Yachts</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5 mt-4 md:mt-5">
+        <h1 className="text-lg md:text-xl font-semibold">
+          Top 4 Most Viewed Yachts
+        </h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-5 mt-4 md:mt-5">
           {isLoadingYachts ? (
             // Loading state for yachts
             <>
@@ -148,11 +153,9 @@ const AnalyticsAndReports: React.FC = () => {
               ))}
             </>
           ) : transformedYachts.length > 0 ? (
-            transformedYachts
-              .slice(0, 6)
-              .map((data: any) => (
-                <ProductCard key={data.id} product={data} isPremium={true} />
-              ))
+            transformedYachts.map((data: any) => (
+              <ProductCard key={data.id} product={data} isPremium={true} />
+            ))
           ) : (
             <div className="col-span-4 text-center text-gray-500 py-8">
               No yacht data available

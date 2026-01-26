@@ -1,6 +1,7 @@
-import { Search } from 'lucide-react';
+import { NotificationBell } from '@/components/shared/NotificationBell';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { LuBell, LuChevronDown } from 'react-icons/lu';
+import { Search } from 'lucide-react';
+import { LuChevronDown } from 'react-icons/lu';
 
 const UpperNavbar = () => {
   return (
@@ -21,12 +22,7 @@ const UpperNavbar = () => {
         {/* Right Section - Notification & User */}
         <div className="flex items-center gap-3 sm:gap-4">
           {/* Notification Bell */}
-          <button className="relative rounded-full p-2 text-gray-600 hover:bg-gray-100 transition-colors">
-            <LuBell className="h-5 w-5" />
-            <span className="absolute right-0 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-semibold text-white">
-              3
-            </span>
-          </button>
+          <NotificationBell />
 
           {/* User Profile */}
           <div className="flex items-center gap-3">

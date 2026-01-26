@@ -3,8 +3,8 @@ import React from 'react';
 
 import { BsBookmarkFill } from 'react-icons/bs';
 // import { YachtProduct } from "@/types/product-types-demo";
+import { Eye } from 'lucide-react';
 import { IoLocationOutline } from 'react-icons/io5';
-import { Link } from 'react-router-dom';
 
 interface ProductCardProps {
   product: any;
@@ -16,10 +16,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, isPremium }) => {
     return `$${price.toLocaleString('en-US')}`;
   };
 
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const url = 'https://development.floridayachttrader.com';
+    window.open(`${url}/search-listing/${product.id}`, '_blank');
+  };
+
   return (
-    <Link
-      to={`/search-listing/${2}`}
-      className="relative bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 group"
+    <div
+      onClick={handleClick}
+      className="relative bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 group cursor-pointer"
     >
       {/* Image Section with Bookmark */}
       <div className="relative w-full aspect-[4/2.6] overflow-hidden">
@@ -32,6 +38,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, isPremium }) => {
           <button className="absolute -top-1 right-4" aria-label="Bookmark">
             <BsBookmarkFill className="text-5xl text-accent" />
           </button>
+        )}
+
+        {/* View Count Badge */}
+        {product.views !== undefined && (
+          <div className="absolute bottom-3 right-3 flex items-center gap-1.5 bg-black/70 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium">
+            <Eye className="w-4 h-4" />
+            <span>{product.views.toLocaleString()}</span>
+          </div>
         )}
       </div>
 
@@ -78,7 +92,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, isPremium }) => {
           Price: {formatPrice(product.price)}
         </p>
       </div>
-    </Link>
+    </div>
   );
 };
 
