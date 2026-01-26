@@ -5,7 +5,7 @@ import HomeBannersSection from '@/components/FeaturedAndHomeComponents/HomeBanne
 type Tab = 'featured' | 'FLORIDA' | 'JUPITER';
 
 const FeaturedAndHomeManagement: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<Tab>('featured');
+  const [activeTab, setActiveTab] = useState<Tab>('FLORIDA');
 
   return (
     <div className="p-4 md:p-6">
@@ -22,16 +22,6 @@ const FeaturedAndHomeManagement: React.FC = () => {
       {/* Tabs */}
       <div className="mb-6">
         <div className="flex gap-2 p-2 bg-[#ECECF0] rounded-full max-w-full sm:max-w-max overflow-x-auto">
-          <button
-            onClick={() => setActiveTab('featured')}
-            className={`px-4 py-2 text-sm font-medium rounded-full transition-colors whitespace-nowrap ${
-              activeTab === 'featured'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'bg-transparent text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            Featured Yachts
-          </button>
           <button
             onClick={() => setActiveTab('FLORIDA')}
             className={`px-4 py-2 text-sm font-medium rounded-full transition-colors whitespace-nowrap ${
