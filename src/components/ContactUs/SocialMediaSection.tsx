@@ -1,5 +1,5 @@
+import { Facebook, Linkedin, Twitter, Youtube } from 'lucide-react';
 import React from 'react';
-import { Facebook, Twitter, Linkedin, Youtube } from 'lucide-react';
 import { type SocialMedia } from './types';
 
 interface SocialMediaSectionProps {

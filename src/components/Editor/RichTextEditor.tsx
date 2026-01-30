@@ -18,9 +18,9 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   onChange,
   placeholder = 'Start writing your content...',
   className = '',
-  readOnly = false,
+  readOnly = true,
   theme = 'snow',
-  minHeight = '300px',
+  minHeight = '3000px',
 }) => {
   const quillRef = useRef<ReactQuill>(null);
 

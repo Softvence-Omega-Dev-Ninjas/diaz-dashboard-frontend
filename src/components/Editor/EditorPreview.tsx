@@ -7,10 +7,6 @@ interface EditorPreviewProps {
   className?: string;
 }
 
-/**
- * EditorPreview component displays the HTML content from the editor
- * in a read-only format with proper styling matching Quill's output
- */
 const EditorPreview: React.FC<EditorPreviewProps> = ({
   content,
   className = '',
