@@ -177,10 +177,34 @@ const ContentManagement: React.FC = () => {
         {/* Blog Posts Section - 1/3 Width */}
         <div className="flex-1 lg:w-1/3">
           <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+
+
+
+
+
+
             {/* Header */}
             <div className="flex  items-start justify-between p-4 md:p-6 border-b border-gray-200 gap-3">
               <h2 className="text-lg font-semibold text-gray-900">
                 Blog Articles
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
               </h2>
               <button
                 onClick={handleNewArticle}
@@ -190,6 +214,24 @@ const ContentManagement: React.FC = () => {
                 New Article
               </button>
             </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             {/* Blog Posts List */}
             <div className="divide-y divide-gray-200 max-h-[800px] overflow-y-auto">

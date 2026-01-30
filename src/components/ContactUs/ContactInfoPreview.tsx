@@ -1,14 +1,14 @@
-import React from 'react';
 import {
-  MapPin,
-  Mail,
-  Phone,
   Clock,
   Facebook,
-  Twitter,
   Linkedin,
+  Mail,
+  MapPin,
+  Phone,
+  Twitter,
   Youtube,
 } from 'lucide-react';
+import React from 'react';
 import { type ContactInfoFormData } from './types';
 
 interface ContactInfoPreviewProps {
