@@ -7,7 +7,6 @@ interface EditorPreviewProps {
   className?: string;
 }
 
-
 const EditorPreview: React.FC<EditorPreviewProps> = ({
   content,
   className = '',
