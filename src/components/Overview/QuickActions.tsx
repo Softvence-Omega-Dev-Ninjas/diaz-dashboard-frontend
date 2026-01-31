@@ -1,5 +1,5 @@
 import { LuCircleCheckBig, LuFileText, LuPlus, LuStar } from 'react-icons/lu';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const QuickActions = () => {
   const navigate = useNavigate();
