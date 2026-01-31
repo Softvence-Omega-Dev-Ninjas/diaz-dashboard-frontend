@@ -1,7 +1,6 @@
 import { NotificationBell } from '@/components/shared/NotificationBell';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Search } from 'lucide-react';
-import { LuChevronDown } from 'react-icons/lu';
 
 const UpperNavbar = () => {
   return (
@@ -22,7 +21,9 @@ const UpperNavbar = () => {
         {/* Right Section - Notification & User */}
         <div className="flex items-center gap-3 sm:gap-4">
           {/* Notification Bell */}
-          <NotificationBell />
+          <div className='cursor-pointer'>
+            <NotificationBell  />
+          </div>
 
           {/* User Profile */}
           <div className="flex items-center gap-3">
@@ -38,7 +39,6 @@ const UpperNavbar = () => {
               </p>
               <p className="text-xs text-gray-500 leading-tight">Super Admin</p>
             </div>
-            <LuChevronDown />
           </div>
         </div>
       </div>

@@ -54,7 +54,7 @@ export function NotificationBell() {
         onClick={() => setIsOpen(!isOpen)}
         className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors"
       >
-        <Bell className="w-6 h-6" />
+        <Bell className="w-6 h-6 cursor-pointer" />
         {unreadCount > 0 && (
           <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
             {unreadCount > 9 ? '9+' : unreadCount}
@@ -105,7 +105,7 @@ export function NotificationBell() {
                 >
                   <div className="flex items-start gap-3">
                     {/* Icon */}
-                    <div className="flex-shrink-0 text-2xl">
+                    <div className="shrink-0 text-2xl">
                       {getNotificationIcon(notification.type)}
                     </div>
 

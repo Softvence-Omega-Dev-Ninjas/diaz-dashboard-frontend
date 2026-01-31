@@ -56,14 +56,6 @@ const ListingManagement: React.FC = () => {
     }
   }, [listingData?.total]);
 
-  const uniqueSellers = useMemo((): string[] => {
-    if (!listingData?.items) return [];
-    const sellers = listingData.items.map(
-      (item: any) => item.seller?.name || item.name || 'Unknown',
-    );
-    return Array.from(new Set(sellers)) as string[];
-  }, [listingData]);
-
   const filteredListings = useMemo(() => {
     if (!listingData?.items) return [];
     return listingData.items;
@@ -205,7 +197,6 @@ const ListingManagement: React.FC = () => {
         filters={filters}
         onFilterChange={setFilters}
         onExport={handleExportCSV}
-        sellers={uniqueSellers}
       />
 
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
