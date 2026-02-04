@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import io, { type Socket } from 'socket.io-client';
 import { toast } from 'sonner';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5051';
+const API_URL = import.meta.env.VITE_API_URL || 'https://api.floridayachttrader.com/';
 
 export function useNotifications(token: string | null) {
   const [socket, setSocket] = useState<Socket | null>(null);

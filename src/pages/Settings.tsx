@@ -8,7 +8,7 @@ import {
   useGetAdminSettingsQuery,
   useUpdateAdminSettingsMutation,
 } from '@/redux/features/adminSettingApis/adminSettingsApi';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 type Tab = 'general' | 'branding' | 'notifications';
 
@@ -42,8 +42,6 @@ const Settings: React.FC = () => {
   }, [data]);
 
   const handleSave = async () => {
-    // const toastId = toast.loading("Saving settings...");
-
     try {
       await updateSettings(formData).unwrap();
       toast.success('Settings updated successfully');

@@ -1,5 +1,5 @@
-import logoImg from '@/assets/logo.png';
 import { cn } from '@/lib/utils';
+import { useGetAdminSettingsQuery } from '@/redux/features/adminSettingApis/adminSettingsApi';
 import { logout } from '@/redux/features/auth/authSlice';
 // import { persistor } from "@/redux/store"
 import { useCallback, useEffect, useState } from 'react';
@@ -84,6 +84,10 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dispatch = useDispatch();
 
+  const { data: settings } = useGetAdminSettingsQuery();
+
+  console.log(settings);
+
   // Close mobile menu on window resize
   useEffect(() => {
     const handleResize = () => {
@@ -165,12 +169,12 @@ const Navbar = () => {
         {/* Logo Section */}
         <div className="p-4 flex items-center gap-3 justify-center border-b border-gray-100">
           <img
-            src={logoImg}
+            src={settings?.logoUrl || ''}
             className="h-8 sm:h-10"
             alt="Florida Yacht Trader"
           />
           <span className="text-sm sm:text-lg font-bold uppercase text-[#004DAC] leading-tight">
-            Florida Yacht Trader
+            {settings?.siteName}
           </span>
         </div>
 
