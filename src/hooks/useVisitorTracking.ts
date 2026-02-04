@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import io, { type Socket } from 'socket.io-client';
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://api.floridayachttrader.com/';
+const API_URL =
+  import.meta.env.VITE_API_URL || 'https://api.floridayachttrader.com/';
 
 export function useVisitorTracking() {
   const [stats, setStats] = useState<VisitorStats>({
@@ -18,11 +19,10 @@ export function useVisitorTracking() {
 
   useEffect(() => {
     // Connect to visitor tracking socket
-   const newSocket = io(API_URL, {
+    const newSocket = io(API_URL, {
       path: '/ws',
       transports: ['websocket', 'polling'],
     });
-
 
     // Connection successful
     newSocket.on('connect', () => {
@@ -59,7 +59,7 @@ export function useVisitorTracking() {
 
     // Cleanup: End session when component unmounts
     return () => {
-     newSocket.emit('visit:end');
+      newSocket.emit('visit:end');
       newSocket.off('connect');
       newSocket.off('disconnect');
       newSocket.off('connect_error');

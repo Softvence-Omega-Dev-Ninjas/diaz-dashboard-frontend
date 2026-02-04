@@ -41,13 +41,11 @@ const ContactInfoPreview: React.FC<ContactInfoPreviewProps> = ({
 
       <div className="p-8 max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-      
           <div className="space-y-6">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">
               Contact Information
             </h2>
 
-       
             {formData.address && (
               <div className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-blue-600 mt-1 shrink-0" />
@@ -73,7 +71,6 @@ const ContactInfoPreview: React.FC<ContactInfoPreviewProps> = ({
               </div>
             )}
 
-    
             {formData.phone && (
               <div className="flex items-start gap-3">
                 <Phone className="w-5 h-5 text-blue-600 mt-1 shrink-0" />
@@ -89,7 +86,6 @@ const ContactInfoPreview: React.FC<ContactInfoPreviewProps> = ({
               </div>
             )}
 
- 
             {(formData.socialMedia.facebook ||
               formData.socialMedia.twitter ||
               formData.socialMedia.linkedin ||
@@ -142,7 +138,6 @@ const ContactInfoPreview: React.FC<ContactInfoPreviewProps> = ({
             )}
           </div>
 
-    
           {formData.workingHours.length > 0 && (
             <div>
               <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">

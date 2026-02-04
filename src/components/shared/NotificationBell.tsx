@@ -96,7 +96,7 @@ export function NotificationBell() {
   const handleMarkAsRead = async (id: string, title: string) => {
     try {
       await markAsRead(id).unwrap();
-      toast.success('Notification marked as read');
+      toast.success(`Notification marked as read ${title}`);
     } catch (error) {
       toast.error('Failed to mark notification as read');
       console.error('Error marking notification as read:', error);
@@ -115,7 +115,10 @@ export function NotificationBell() {
 
   const handleNotificationClick = (notification: NotificationData) => {
     if (!notification.read) {
-      handleMarkAsRead(notification.notificationId, notification.notification.title);
+      handleMarkAsRead(
+        notification.notificationId,
+        notification.notification.title,
+      );
     }
   };
 
