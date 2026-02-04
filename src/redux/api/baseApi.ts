@@ -52,6 +52,7 @@ export const baseApi = createApi({
     'WhatSetsUsApart',
     'Subscription',
     'PromoCodes',
+    'Notification',
   ],
 
   endpoints: () => ({}),
