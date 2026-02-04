@@ -18,10 +18,11 @@ export function useVisitorTracking() {
 
   useEffect(() => {
     // Connect to visitor tracking socket
-    const newSocket = io(API_URL, {
-      path: '/ws/',
+   const newSocket = io(API_URL, {
+      path: '/ws',
       transports: ['websocket', 'polling'],
     });
+
 
     // Connection successful
     newSocket.on('connect', () => {
@@ -58,12 +59,12 @@ export function useVisitorTracking() {
 
     // Cleanup: End session when component unmounts
     return () => {
-      newSocket.emit('/visit:end');
-      newSocket.off('/connect');
-      newSocket.off('/disconnect');
-      newSocket.off('/connect_error');
-      newSocket.off('/visitors:count');
-      newSocket.off('/visitors:stats');
+     newSocket.emit('visit:end');
+      newSocket.off('connect');
+      newSocket.off('disconnect');
+      newSocket.off('connect_error');
+      newSocket.off('visitors:count');
+      newSocket.off('visitors:stats');
       newSocket.disconnect();
     };
   }, [location.pathname]);

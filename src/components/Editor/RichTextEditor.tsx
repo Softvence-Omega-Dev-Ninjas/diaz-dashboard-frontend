@@ -2,16 +2,8 @@ import React, { useMemo, useRef } from 'react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import './editor.css';
+import type { RichTextEditorProps } from '@/types/textEditor';
 
-interface RichTextEditorProps {
-  value: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
-  className?: string;
-  readOnly?: boolean;
-  theme?: 'snow' | 'bubble';
-  minHeight?: string;
-}
 
 const RichTextEditor: React.FC<RichTextEditorProps> = ({
   value,
@@ -20,7 +12,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   className = '',
   readOnly = true,
   theme = 'snow',
-  minHeight = '3000px',
+  minHeight = '300px',
 }) => {
   const quillRef = useRef<ReactQuill>(null);
 
