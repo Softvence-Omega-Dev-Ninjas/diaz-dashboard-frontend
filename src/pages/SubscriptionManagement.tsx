@@ -11,7 +11,6 @@ const SubscriptionManagement: React.FC = () => {
 
   return (
     <div className="p-4 md:p-6">
-      {/* Header */}
       <div className="mb-6">
         <h1 className="text-xl md:text-2xl font-semibold text-gray-900">
           Subscription Management
@@ -21,7 +20,6 @@ const SubscriptionManagement: React.FC = () => {
         </p>
       </div>
 
-      {/* Tabs */}
       <div className="mb-6">
         <div className="flex gap-2 p-2 bg-gray-100 rounded-full max-w-full sm:max-w-max overflow-x-auto">
           <button
@@ -47,7 +45,6 @@ const SubscriptionManagement: React.FC = () => {
         </div>
       </div>
 
-      {/* Content */}
       {activeTab === 'plan' ? <PlanList /> : <EmailSubscriptionList />}
     </div>
   );

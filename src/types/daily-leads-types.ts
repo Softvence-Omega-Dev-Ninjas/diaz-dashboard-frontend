@@ -1,4 +1,3 @@
-// Daily Leads types
 export interface Lead {
   name: string | null;
   email: string | null;

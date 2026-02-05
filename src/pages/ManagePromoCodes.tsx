@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Pagination,
   PromoCodeForm,
@@ -71,7 +70,6 @@ const ManagePromoCodes: React.FC = () => {
   const handleSubmitForm = async (data: CreatePromoCodeRequest) => {
     try {
       if (selectedPromoCode) {
-        // Update existing promo code
         await updatePromoCode({
           promoId: selectedPromoCode.id,
           promoData: data,
@@ -84,7 +82,6 @@ const ManagePromoCodes: React.FC = () => {
           confirmButtonColor: '#3085d6',
         });
       } else {
-        // Create new promo code
         await createPromoCode({ promoData: data }).unwrap();
 
         Swal.fire({

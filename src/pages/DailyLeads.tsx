@@ -41,7 +41,6 @@ const AllLeads: React.FC = () => {
     source: yachtSource || undefined,
   });
 
-  // Client-side filtering for status
   const filteredYachtLeads =
     yachtLeadsData?.data?.filter((lead: YachtLead) => {
       if (!yachtStatus) return true;
@@ -242,7 +241,6 @@ const AllLeads: React.FC = () => {
     <div className="p-4 md:p-6">
       <DailyLeadsHeader totalLeads={leadsData?.total_leads || 0} />
 
-      {/* Tabs */}
       <div className="bg-white rounded-lg shadow mb-4">
         <div className="border-b border-gray-200">
           <nav className="flex -mb-px" aria-label="Tabs">
@@ -331,11 +329,9 @@ const AllLeads: React.FC = () => {
         </div>
       </div>
 
-      {/* Tab Content */}
       <div className="bg-white rounded-lg shadow">
         {activeTab === 'daily-leads-ai' && (
           <>
-            {/* Export Button */}
             <div className="p-4 border-b border-gray-200 flex justify-end">
               <button
                 onClick={handleExportCSV}
@@ -351,10 +347,8 @@ const AllLeads: React.FC = () => {
         )}
         {activeTab === 'yacht-leads' && (
           <>
-            {/* Filters and Export Section */}
             <div className="p-4 border-b border-gray-200">
               <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-                {/* Filters */}
                 <div className="flex flex-wrap gap-3 items-center">
                   <Filter className="w-5 h-5 text-gray-500" />
                   <div className="flex gap-3">
@@ -385,7 +379,6 @@ const AllLeads: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Export Button */}
                 <button
                   onClick={handleExportYachtLeadsCSV}
                   disabled={
@@ -399,7 +392,6 @@ const AllLeads: React.FC = () => {
               </div>
             </div>
 
-            {/* Loading State */}
             {isLoadingYachtLeads && (
               <div className="p-6 text-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
@@ -407,14 +399,12 @@ const AllLeads: React.FC = () => {
               </div>
             )}
 
-            {/* Error State */}
             {isErrorYachtLeads && (
               <div className="p-6 text-center text-red-600">
                 <p>Error loading yacht leads. Please try again.</p>
               </div>
             )}
 
-            {/* Table */}
             {!isLoadingYachtLeads && !isErrorYachtLeads && (
               <>
                 <YachtLeadsTable
@@ -423,7 +413,6 @@ const AllLeads: React.FC = () => {
                   limit={limit}
                 />
 
-                {/* Pagination */}
                 {yachtLeadsData?.metadata && (
                   <Pagination
                     currentPage={page}
@@ -442,7 +431,6 @@ const AllLeads: React.FC = () => {
         )}
         {activeTab === 'customer-contacted' && (
           <>
-            {/* Export Button */}
             <div className="p-4 border-b border-gray-200 flex justify-end">
               <button
                 onClick={handleExportContactsCSV}
@@ -457,7 +445,6 @@ const AllLeads: React.FC = () => {
               </button>
             </div>
 
-            {/* Loading State */}
             {isLoadingContacts && (
               <div className="p-6 text-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
@@ -465,14 +452,12 @@ const AllLeads: React.FC = () => {
               </div>
             )}
 
-            {/* Error State */}
             {isErrorContacts && (
               <div className="p-6 text-center text-red-600">
                 <p>Error loading customer contacts. Please try again.</p>
               </div>
             )}
 
-            {/* Table */}
             {!isLoadingContacts && !isErrorContacts && (
               <>
                 <CustomerContactedTable
@@ -481,7 +466,6 @@ const AllLeads: React.FC = () => {
                   limit={limit}
                 />
 
-                {/* Pagination */}
                 {customerContactedData?.metadata && (
                   <Pagination
                     currentPage={page}

@@ -1,6 +1,3 @@
-// Socket.IO TypeScript Types & Interfaces
-
-// Visitor Tracking
 export interface VisitorCount {
   active: number;
 }
@@ -27,7 +24,6 @@ export interface AnalyticsOverview {
   };
 }
 
-// Notifications
 export interface Notification {
   notificationId: string;
   type: string;
@@ -47,7 +43,6 @@ export interface NotificationSocketEvents {
   notification: (notification: Notification) => void;
 }
 
-// Featured Yachts
 export type SiteType = 'FLORIDA' | 'JUPITER';
 
 export interface FeaturedYacht {
@@ -99,19 +94,16 @@ export interface User {
   phone: string;
 }
 
-// API Responses
 export interface ApiResponse<T> {
   success: boolean;
   data: T;
   message?: string;
 }
 
-// Visit tracking
 export interface VisitStartPayload {
   page: string;
 }
 
-// Socket connection status
 export interface SocketConnectionStatus {
   isConnected: boolean;
   error: string | null;

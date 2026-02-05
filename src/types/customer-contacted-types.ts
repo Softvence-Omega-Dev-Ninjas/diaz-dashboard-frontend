@@ -1,4 +1,3 @@
-// Customer Contacted types
 export interface CustomerContacted {
   id: string;
   fullName: string;

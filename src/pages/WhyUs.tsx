@@ -39,7 +39,6 @@ const WhyUs: React.FC = () => {
   const [updateWhyUs, { isLoading: isUpdating }] = useUpdateWhyUsMutation();
   const [deleteWhyUs] = useDeleteWhyUsMutation();
 
-  // Load data when fetched or site changes
   useEffect(() => {
     if (whyUsData?.data) {
       const data = whyUsData.data;
@@ -63,7 +62,6 @@ const WhyUs: React.FC = () => {
         site: selectedSite,
       });
     } else {
-      // Reset to default when no data
       setFormData({
         title: '',
         description: '',
@@ -122,13 +120,11 @@ const WhyUs: React.FC = () => {
   };
 
   const handleSave = async () => {
-    // Validation
     if (!formData.title.trim()) {
       Swal.fire('Error', 'Title is required', 'error');
       return;
     }
 
-    // Check that all 3 images are present (either existing or new)
     if (!formData.image1 || !formData.image2 || !formData.image3) {
       Swal.fire('Error', 'All 3 images are required', 'error');
       return;
@@ -138,7 +134,6 @@ const WhyUs: React.FC = () => {
       const formDataToSend = new FormData();
 
       if (whyUsData?.data) {
-        // Update existing Why Us
         formDataToSend.append('title', formData.title.trim());
         if (formData.description.trim())
           formDataToSend.append('description', formData.description.trim());
@@ -156,7 +151,6 @@ const WhyUs: React.FC = () => {
         if (formData.buttonLink.trim())
           formDataToSend.append('buttonLink', formData.buttonLink.trim());
 
-        // Add new images if selected (replaces existing)
         if (formData.image1?.file) {
           formDataToSend.append('image1', formData.image1.file);
         }
@@ -173,7 +167,6 @@ const WhyUs: React.FC = () => {
         }).unwrap();
         Swal.fire('Success!', 'Why Us section updated successfully', 'success');
       } else {
-        // Create new Why Us
         formDataToSend.append('site', selectedSite);
         formDataToSend.append('title', formData.title.trim());
         if (formData.description.trim())
@@ -192,7 +185,6 @@ const WhyUs: React.FC = () => {
         if (formData.buttonLink.trim())
           formDataToSend.append('buttonLink', formData.buttonLink.trim());
 
-        // All 3 images are required for creation
         if (formData.image1?.file) {
           formDataToSend.append('image1', formData.image1.file);
         }
@@ -243,7 +235,6 @@ const WhyUs: React.FC = () => {
           'Why Us section has been deleted successfully',
           'success',
         );
-        // Reset form
         setFormData({
           title: '',
           description: '',
@@ -286,7 +277,6 @@ const WhyUs: React.FC = () => {
           <WhyUsPreview formData={formData} />
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Main Content */}
             <div className="lg:col-span-2">
               <WhyUsForm
                 formData={formData}
@@ -296,7 +286,6 @@ const WhyUs: React.FC = () => {
               />
             </div>
 
-            {/* Sidebar */}
             <WhyUsSidebar
               selectedSite={selectedSite}
               onSiteChange={setSelectedSite}
