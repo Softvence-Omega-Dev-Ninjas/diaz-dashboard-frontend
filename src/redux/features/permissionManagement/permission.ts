@@ -22,7 +22,7 @@ const permissionManageApi = baseApi.injectEndpoints({
         url: `/user-permissions/${id}`,
         method: 'PATCH',
         body: {
-          changerole: data.role
+          changerole: data.role,
         },
       }),
       invalidatesTags: ['PERMISSION'],
