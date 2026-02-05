@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
 import Branding from '@/components/Settings/Branding';
 import General from '@/components/Settings/General';
@@ -70,7 +69,6 @@ const Settings: React.FC = () => {
         </button>
       </div>
 
-      {/* Tabs */}
       <div className="mb-6">
         <div className="flex gap-2 p-1 bg-gray-100 rounded-lg">
           {(['general', 'branding', 'notifications'] as Tab[]).map((tab) => (

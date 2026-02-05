@@ -30,7 +30,6 @@ const PrivacyPolicy: React.FC = () => {
     useGetPrivacyPolicyQuery(selectedSite);
   const [updatePrivacyPolicy] = useUpdatePrivacyPolicyMutation();
 
-  // Load data when fetched or site changes
   useEffect(() => {
     if (getPrivacyPolicyData) {
       setFormData({

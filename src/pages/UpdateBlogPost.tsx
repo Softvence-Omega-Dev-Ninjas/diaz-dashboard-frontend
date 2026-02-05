@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   useGetBlogsQuery,
   useUpdateBlogMutation,
@@ -34,7 +33,6 @@ const UpdateBlogPost: React.FC = () => {
     existingImageUrl: '',
   });
 
-  // Find the current blog post and populate the form
   useEffect(() => {
     if (blogsData && id) {
       const currentBlog = blogsData.find((blog: any) => blog.id === id);
@@ -106,7 +104,6 @@ const UpdateBlogPost: React.FC = () => {
     formDataToSend.append('blogDescription', formData.content);
     formDataToSend.append('postStatus', formData.status);
 
-    // Only append new image if user selected one
     if (formData.blogImage) {
       formDataToSend.append('blogImage', formData.blogImage);
     }

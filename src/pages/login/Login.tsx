@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { useAppDispatch } from '@/redux/typeHook';
@@ -43,7 +42,6 @@ const LoginPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center  px-4">
       <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
-        {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Welcome Back</h1>
           <p className="text-sm text-gray-500 mt-2">
@@ -52,7 +50,6 @@ const LoginPage: React.FC = () => {
         </div>
 
         <form onSubmit={handleLogin} className="space-y-6">
-          {/* Email */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Email address
@@ -67,7 +64,6 @@ const LoginPage: React.FC = () => {
             />
           </div>
 
-          {/* Password */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Password
@@ -92,7 +88,6 @@ const LoginPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Remember / Forgot */}
           <div className="flex items-center justify-between">
             <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
               <input
@@ -109,7 +104,6 @@ const LoginPage: React.FC = () => {
             </a>
           </div>
 
-          {/* Submit */}
           <button
             type="submit"
             disabled={isLoading}
@@ -119,13 +113,6 @@ const LoginPage: React.FC = () => {
           </button>
         </form>
 
-        {/* Footer */}
-        {/* <div className="mt-8 text-center text-sm text-gray-500">
-          Don’t have an account?{" "}
-          <a href="#" className="text-blue-600 font-medium hover:underline">
-            Create one
-          </a>
-        </div> */}
       </div>
     </div>
   );

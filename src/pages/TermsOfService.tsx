@@ -30,7 +30,6 @@ const TermsOfService: React.FC = () => {
     useGetTermsAndConditionsQuery(selectedSite);
   const [updateTermsAndConditions] = useUpdateTermsAndConditionsMutation();
 
-  // Load data when fetched or site changes
   useEffect(() => {
     if (getTermsData) {
       setFormData({

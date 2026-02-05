@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   useCreateOurTeamMutation,
   useDeleteOurTeamMutation,
@@ -126,7 +125,6 @@ const OurTeam: React.FC = () => {
       const formDataToSend = new FormData();
       formDataToSend.append('name', formData.name);
       formDataToSend.append('designation', formData.designation);
-      // Backend expects boolean - send as string representation
       formDataToSend.append('isActive', formData.isActive ? 'true' : 'false');
 
       if (formData.image) {
@@ -180,7 +178,6 @@ const OurTeam: React.FC = () => {
 
   return (
     <div className="p-4 md:p-6 max-w-7xl mx-auto">
-      {/* Header */}
       <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <button
@@ -208,7 +205,6 @@ const OurTeam: React.FC = () => {
         </button>
       </div>
 
-      {/* Team Members List */}
       {isOurTeamLoading ? (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -285,7 +281,6 @@ const OurTeam: React.FC = () => {
         </div>
       )}
 
-      {/* Create/Edit Form Modal */}
       {isFormOpen && (
         <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
@@ -296,7 +291,6 @@ const OurTeam: React.FC = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-6">
-              {/* Image Upload */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Profile Photo{' '}
@@ -317,7 +311,6 @@ const OurTeam: React.FC = () => {
                     </span>
                     <input
                       type="file"
-                      accept="image/*"
                       onChange={handleImageUpload}
                       className="hidden"
                     />
@@ -325,7 +318,6 @@ const OurTeam: React.FC = () => {
                 </div>
               </div>
 
-              {/* Name */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Name <span className="text-red-500">*</span>
@@ -341,7 +333,6 @@ const OurTeam: React.FC = () => {
                 />
               </div>
 
-              {/* Designation */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Designation <span className="text-red-500">*</span>
@@ -357,7 +348,6 @@ const OurTeam: React.FC = () => {
                 />
               </div>
 
-              {/* Active Status */}
               <div className="flex items-center gap-3">
                 <input
                   type="checkbox"
@@ -379,7 +369,6 @@ const OurTeam: React.FC = () => {
                 </label>
               </div>
 
-              {/* Form Actions */}
               <div className="flex items-center gap-3 pt-4 border-t border-gray-200">
                 <button
                   type="button"

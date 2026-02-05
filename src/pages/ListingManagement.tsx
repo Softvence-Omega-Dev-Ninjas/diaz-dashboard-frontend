@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   ListingsFilters,
   ListingsHeader,
@@ -103,7 +102,6 @@ const ListingManagement: React.FC = () => {
       return;
     }
 
-    // Define CSV headers
     const headers = [
       'Listing ID',
       'Yacht Name',
@@ -118,7 +116,6 @@ const ListingManagement: React.FC = () => {
       'Created Date',
     ];
 
-    // Convert listings to CSV rows
     const rows = filteredListings.map((listing: any) => [
       listing.listingId || '',
       listing.name || '',
@@ -135,7 +132,6 @@ const ListingManagement: React.FC = () => {
         : '',
     ]);
 
-    // Combine headers and rows
     const csvContent = [
       headers.join(','),
       ...rows.map((row: any) =>
@@ -145,7 +141,6 @@ const ListingManagement: React.FC = () => {
       ),
     ].join('\n');
 
-    // Create blob and download
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);

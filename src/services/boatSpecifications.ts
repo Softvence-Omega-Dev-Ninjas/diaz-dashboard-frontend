@@ -1,9 +1,3 @@
-/**
- * Boat Specifications API Service
- * Fetches dynamic form field options from the backend
- * Matches the implementation from diaz-florida-yacht-frontend
- */
-
 const API_BASE_URL = 'http://localhost:3000';
 
 export interface SpecificationParams {
@@ -17,19 +11,12 @@ export interface SpecificationResponse {
   total?: number;
 }
 
-/**
- * Fetch specifications from API
- * Endpoint: GET /boats/specification/list
- * @param params - Type (MAKE, MODEL, CLASS, etc.), search query, and limit
- * @returns Array of specification values
- */
 export const getSpecifications = async ({
   type,
   search = '',
   limit = 20,
 }: SpecificationParams): Promise<SpecificationResponse> => {
   try {
-    // Build query string - matching Florida yacht implementation
     const queryParams = new URLSearchParams({
       type,
       search,
@@ -55,7 +42,6 @@ export const getSpecifications = async ({
 
     console.log('✅ Specifications received:', data);
 
-    // Handle different response formats from the API
     if (data.items && Array.isArray(data.items)) {
       return data;
     } else if (Array.isArray(data)) {
