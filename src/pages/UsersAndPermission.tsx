@@ -142,7 +142,7 @@ const UsersAndPermission: React.FC = () => {
   };
 
   const filteredUsers = users.filter(
-    (user: any) => !adminEmails.includes(user.email)
+    (user: any) => !adminEmails.includes(user.email),
   );
 
   if (isLoading) {

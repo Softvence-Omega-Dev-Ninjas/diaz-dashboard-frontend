@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import FirstListingPage from '@/components/Listing/FirstListingPage';
 import { useCreateListingMutation } from '@/redux/features/listingManagement/listingManagement';
 import toast from 'react-hot-toast';

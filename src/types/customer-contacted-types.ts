@@ -21,7 +21,4 @@ export interface CustomerContactedResponse {
   };
 }
 
-export const adminEmails =[
-  'diaz614@goatmail.uk',
-  'diazsuper@goatmail.uk',
-]
+export const adminEmails = ['diaz614@goatmail.uk', 'diazsuper@goatmail.uk'];
