@@ -75,7 +75,7 @@ const UsersAndPermission: React.FC = () => {
 
   const handleRoleUpdate = async (data: UpdateRoleRequest) => {
     if (!selectedUser) return;
-
+    console.log('Updating role with data:', data);
     try {
       await updateRole({ id: selectedUser.id, data }).unwrap();
       toast.success('Role updated successfully');
