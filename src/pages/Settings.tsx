@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Branding from '@/components/Settings/Branding';
 import General from '@/components/Settings/General';
 import Notifications from '@/components/Settings/Notifications';
@@ -7,6 +7,7 @@ import {
   useGetAdminSettingsQuery,
   useUpdateAdminSettingsMutation,
 } from '@/redux/features/adminSettingApis/adminSettingsApi';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 type Tab = 'general' | 'branding' | 'notifications';

@@ -21,7 +21,6 @@ export type {
   UpdateRoleRequest,
 } from './permission-types';
 
-
 export type {
   CreatePromoCodeRequest,
   PromoCode,

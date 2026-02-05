@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
-import { useAppDispatch } from '@/redux/typeHook';
-import { useNavigate } from 'react-router-dom';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useLoginMutation } from '@/redux/features/auth/authApi';
 import { setCredentials } from '@/redux/features/auth/authSlice';
+import { useAppDispatch } from '@/redux/typeHook';
+import { Eye, EyeOff } from 'lucide-react';
+import React, { useState } from 'react';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -112,7 +113,6 @@ const LoginPage: React.FC = () => {
             {isLoading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
-
       </div>
     </div>
   );
