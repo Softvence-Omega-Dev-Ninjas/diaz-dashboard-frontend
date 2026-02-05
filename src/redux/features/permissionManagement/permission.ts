@@ -21,7 +21,9 @@ const permissionManageApi = baseApi.injectEndpoints({
       query: ({ id, data }) => ({
         url: `/user-permissions/${id}`,
         method: 'PATCH',
-        body: data,
+        body: {
+          changerole: data.role,
+        },
       }),
       invalidatesTags: ['PERMISSION'],
     }),
