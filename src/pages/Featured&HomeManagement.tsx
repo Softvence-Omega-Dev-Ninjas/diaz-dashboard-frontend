@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
 import FeaturedSection from '@/components/FeaturedAndHomeComponents/FeaturedSection';
 import HomeBannersSection from '@/components/FeaturedAndHomeComponents/HomeBannersSection';
+import { useFeaturedBoatsQuery } from '@/redux/features/adminBannerApi/adminBannerApi';
+import React, { useState } from 'react';
 
 type Tab = 'featured' | 'FLORIDA' | 'JUPITER';
 
 const FeaturedAndHomeManagement: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<Tab>('FLORIDA');
+  const [activeTab, setActiveTab] = useState<Tab>('featured');
+  const { data: featuredBoatsData, isLoading: isFeaturedBoatsLoading } =
+    useFeaturedBoatsQuery({});
 
   return (
     <div className="p-4 md:p-6">
@@ -22,6 +25,16 @@ const FeaturedAndHomeManagement: React.FC = () => {
       {/* Tabs */}
       <div className="mb-6">
         <div className="flex gap-2 p-2 bg-[#ECECF0] rounded-full max-w-full sm:max-w-max overflow-x-auto">
+          <button
+            onClick={() => setActiveTab('featured')}
+            className={`px-4 py-2 text-sm font-medium rounded-full transition-colors whitespace-nowrap ${
+              activeTab === 'featured'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'bg-transparent text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            Featured Boats
+          </button>
           <button
             onClick={() => setActiveTab('FLORIDA')}
             className={`px-4 py-2 text-sm font-medium rounded-full transition-colors whitespace-nowrap ${
@@ -47,7 +60,10 @@ const FeaturedAndHomeManagement: React.FC = () => {
 
       {/* Content */}
       {activeTab === 'featured' ? (
-        <FeaturedSection />
+        <FeaturedSection
+          featuredBoatsData={featuredBoatsData}
+          isLoading={isFeaturedBoatsLoading}
+        />
       ) : activeTab === 'FLORIDA' ? (
         <HomeBannersSection website={activeTab} />
       ) : (

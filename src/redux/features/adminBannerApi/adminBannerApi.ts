@@ -110,6 +110,14 @@ export const adminBannerApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ['Admin'],
     }),
+
+    featuredBoats: builder.query({
+      query: () => ({
+        url: `/boats/featured?site=FLORIDA`,
+        method: 'GET',
+      }),
+      providesTags: ['Admin'],
+    }),
   }),
 });
 
@@ -117,4 +125,5 @@ export const {
   useCreateBannerMutation,
   useGetSingleBannerQuery,
   useUpdateBannerMutation,
+  useFeaturedBoatsQuery,
 } = adminBannerApi;
