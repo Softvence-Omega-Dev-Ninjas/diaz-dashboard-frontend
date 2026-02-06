@@ -49,8 +49,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, isPremium }) => {
       <div className="p-3 2xl:p-5 pb-3 2xl:pb-5">
         {/* Location */}
         <div className="flex items-center gap-1 text-gray-400 mb-3">
-          <IoLocationOutline className="text-sm 2xl:text-xl text-black" />
-          <span className="text-sm 2xl:text-lg font-normal">
+          <IoLocationOutline className="text-sm 2xl:text-md text-black" />
+          <span className="text-sm 2xl:text-md font-normal">
             {product.location}
           </span>
         </div>
