@@ -1,11 +1,11 @@
 import type { Listing } from '@/types/listing-types';
-import { Eye, Trash2 } from 'lucide-react';
+import { Edit, Eye, Trash2 } from 'lucide-react';
 import React from 'react';
 
 interface ListingsTableProps {
   listings: Listing[];
   onView: (id: string) => void;
-
+  onEdit: (id: string) => void;
   onDelete: (id: string) => void;
 }
 
@@ -30,6 +30,7 @@ const STATUS_LABELS: Record<string, string> = {
 export const ListingsTable: React.FC<ListingsTableProps> = ({
   listings,
   onView,
+  onEdit,
   onDelete,
 }) => {
   const formatPrice = (price: number) => {
@@ -152,7 +153,13 @@ export const ListingsTable: React.FC<ListingsTableProps> = ({
                     >
                       <Eye className="w-4 h-4" />
                     </button>
-
+                    <button
+                      onClick={() => onEdit(listing.id)}
+                      className="p-1.5 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded transition-colors"
+                      title="Edit"
+                    >
+                      <Edit className="w-4 h-4" />
+                    </button>
                     <button
                       onClick={() => onDelete(listing.id)}
                       className="p-1.5 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded transition-colors"

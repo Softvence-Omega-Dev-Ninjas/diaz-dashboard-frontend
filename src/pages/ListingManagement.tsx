@@ -69,6 +69,10 @@ const ListingManagement: React.FC = () => {
     window.open(`${url}/search-listing/${id}`, '_blank');
   };
 
+  const handleEdit = (id: string) => {
+    navigate(`/listings/edit/${id}`);
+  };
+
   const handleDelete = async (id: string) => {
     const result = await Swal.fire({
       title: 'Are you sure?',
@@ -199,6 +203,7 @@ const ListingManagement: React.FC = () => {
         <ListingsTable
           listings={filteredListings}
           onView={handleView}
+          onEdit={handleEdit}
           onDelete={handleDelete}
         />
 

@@ -16,9 +16,10 @@ interface Activity {
 
 interface RecentActivityProps {
   recentActivityData: Activity[];
+  isLoading?: boolean;
 }
 
-const RecentActivity = ({ recentActivityData }: RecentActivityProps) => {
+const RecentActivity = ({ recentActivityData, isLoading = false }: RecentActivityProps) => {
   const [visibleCount, setVisibleCount] = useState(4);
 
   const handleViewMore = () => {
@@ -71,7 +72,22 @@ const RecentActivity = ({ recentActivityData }: RecentActivityProps) => {
         <h2 className="text-lg font-semibold">Recent Activity</h2>
       </div>
       <ul className="my-10 space-y-3 flex-1 overflow-y-auto">
-        {displayedActivities && displayedActivities.length > 0 ? (
+        {isLoading ? (
+          // Skeleton Loading
+          Array.from({ length: 4 }).map((_, index) => (
+            <li
+              key={index}
+              className="flex items-center gap-3 p-3 bg-[#F9FAFB] rounded-lg animate-pulse"
+            >
+              <div className="bg-gray-200 p-3 rounded-full w-12 h-12"></div>
+              <div className="space-y-2 flex-1">
+                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                <div className="h-3 bg-gray-200 rounded w-full"></div>
+                <div className="h-3 bg-gray-200 rounded w-1/4"></div>
+              </div>
+            </li>
+          ))
+        ) : displayedActivities && displayedActivities.length > 0 ? (
           displayedActivities.map((activity, index) => (
             <li
               key={index}
