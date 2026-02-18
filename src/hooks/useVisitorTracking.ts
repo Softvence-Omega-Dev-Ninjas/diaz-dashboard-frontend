@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom';
 import io, { type Socket } from 'socket.io-client';
 
 const API_URL =
-  import.meta.env.VITE_API_URL || 'https://api.floridayachttrader.com/';
+  import.meta.env.VITE_API_BASE_URL || 'https://api.floridayachttrader.com';
 
 export function useVisitorTracking() {
   const [stats, setStats] = useState<VisitorStats>({

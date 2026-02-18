@@ -9,7 +9,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   onChange,
   placeholder = 'Start writing your content...',
   className = '',
-  readOnly = true,
+  readOnly = false,
   theme = 'snow',
   minHeight = '300px',
 }) => {

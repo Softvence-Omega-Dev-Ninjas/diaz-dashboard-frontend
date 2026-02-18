@@ -183,6 +183,7 @@ const EditPlanForm: React.FC<EditPlanFormProps> = ({
               name="planType"
               value={formData.planType}
               onChange={handleChange}
+              aria-label="Plan Type"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               {PLAN_TYPES.map((type) => (
@@ -226,6 +227,7 @@ const EditPlanForm: React.FC<EditPlanFormProps> = ({
                 onChange={handleChange}
                 min="0"
                 step="0.01"
+                aria-label="Price"
                 className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                   errors.price ? 'border-red-500' : 'border-gray-300'
                 }`}
@@ -242,6 +244,7 @@ const EditPlanForm: React.FC<EditPlanFormProps> = ({
                 name="currency"
                 value={formData.currency}
                 onChange={handleChange}
+                aria-label="Currency"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="usd">USD</option>
@@ -262,6 +265,7 @@ const EditPlanForm: React.FC<EditPlanFormProps> = ({
                 value={formData.picLimit}
                 onChange={handleChange}
                 min="1"
+                aria-label="Picture Limit"
                 className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                   errors.picLimit ? 'border-red-500' : 'border-gray-300'
                 }`}
@@ -280,6 +284,7 @@ const EditPlanForm: React.FC<EditPlanFormProps> = ({
                 value={formData.wordLimit}
                 onChange={handleChange}
                 min="1"
+                aria-label="Word Limit"
                 className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                   errors.wordLimit ? 'border-red-500' : 'border-gray-300'
                 }`}
@@ -301,6 +306,7 @@ const EditPlanForm: React.FC<EditPlanFormProps> = ({
               value={formData.billingPeriodMonths}
               onChange={handleChange}
               min="1"
+              aria-label="Billing Period in Months"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
@@ -325,6 +331,7 @@ const EditPlanForm: React.FC<EditPlanFormProps> = ({
                       type="button"
                       onClick={() => removeBenefit(index)}
                       className="px-3 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
+                      aria-label={`Remove benefit ${index + 1}`}
                     >
                       <X className="w-4 h-4" />
                     </button>

@@ -22,11 +22,28 @@ const listingManagementApi = baseApi.injectEndpoints({
       providesTags: ['Listing'],
     }),
 
+    getListingById: build.query({
+      query: (id) => ({
+        url: `/admin/listings/${id}`,
+        method: 'GET',
+      }),
+      providesTags: ['Listing'],
+    }),
+
     createListing: build.mutation({
       query: (listingData) => ({
         url: `/admin/listings/admin-create-listing`,
         method: 'POST',
         body: listingData,
+      }),
+      invalidatesTags: ['Listing'],
+    }),
+
+    updateListing: build.mutation({
+      query: ({ id, ...data }) => ({
+        url: `/admin/listings/${id}`,
+        method: 'PATCH',
+        body: data,
       }),
       invalidatesTags: ['Listing'],
     }),
@@ -43,6 +60,8 @@ const listingManagementApi = baseApi.injectEndpoints({
 
 export const {
   useGetAllListingQuery,
+  useGetListingByIdQuery,
   useCreateListingMutation,
+  useUpdateListingMutation,
   useDeleteListingMutation,
 } = listingManagementApi;

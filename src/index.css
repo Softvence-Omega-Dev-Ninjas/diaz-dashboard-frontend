@@ -124,6 +124,12 @@
   body {
     @apply bg-background text-foreground;
   }
+  
+  /* Global placeholder styling */
+  input::placeholder,
+  textarea::placeholder {
+    @apply text-gray-400;
+  }
 }
 body {
   font-family: 'Inter', sans-serif;
