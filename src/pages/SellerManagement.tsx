@@ -9,7 +9,6 @@ import React, { useState } from 'react';
 const SellerManagement: React.FC = () => {
   const [selectedSellerId, setSelectedSellerId] = useState<string | null>(null);
 
-  // Fetch all sellers without pagination
   const { data: sellerData, isLoading, isError } = useGetAllSellersQuery({});
 
   const handleViewProfile = (id: string) => {
@@ -48,7 +47,6 @@ const SellerManagement: React.FC = () => {
 
   const sellers = Array.isArray(sellerData) ? sellerData : [];
 
-  // If a seller is selected, show details view
   if (selectedSellerId) {
     return (
       <div className="p-4 md:p-6">
@@ -57,7 +55,6 @@ const SellerManagement: React.FC = () => {
     );
   }
 
-  // Otherwise show list view
   return (
     <div className="p-4 md:p-6">
       <SellersHeader totalSellers={sellers.length} />

@@ -9,7 +9,7 @@ function Layout() {
 
       <main className="flex-1 lg:ml-[310px] xl:ml-80 transition-all duration-300">
         <UpperNavbar />
-        <div className="p-4 sm:p-6 lg:p-8 pt-16 lg:pt-6">
+        <div className="p-4 sm:p-6 lg:p-8 pt-6 lg:pt-6">
           <Outlet />
         </div>
       </main>

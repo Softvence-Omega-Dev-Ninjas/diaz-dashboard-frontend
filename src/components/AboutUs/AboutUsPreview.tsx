@@ -181,7 +181,7 @@ export const AboutUsPreview: React.FC<AboutUsPreviewProps> = ({
           whatSetsUsApartData.boatsSoldIn2024 ||
           whatSetsUsApartData.listingsViewedMonthly ||
           whatSetsUsApartImages.length > 0) && (
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 p-6 rounded-lg">
+          <div className="bg-linear-to-r from-blue-50 to-indigo-50 border border-blue-200 p-6 rounded-lg">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
               {whatSetsUsApartData.title || 'What Sets Us Apart'}
             </h2>

@@ -104,7 +104,7 @@ const CreateNewArticle: React.FC = () => {
   };
 
   const handleBack = () => {
-    navigate('/content');
+    navigate('/content/backup');
   };
 
   return (

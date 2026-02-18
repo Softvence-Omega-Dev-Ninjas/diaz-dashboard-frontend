@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from 'react';
 import Branding from '@/components/Settings/Branding';
 import General from '@/components/Settings/General';
 import Notifications from '@/components/Settings/Notifications';
@@ -8,7 +7,8 @@ import {
   useGetAdminSettingsQuery,
   useUpdateAdminSettingsMutation,
 } from '@/redux/features/adminSettingApis/adminSettingsApi';
-import toast from 'react-hot-toast';
+import React, { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 type Tab = 'general' | 'branding' | 'notifications';
 
@@ -42,8 +42,6 @@ const Settings: React.FC = () => {
   }, [data]);
 
   const handleSave = async () => {
-    // const toastId = toast.loading("Saving settings...");
-
     try {
       await updateSettings(formData).unwrap();
       toast.success('Settings updated successfully');
@@ -72,7 +70,6 @@ const Settings: React.FC = () => {
         </button>
       </div>
 
-      {/* Tabs */}
       <div className="mb-6">
         <div className="flex gap-2 p-1 bg-gray-100 rounded-lg">
           {(['general', 'branding', 'notifications'] as Tab[]).map((tab) => (

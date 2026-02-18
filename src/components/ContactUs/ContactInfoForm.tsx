@@ -1,5 +1,5 @@
-import React from 'react';
 import { Upload, X } from 'lucide-react';
+import React from 'react';
 import { type ImageData } from './types';
 
 interface ContactInfoFormProps {

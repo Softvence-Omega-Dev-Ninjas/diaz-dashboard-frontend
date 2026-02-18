@@ -1,17 +1,17 @@
+import {
+  useCreateContactInfoMutation,
+  useGetContactInfoQuery,
+  useUpdateContactInfoMutation,
+} from '@/redux/features/contentmanagement/contentmanagement';
 import React, { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import {
-  useGetContactInfoQuery,
-  useCreateContactInfoMutation,
-  useUpdateContactInfoMutation,
-} from '@/redux/features/contentmanagement/contentmanagement';
-import {
-  ContactUsHeader,
   ContactInfoForm,
-  WorkingHoursSection,
-  SocialMediaSection,
   ContactInfoPreview,
   ContactInfoSidebar,
+  ContactUsHeader,
+  SocialMediaSection,
+  WorkingHoursSection,
   type ContactInfoFormData,
   type SocialMedia,
 } from '../components/ContactUs';

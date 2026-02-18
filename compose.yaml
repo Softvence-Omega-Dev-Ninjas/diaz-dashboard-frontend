@@ -4,8 +4,7 @@ services:
     image: softvence/diaz_floridayt_admin:latest
     container_name: floridayt_admin
     environment:
-      - NEXT_PUBLIC_BASE_URL=https://admin.floridayachttrader.com
-      - NEXT_PUBLIC_BASE_API=https://api.floridayachttrader.com/api
+      - VITE_BASE_URL=https://development.floridayachttrader.com
     ports:
       - "4173:4173"
     restart: always

@@ -1,9 +1,8 @@
-// src/routes/ProtectedRoute.tsx
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import type { RootState } from '@/redux/store';
 import { useEffect } from 'react';
 import toast from 'react-hot-toast';
+import { useSelector } from 'react-redux';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
 const ProtectedRoute = () => {
   const token = useSelector((state: RootState) => state.auth.token);

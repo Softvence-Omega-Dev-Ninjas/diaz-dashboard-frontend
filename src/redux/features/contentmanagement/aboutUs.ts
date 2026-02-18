@@ -29,7 +29,6 @@ export const aboutUsApi = baseApi.injectEndpoints({
       invalidatesTags: ['AboutUs'],
     }),
 
-
     getAboutUsOurStory: build.query({
       query: (site) => ({
         url: `/aboutus/our-story?site=${site}`,
@@ -65,8 +64,7 @@ export const {
 
   useGetAboutUsOurStoryQuery,
   useCreateAboutUsOurStoryMutation,
-  useUpdateAboutUsOurStoryMutation
+  useUpdateAboutUsOurStoryMutation,
 } = aboutUsApi;
-
 
 export { useGetAboutUsQuery as useGetAboutUsContentQuery };

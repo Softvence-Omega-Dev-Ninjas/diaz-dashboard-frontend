@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
 import FeaturedSection from '@/components/FeaturedAndHomeComponents/FeaturedSection';
 import HomeBannersSection from '@/components/FeaturedAndHomeComponents/HomeBannersSection';
+import { useFeaturedBoatsQuery } from '@/redux/features/adminBannerApi/adminBannerApi';
+import React, { useState } from 'react';
 
 type Tab = 'featured' | 'FLORIDA' | 'JUPITER';
 
 const FeaturedAndHomeManagement: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>('featured');
+  const { data: featuredBoatsData, isLoading: isFeaturedBoatsLoading } =
+    useFeaturedBoatsQuery({});
 
   return (
     <div className="p-4 md:p-6">
@@ -30,7 +33,7 @@ const FeaturedAndHomeManagement: React.FC = () => {
                 : 'bg-transparent text-gray-600 hover:text-gray-900'
             }`}
           >
-            Featured Yachts
+            Featured Boats
           </button>
           <button
             onClick={() => setActiveTab('FLORIDA')}
@@ -57,7 +60,10 @@ const FeaturedAndHomeManagement: React.FC = () => {
 
       {/* Content */}
       {activeTab === 'featured' ? (
-        <FeaturedSection />
+        <FeaturedSection
+          featuredBoatsData={featuredBoatsData}
+          isLoading={isFeaturedBoatsLoading}
+        />
       ) : activeTab === 'FLORIDA' ? (
         <HomeBannersSection website={activeTab} />
       ) : (

@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { CityField } from './CityField';
 import { FormFieldWithError } from './FormFieldWithError';
-import ProgressBar from './ProgressBar';
 import RightPreviewSection from './RightPreviewSection';
 import { StateField } from './StateField';
 
@@ -33,7 +32,6 @@ const SecondListingPage = ({
   onBack,
   onSubmit,
   initialData,
-  currentStep,
   isSubmitting = false,
   previewData,
 }: SecondListingPageProps) => {
@@ -58,9 +56,6 @@ const SecondListingPage = ({
         {/* Left Form Section */}
         <div className="lg:col-span-2">
           <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
-            {/* Progress Bar */}
-            <ProgressBar currentStep={currentStep} />
-
             {/* Your Contact Details Section */}
             <div className="bg-white rounded-lg border border-gray-200 p-4 md:p-6">
               <h2 className="text-lg font-semibold mb-4">

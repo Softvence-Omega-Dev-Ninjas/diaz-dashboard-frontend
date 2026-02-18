@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import {
   CABIN_COUNT_OPTIONS,
@@ -37,26 +38,37 @@ interface FirstListingPageProps {
       moreDetails: MoreDetail[];
     },
   ) => void;
-  initialData?: Partial<FirstStepFormData>;
+  initialData?: Partial<FirstStepFormData> & {
+    coverPhoto?: string | null;
+    galleryPhotos?: string[];
+    moreDetails?: MoreDetail[];
+  };
   isSubmitting?: boolean;
+  isEditMode?: boolean;
 }
 
 const FirstListingPage = ({
   onNext,
   initialData,
   isSubmitting = false,
+  isEditMode = false,
 }: FirstListingPageProps) => {
+  const navigate = useNavigate();
   const { register, handleSubmit, watch, setValue } =
     useForm<FirstStepFormData>({
       resolver: zodResolver(firstStepSchema) as any,
       defaultValues: initialData || {},
     });
 
-  const [coverPhoto, setCoverPhoto] = useState<string | null>(null);
-  const [galleryPhotos, setGalleryPhotos] = useState<string[]>([]);
-  const [moreDetails, setMoreDetails] = useState<MoreDetail[]>([
-    { title: '', description: '' },
-  ]);
+  const [coverPhoto, setCoverPhoto] = useState<string | null>(
+    initialData?.coverPhoto || null,
+  );
+  const [galleryPhotos, setGalleryPhotos] = useState<string[]>(
+    initialData?.galleryPhotos || [],
+  );
+  const [moreDetails, setMoreDetails] = useState<MoreDetail[]>(
+    initialData?.moreDetails || [{ title: '', description: '' }],
+  );
 
   const coverPhotoRef = useRef<HTMLInputElement>(null);
   const galleryPhotoRef = useRef<HTMLInputElement>(null);
@@ -401,14 +413,15 @@ const FirstListingPage = ({
             <div className="flex justify-between items-center pt-4">
               <button
                 type="button"
-                className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+                onClick={() => navigate('/listings')}
+                className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors cursor-pointer"
               >
                 Back
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 {isSubmitting ? (
                   <>
@@ -432,11 +445,11 @@ const FirstListingPage = ({
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       ></path>
                     </svg>
-                    Submitting...
+                    {isEditMode ? 'Updating...' : 'Submitting...'}
                   </>
                 ) : (
                   <>
-                    Post Now
+                    {isEditMode ? 'Update Listing' : 'Post Now'}
                     <span>→</span>
                   </>
                 )}

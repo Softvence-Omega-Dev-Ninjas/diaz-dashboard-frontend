@@ -1,4 +1,3 @@
-// Yacht Leads types
 export interface BoatInfo {
   id: string;
   name: string;

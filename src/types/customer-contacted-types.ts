@@ -1,4 +1,3 @@
-// Customer Contacted types
 export interface CustomerContacted {
   id: string;
   fullName: string;
@@ -21,3 +20,5 @@ export interface CustomerContactedResponse {
     totalPage: number;
   };
 }
+
+export const adminEmails = ['diaz614@goatmail.uk', 'diazsuper@goatmail.uk'];

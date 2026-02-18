@@ -3,31 +3,36 @@ import {
   useGetActiveEmailSubscriptionsQuery,
   useGetEmailSubscriptionsQuery,
 } from '@/redux/features/subscription/subscriptionApi';
-import { Calendar, CheckCircle, ChevronLeft, ChevronRight, Download, Mail, XCircle } from 'lucide-react';
+import {
+  Calendar,
+  CheckCircle,
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  Mail,
+  XCircle,
+} from 'lucide-react';
 import React, { useState } from 'react';
 
 const EmailSubscriptionList: React.FC = () => {
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState<'all' | 'active'>('all');
 
-  const {
-    data: allSubscriptions,
-    isLoading: isLoadingAll,
-  } = useGetEmailSubscriptionsQuery(
-    { site: 'FLORIDA', page, limit: 10 },
-    { skip: filter !== 'all' },
-  );
+  const { data: allSubscriptions, isLoading: isLoadingAll } =
+    useGetEmailSubscriptionsQuery(
+      { site: 'FLORIDA', page, limit: 10 },
+      { skip: filter !== 'all' },
+    );
 
-  const {
-    data: activeSubscriptions,
-    isLoading: isLoadingActive,
-  } = useGetActiveEmailSubscriptionsQuery(
-    { site: 'FLORIDA', page, limit: 10 },
-    { skip: filter !== 'active' },
-  );
+  const { data: activeSubscriptions, isLoading: isLoadingActive } =
+    useGetActiveEmailSubscriptionsQuery(
+      { site: 'FLORIDA', page, limit: 10 },
+      { skip: filter !== 'active' },
+    );
 
   const isLoading = filter === 'all' ? isLoadingAll : isLoadingActive;
-  const subscriptionsData = filter === 'all' ? allSubscriptions : activeSubscriptions;
+  const subscriptionsData =
+    filter === 'all' ? allSubscriptions : activeSubscriptions;
   const subscriptions: EmailSubscription[] = subscriptionsData?.data || [];
   const metadata = subscriptionsData?.metadata;
 
@@ -42,7 +47,13 @@ const EmailSubscriptionList: React.FC = () => {
   };
 
   const exportToCSV = () => {
-    const headers = ['Email', 'Site', 'Status', 'Subscribed At', 'Unsubscribed At'];
+    const headers = [
+      'Email',
+      'Site',
+      'Status',
+      'Subscribed At',
+      'Unsubscribed At',
+    ];
     const csvRows = subscriptions.map((sub) => [
       sub.email,
       sub.site,
@@ -53,14 +64,19 @@ const EmailSubscriptionList: React.FC = () => {
 
     const csvContent = [
       headers.join(','),
-      ...csvRows.map((row: string[]) => row.map((cell: string) => `"${cell}"`).join(',')),
+      ...csvRows.map((row: string[]) =>
+        row.map((cell: string) => `"${cell}"`).join(','),
+      ),
     ].join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
-    link.setAttribute('download', `email-subscriptions-${filter}-${new Date().toISOString()}.csv`);
+    link.setAttribute(
+      'download',
+      `email-subscriptions-${filter}-${new Date().toISOString()}.csv`,
+    );
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
@@ -83,7 +99,9 @@ const EmailSubscriptionList: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 md:p-6 border-b border-gray-200 gap-4">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Email Subscriptions</h2>
+          <h2 className="text-lg font-semibold text-gray-900">
+            Email Subscriptions
+          </h2>
           <p className="text-sm text-gray-500 mt-1">
             {metadata?.total || 0} total subscriptions
           </p>
@@ -96,10 +114,11 @@ const EmailSubscriptionList: React.FC = () => {
                 setFilter('all');
                 setPage(1);
               }}
-              className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${filter === 'all'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'bg-transparent text-gray-600 hover:text-gray-900'
-                }`}
+              className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                filter === 'all'
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'bg-transparent text-gray-600 hover:text-gray-900'
+              }`}
             >
               All
             </button>
@@ -108,10 +127,11 @@ const EmailSubscriptionList: React.FC = () => {
                 setFilter('active');
                 setPage(1);
               }}
-              className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${filter === 'active'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'bg-transparent text-gray-600 hover:text-gray-900'
-                }`}
+              className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                filter === 'active'
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'bg-transparent text-gray-600 hover:text-gray-900'
+              }`}
             >
               Active
             </button>
@@ -132,7 +152,9 @@ const EmailSubscriptionList: React.FC = () => {
           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
             <Mail className="w-8 h-8 text-gray-400" />
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No subscriptions found</h3>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            No subscriptions found
+          </h3>
           <p className="text-gray-500">
             {filter === 'active'
               ? 'No active email subscriptions at the moment.'
@@ -177,14 +199,17 @@ const EmailSubscriptionList: React.FC = () => {
                       </div>
                     </td>
                     <td className="px-4 md:px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm text-gray-600">{subscription.site}</span>
+                      <span className="text-sm text-gray-600">
+                        {subscription.site}
+                      </span>
                     </td>
                     <td className="px-4 md:px-6 py-4 whitespace-nowrap">
                       <span
-                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${subscription.isActive
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-gray-100 text-gray-800'
-                          }`}
+                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          subscription.isActive
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-gray-100 text-gray-800'
+                        }`}
                       >
                         {subscription.isActive ? (
                           <>
@@ -210,7 +235,9 @@ const EmailSubscriptionList: React.FC = () => {
                         {subscription.unsubscribedAt ? (
                           <>
                             <Calendar className="w-3 h-3" />
-                            <span>{formatDate(subscription.unsubscribedAt)}</span>
+                            <span>
+                              {formatDate(subscription.unsubscribedAt)}
+                            </span>
                           </>
                         ) : (
                           <span className="text-gray-400">-</span>
@@ -227,40 +254,50 @@ const EmailSubscriptionList: React.FC = () => {
           {metadata && (
             <div className="flex flex-col sm:flex-row items-center justify-between px-4 md:px-6 py-4 border-t border-gray-200 gap-4">
               <div className="text-sm text-gray-600">
-                Showing <span className="font-medium">{((page - 1) * metadata.limit) + 1}</span> to{' '}
-                <span className="font-medium">{Math.min(page * metadata.limit, metadata.total)}</span> of{' '}
-                <span className="font-medium">{metadata.total}</span> results
+                Showing{' '}
+                <span className="font-medium">
+                  {(page - 1) * metadata.limit + 1}
+                </span>{' '}
+                to{' '}
+                <span className="font-medium">
+                  {Math.min(page * metadata.limit, metadata.total)}
+                </span>{' '}
+                of <span className="font-medium">{metadata.total}</span> results
               </div>
 
               <div className="flex items-center gap-2">
                 {/* Page Numbers */}
                 {metadata.totalPage > 1 && (
                   <div className="flex items-center gap-1">
-                    {Array.from({ length: Math.min(5, metadata.totalPage) }, (_, i) => {
-                      let pageNum: number;
-                      if (metadata.totalPage <= 5) {
-                        pageNum = i + 1;
-                      } else if (page <= 3) {
-                        pageNum = i + 1;
-                      } else if (page >= metadata.totalPage - 2) {
-                        pageNum = metadata.totalPage - 4 + i;
-                      } else {
-                        pageNum = page - 2 + i;
-                      }
+                    {Array.from(
+                      { length: Math.min(5, metadata.totalPage) },
+                      (_, i) => {
+                        let pageNum: number;
+                        if (metadata.totalPage <= 5) {
+                          pageNum = i + 1;
+                        } else if (page <= 3) {
+                          pageNum = i + 1;
+                        } else if (page >= metadata.totalPage - 2) {
+                          pageNum = metadata.totalPage - 4 + i;
+                        } else {
+                          pageNum = page - 2 + i;
+                        }
 
-                      return (
-                        <button
-                          key={pageNum}
-                          onClick={() => setPage(pageNum)}
-                          className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${page === pageNum
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                        return (
+                          <button
+                            key={pageNum}
+                            onClick={() => setPage(pageNum)}
+                            className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
+                              page === pageNum
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
                             }`}
-                        >
-                          {pageNum}
-                        </button>
-                      );
-                    })}
+                          >
+                            {pageNum}
+                          </button>
+                        );
+                      },
+                    )}
                   </div>
                 )}
 
@@ -275,7 +312,9 @@ const EmailSubscriptionList: React.FC = () => {
                     <ChevronLeft className="w-5 h-5" />
                   </button>
                   <button
-                    onClick={() => setPage((p) => Math.min(metadata?.totalPage || 1, p + 1))}
+                    onClick={() =>
+                      setPage((p) => Math.min(metadata?.totalPage || 1, p + 1))
+                    }
                     disabled={page === (metadata?.totalPage || 1) || !metadata}
                     className="p-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     title="Next"

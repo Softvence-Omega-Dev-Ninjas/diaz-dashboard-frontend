@@ -6,6 +6,7 @@ import {
   useDeletePermissionMutation,
   useGetAllPermissionUsersQuery,
 } from '@/redux/features/permissionManagement/permission';
+import { adminEmails } from '@/types/customer-contacted-types';
 import type {
   CreateAdminRequest,
   PermissionUser,
@@ -75,7 +76,7 @@ const UsersAndPermission: React.FC = () => {
 
   const handleRoleUpdate = async (data: UpdateRoleRequest) => {
     if (!selectedUser) return;
-
+    console.log('Updating role with data:', data);
     try {
       await updateRole({ id: selectedUser.id, data }).unwrap();
       toast.success('Role updated successfully');
@@ -140,6 +141,10 @@ const UsersAndPermission: React.FC = () => {
     return role === 'SUPER_ADMIN' ? 'Super Admin' : 'Admin';
   };
 
+  const filteredUsers = users.filter(
+    (user: any) => !adminEmails.includes(user.email),
+  );
+
   if (isLoading) {
     return (
       <div className="p-4 md:p-6">
@@ -193,12 +198,12 @@ const UsersAndPermission: React.FC = () => {
 
         {/* Users List */}
         <div className="divide-y divide-gray-200">
-          {users.length === 0 ? (
+          {filteredUsers.length === 0 ? (
             <div className="p-8 text-center text-gray-500">
               No admin users found
             </div>
           ) : (
-            users.map((user: any) => (
+            filteredUsers.map((user: any) => (
               <div
                 key={user.id}
                 className="flex flex-col lg:flex-row items-start lg:items-center justify-between p-4 md:p-6 hover:bg-gray-50 transition-colors gap-4"

@@ -13,6 +13,7 @@ import WhyUs from '@/pages/WhyUs';
 import { createBrowserRouter } from 'react-router-dom';
 import App from '../App';
 import AddListing from '../pages/AddListing';
+import EditListing from '../pages/EditListing';
 import AnalyticsAndReports from '../pages/AnalyticsAndReports';
 import ContentManagement from '../pages/ContentManagement';
 import AllLeads from '../pages/DailyLeads';
@@ -44,6 +45,7 @@ const router = createBrowserRouter([
           { path: 'overview', element: <Overview /> },
           { path: 'listings', element: <ListingManagement /> },
           { path: 'listings/add', element: <AddListing /> },
+          { path: 'listings/edit/:id', element: <EditListing /> },
           { path: 'sellers', element: <SellerManagement /> },
           { path: 'yacht-leads', element: <AllLeads /> },
           { path: 'featured', element: <FeaturedAndHomeManagement /> },
@@ -64,12 +66,11 @@ const router = createBrowserRouter([
           { path: 'users', element: <UsersAndPermission /> },
           { path: 'analytics', element: <AnalyticsAndReports /> },
           { path: 'settings', element: <Settings /> },
-          { path: 'promoCodeManagement', element: <ManagePromoCodes /> }
+          { path: 'promoCodeManagement', element: <ManagePromoCodes /> },
         ],
       },
     ],
   },
 ]);
-
 
 export default router;

@@ -5,7 +5,6 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
 interface FormData {
-  // Step 1 - Boat Information
   buildYear?: number;
   make?: string;
   model?: string;
@@ -23,7 +22,6 @@ interface FormData {
   numberOfCabins?: number;
   numberOfHeads?: number;
 
-  // Dynamic Engines (supports multiple engines)
   [key: `engine${number}Hours`]: number | undefined;
   [key: `engine${number}Make`]: string | undefined;
   [key: `engine${number}Model`]: string | undefined;
@@ -31,7 +29,6 @@ interface FormData {
   [key: `engine${number}FuelType`]: string | undefined;
   [key: `engine${number}PropellerType`]: string | undefined;
 
-  // Basic Information
   condition?: string;
   price?: number;
   city?: string;
@@ -45,7 +42,6 @@ interface FormData {
   coverPhoto?: string | null;
   galleryPhotos?: string[];
 
-  // Equipment Arrays
   electricalEquipment?: string[];
   additionalEquipment?: string[];
   outsideEquipment?: string[];
@@ -53,21 +49,15 @@ interface FormData {
   coversEquipment?: string[];
   electronics?: string[];
 
-  // Engine Types
   engineType?: string;
   propType?: string;
 }
 
-/**
- * Create FormData object for submission
- * Converts form data to proper types (numbers, etc.)
- */
 const createBoatRegistrationFormData = async (
   data: FormData,
 ): Promise<FormData> => {
   const formData = new FormData();
 
-  // Helper to safely parse numbers
   const toNumber = (value: number | string | null | undefined): number => {
     if (typeof value === 'number') return value;
     if (value === null || value === undefined) return 0;
@@ -80,7 +70,6 @@ const createBoatRegistrationFormData = async (
     return parseFloat(String(value || '0')) || 0;
   };
 
-  // Boat Information with proper number types - matching backend structure
   const boatInfo = {
     zip: data.zip || '',
     electricalEquipment: data.electricalEquipment || [],
@@ -143,15 +132,12 @@ const createBoatRegistrationFormData = async (
     propType: data.propType || '',
   };
 
-  // Debug: Log engines array
   console.log('\n🔧 Engines Array:', boatInfo.engines);
   console.log(`📊 Number of Engines: ${boatInfo.enginesNumber}`);
   console.log(`✅ Engines in Array: ${boatInfo.engines.length}`);
 
-  // Add boatInfo as JSON string to FormData
   formData.append('boatInfo', JSON.stringify(boatInfo));
 
-  // Handle cover photo (array of images, even if single) with compression
   if (data.coverPhoto) {
     if (
       typeof data.coverPhoto === 'string' &&
@@ -159,7 +145,6 @@ const createBoatRegistrationFormData = async (
     ) {
       const blob = dataURLtoBlob(data.coverPhoto);
       let file = new File([blob], 'cover.jpg', { type: 'image/jpeg' });
-      // Compress the image
       file = await compressImage(file);
       formData.append('covers', file);
     } else if (data.coverPhoto && typeof data.coverPhoto !== 'string') {
@@ -168,7 +153,6 @@ const createBoatRegistrationFormData = async (
     }
   }
 
-  // Handle gallery photos (array of images) with compression
   if (data.galleryPhotos && data.galleryPhotos.length > 0) {
     for (let index = 0; index < data.galleryPhotos.length; index++) {
       const photo = data.galleryPhotos[index];
@@ -177,7 +161,6 @@ const createBoatRegistrationFormData = async (
         let file = new File([blob], `gallery-${index}.jpg`, {
           type: 'image/jpeg',
         });
-        // Compress the image
         file = await compressImage(file);
         formData.append('galleries', file);
       } else if (typeof photo !== 'string') {
@@ -190,9 +173,6 @@ const createBoatRegistrationFormData = async (
   return formData as unknown as FormData;
 };
 
-/**
- * Convert base64/DataURL to Blob
- */
 const dataURLtoBlob = (dataURL: string): Blob => {
   const parts = dataURL.split(',');
   const mime = parts[0].match(/:(.*?);/)?.[1] || 'image/jpeg';
@@ -205,9 +185,6 @@ const dataURLtoBlob = (dataURL: string): Blob => {
   return new Blob([u8arr], { type: mime });
 };
 
-/**
- * Compress image to reduce file size
- */
 const compressImage = async (file: File): Promise<File> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -220,7 +197,6 @@ const compressImage = async (file: File): Promise<File> => {
         let width = img.width;
         let height = img.height;
 
-        // Resize if too large
         const maxWidth = 1920;
         const maxHeight = 1920;
 
@@ -240,7 +216,6 @@ const compressImage = async (file: File): Promise<File> => {
         const ctx = canvas.getContext('2d');
         ctx?.drawImage(img, 0, 0, width, height);
 
-        // Compress with quality adjustment
         canvas.toBlob(
           (blob) => {
             if (blob) {
@@ -254,7 +229,7 @@ const compressImage = async (file: File): Promise<File> => {
             }
           },
           'image/jpeg',
-          0.8, // 80% quality
+          0.8,
         );
       };
       img.onerror = reject;
@@ -271,15 +246,12 @@ const AddListing = () => {
   const handleSubmit = async (data: Partial<FormData>) => {
     const finalData = data;
 
-    // Create FormData object with compression
     const formDataToSubmit = await createBoatRegistrationFormData(finalData);
 
-    // Console log FormData
     console.log('========== BOAT REGISTRATION SUBMISSION ==========');
     console.log('\n📋 Complete Form Data:', finalData);
     console.log('\n📦 FormData Object:', formDataToSubmit);
 
-    // Log FormData entries
     console.log('\n📝 FormData Entries:');
     for (const [key, value] of (formDataToSubmit as any).entries()) {
       if (value instanceof File) {
@@ -299,14 +271,11 @@ const AddListing = () => {
 
     console.log('\n==================================================\n');
 
-    // Submit via Redux
     try {
       const result = await createListing(formDataToSubmit).unwrap();
       console.log('✅ Submission successful:', result);
       toast.success('Boat listing created successfully!');
       navigate('/listings');
-      // Reset form or redirect
-      // router.push('/listings');
     } catch (error: any) {
       console.error('❌ Submission failed:', error);
       toast.error(error?.data?.message || 'Failed to create listing');

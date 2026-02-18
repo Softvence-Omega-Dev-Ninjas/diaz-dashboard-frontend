@@ -14,30 +14,6 @@ interface MetricCard {
   isPositive: boolean;
 }
 
-const DEMO_METRICS: MetricCard[] = [
-  {
-    id: 1,
-    title: 'Total Visitors',
-    value: '24,891',
-    change: '+12.5% from last month',
-    isPositive: true,
-  },
-  {
-    id: 2,
-    title: 'Page Views',
-    value: '145,672',
-    change: '+8.2% from last month',
-    isPositive: true,
-  },
-  {
-    id: 3,
-    title: 'Avg. Session Time',
-    value: '4:32',
-    change: '+15% from last month',
-    isPositive: true,
-  },
-];
-
 const AnalyticsAndReports: React.FC = () => {
   const {
     data: metricsData,
@@ -47,20 +23,23 @@ const AnalyticsAndReports: React.FC = () => {
   const { data: topViewedYachtsData, isLoading: isLoadingYachts } =
     useGetTopViewedBoatsQuery({});
 
+  console.log('Top Viewed Yachts Data:', topViewedYachtsData);
+  console.log('Metrics Data:', metricsData);
+
   // Transform API metrics data to match the display format
   const metrics: MetricCard[] = metricsData
     ? [
         {
           id: 1,
           title: 'Total Visitors',
-          value: metricsData.totalVisitors?.value?.toLocaleString() || '0',
+          value: metricsData.totalVisitors?.value?.toString() || '0',
           change: `${metricsData.totalVisitors?.growth >= 0 ? '+' : ''}${metricsData.totalVisitors?.growth || 0}% from last month`,
           isPositive: (metricsData.totalVisitors?.growth || 0) >= 0,
         },
         {
           id: 2,
           title: 'Page Views',
-          value: metricsData.pageViews?.value?.toLocaleString() || '0',
+          value: metricsData.pageViews?.value?.toString() || '0',
           change: `${metricsData.pageViews?.growth >= 0 ? '+' : ''}${metricsData.pageViews?.growth || 0}% from last month`,
           isPositive: (metricsData.pageViews?.growth || 0) >= 0,
         },
@@ -72,21 +51,24 @@ const AnalyticsAndReports: React.FC = () => {
           isPositive: (metricsData.avgSessionTime?.growth || 0) >= 0,
         },
       ]
-    : DEMO_METRICS;
+    : [];
 
   // Transform yacht data to match ProductCard expectations
   const transformedYachts =
-    topViewedYachtsData?.map((yacht: any) => ({
-      id: yacht.id,
-      name: yacht.name,
-      image: yacht.images?.[0]?.file?.url || '',
-      location: `${yacht.city}, ${yacht.state}`,
-      brand_make: yacht.make,
-      model: yacht.model,
-      built_year: yacht.buildYear,
-      price: yacht.price,
-      views: yacht.pageViewCount || 0,
-    })) || [];
+    topViewedYachtsData
+      ?.map((yacht: any) => ({
+        id: yacht.id,
+        name: yacht.name,
+        image: yacht.images?.[0]?.file?.url || '',
+        location: `${yacht.city}, ${yacht.state}`,
+        brand_make: yacht.make,
+        model: yacht.model,
+        built_year: yacht.buildYear,
+        price: yacht.price,
+        views: yacht.pageViewCount || 0,
+      }))
+      .sort((a: any, b: any) => b.views - a.views) // Sort by views descending
+      .slice(0, 4) || []; // Get top 4
 
   return (
     <div className="p-4 md:p-6">
@@ -149,8 +131,10 @@ const AnalyticsAndReports: React.FC = () => {
         )}
       </div>
       <div className="p-4 md:p-5 border border-gray-200 rounded-lg mt-4 md:mt-5">
-        <h1 className="text-lg md:text-xl">Top Viewed Yachts</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5 mt-4 md:mt-5">
+        <h1 className="text-lg md:text-xl font-semibold">
+          Top 4 Most Viewed Yachts
+        </h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-5 mt-4 md:mt-5">
           {isLoadingYachts ? (
             // Loading state for yachts
             <>
@@ -169,11 +153,9 @@ const AnalyticsAndReports: React.FC = () => {
               ))}
             </>
           ) : transformedYachts.length > 0 ? (
-            transformedYachts
-              .slice(0, 4)
-              .map((data: any) => (
-                <ProductCard key={data.id} product={data} isPremium={true} />
-              ))
+            transformedYachts.map((data: any) => (
+              <ProductCard key={data.id} product={data} isPremium={true} />
+            ))
           ) : (
             <div className="col-span-4 text-center text-gray-500 py-8">
               No yacht data available

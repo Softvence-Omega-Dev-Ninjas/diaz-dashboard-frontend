@@ -13,7 +13,11 @@ interface EditPlanFormProps {
 
 const PLAN_TYPES = ['GOLD', 'PLATINUM', 'DIAMOND'];
 
-const EditPlanForm: React.FC<EditPlanFormProps> = ({ plan, onSubmit, onCancel }) => {
+const EditPlanForm: React.FC<EditPlanFormProps> = ({
+  plan,
+  onSubmit,
+  onCancel,
+}) => {
   const [formData, setFormData] = useState<CreateSubscriptionPlanPayload>({
     title: plan.title,
     planType: plan.planType,
@@ -28,9 +32,9 @@ const EditPlanForm: React.FC<EditPlanFormProps> = ({ plan, onSubmit, onCancel })
     billingPeriodMonths: plan.billingPeriodMonths,
   });
 
-  const [errors, setErrors] = useState<Partial<Record<keyof CreateSubscriptionPlanPayload, string>>>(
-    {},
-  );
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof CreateSubscriptionPlanPayload, string>>
+  >({});
 
   useEffect(() => {
     setFormData({
@@ -49,7 +53,9 @@ const EditPlanForm: React.FC<EditPlanFormProps> = ({ plan, onSubmit, onCancel })
   }, [plan]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
@@ -94,7 +100,9 @@ const EditPlanForm: React.FC<EditPlanFormProps> = ({ plan, onSubmit, onCancel })
   };
 
   const validate = (): boolean => {
-    const newErrors: Partial<Record<keyof CreateSubscriptionPlanPayload, string>> = {};
+    const newErrors: Partial<
+      Record<keyof CreateSubscriptionPlanPayload, string>
+    > = {};
 
     if (!formData.title.trim()) {
       newErrors.title = 'Title is required';
@@ -132,7 +140,9 @@ const EditPlanForm: React.FC<EditPlanFormProps> = ({ plan, onSubmit, onCancel })
       <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-gray-900">Edit Subscription Plan</h2>
+          <h2 className="text-xl font-semibold text-gray-900">
+            Edit Subscription Plan
+          </h2>
           <button
             onClick={onCancel}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -159,7 +169,9 @@ const EditPlanForm: React.FC<EditPlanFormProps> = ({ plan, onSubmit, onCancel })
               }`}
               placeholder="e.g., Gold Package"
             />
-            {errors.title && <p className="mt-1 text-sm text-red-500">{errors.title}</p>}
+            {errors.title && (
+              <p className="mt-1 text-sm text-red-500">{errors.title}</p>
+            )}
           </div>
 
           {/* Plan Type */}
@@ -171,6 +183,7 @@ const EditPlanForm: React.FC<EditPlanFormProps> = ({ plan, onSubmit, onCancel })
               name="planType"
               value={formData.planType}
               onChange={handleChange}
+              aria-label="Plan Type"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               {PLAN_TYPES.map((type) => (
@@ -214,11 +227,14 @@ const EditPlanForm: React.FC<EditPlanFormProps> = ({ plan, onSubmit, onCancel })
                 onChange={handleChange}
                 min="0"
                 step="0.01"
+                aria-label="Price"
                 className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                   errors.price ? 'border-red-500' : 'border-gray-300'
                 }`}
               />
-              {errors.price && <p className="mt-1 text-sm text-red-500">{errors.price}</p>}
+              {errors.price && (
+                <p className="mt-1 text-sm text-red-500">{errors.price}</p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -228,6 +244,7 @@ const EditPlanForm: React.FC<EditPlanFormProps> = ({ plan, onSubmit, onCancel })
                 name="currency"
                 value={formData.currency}
                 onChange={handleChange}
+                aria-label="Currency"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="usd">USD</option>
@@ -248,6 +265,7 @@ const EditPlanForm: React.FC<EditPlanFormProps> = ({ plan, onSubmit, onCancel })
                 value={formData.picLimit}
                 onChange={handleChange}
                 min="1"
+                aria-label="Picture Limit"
                 className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                   errors.picLimit ? 'border-red-500' : 'border-gray-300'
                 }`}
@@ -266,6 +284,7 @@ const EditPlanForm: React.FC<EditPlanFormProps> = ({ plan, onSubmit, onCancel })
                 value={formData.wordLimit}
                 onChange={handleChange}
                 min="1"
+                aria-label="Word Limit"
                 className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                   errors.wordLimit ? 'border-red-500' : 'border-gray-300'
                 }`}
@@ -287,6 +306,7 @@ const EditPlanForm: React.FC<EditPlanFormProps> = ({ plan, onSubmit, onCancel })
               value={formData.billingPeriodMonths}
               onChange={handleChange}
               min="1"
+              aria-label="Billing Period in Months"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
@@ -311,6 +331,7 @@ const EditPlanForm: React.FC<EditPlanFormProps> = ({ plan, onSubmit, onCancel })
                       type="button"
                       onClick={() => removeBenefit(index)}
                       className="px-3 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
+                      aria-label={`Remove benefit ${index + 1}`}
                     >
                       <X className="w-4 h-4" />
                     </button>

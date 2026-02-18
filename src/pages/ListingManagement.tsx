@@ -15,7 +15,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import Swal from 'sweetalert2';
 
-const url = import.meta.env.VITE_BASE_URL;
+const url = import.meta.env.VITE_FLORIDA_FRONTEND_URL || 'https://development.floridayachttrader.com';
 const ListingManagement: React.FC = () => {
   const navigate = useNavigate();
   const [filters, setFilters] = useState<ListingFilters>({
@@ -56,14 +56,6 @@ const ListingManagement: React.FC = () => {
     }
   }, [listingData?.total]);
 
-  const uniqueSellers = useMemo((): string[] => {
-    if (!listingData?.items) return [];
-    const sellers = listingData.items.map(
-      (item: any) => item.seller?.name || item.name || 'Unknown',
-    );
-    return Array.from(new Set(sellers)) as string[];
-  }, [listingData]);
-
   const filteredListings = useMemo(() => {
     if (!listingData?.items) return [];
     return listingData.items;
@@ -75,6 +67,10 @@ const ListingManagement: React.FC = () => {
 
   const handleView = (id: string) => {
     window.open(`${url}/search-listing/${id}`, '_blank');
+  };
+
+  const handleEdit = (id: string) => {
+    navigate(`/listings/edit/${id}`);
   };
 
   const handleDelete = async (id: string) => {
@@ -111,7 +107,6 @@ const ListingManagement: React.FC = () => {
       return;
     }
 
-    // Define CSV headers
     const headers = [
       'Listing ID',
       'Yacht Name',
@@ -126,7 +121,6 @@ const ListingManagement: React.FC = () => {
       'Created Date',
     ];
 
-    // Convert listings to CSV rows
     const rows = filteredListings.map((listing: any) => [
       listing.listingId || '',
       listing.name || '',
@@ -143,7 +137,6 @@ const ListingManagement: React.FC = () => {
         : '',
     ]);
 
-    // Combine headers and rows
     const csvContent = [
       headers.join(','),
       ...rows.map((row: any) =>
@@ -153,7 +146,6 @@ const ListingManagement: React.FC = () => {
       ),
     ].join('\n');
 
-    // Create blob and download
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
@@ -205,13 +197,13 @@ const ListingManagement: React.FC = () => {
         filters={filters}
         onFilterChange={setFilters}
         onExport={handleExportCSV}
-        sellers={uniqueSellers}
       />
 
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
         <ListingsTable
           listings={filteredListings}
           onView={handleView}
+          onEdit={handleEdit}
           onDelete={handleDelete}
         />
 

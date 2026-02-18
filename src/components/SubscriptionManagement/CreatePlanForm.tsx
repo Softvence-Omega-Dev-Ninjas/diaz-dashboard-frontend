@@ -29,12 +29,14 @@ const CreatePlanForm: React.FC<CreatePlanFormProps> = ({
     billingPeriodMonths: 1,
   });
 
-  const [errors, setErrors] = useState<Partial<Record<keyof CreateSubscriptionPlanPayload, string>>>(
-    {},
-  );
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof CreateSubscriptionPlanPayload, string>>
+  >({});
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
@@ -81,7 +83,9 @@ const CreatePlanForm: React.FC<CreatePlanFormProps> = ({
   };
 
   const validate = (): boolean => {
-    const newErrors: Partial<Record<keyof CreateSubscriptionPlanPayload, string>> = {};
+    const newErrors: Partial<
+      Record<keyof CreateSubscriptionPlanPayload, string>
+    > = {};
 
     if (!formData.title.trim()) {
       newErrors.title = 'Title is required';
@@ -136,7 +140,9 @@ const CreatePlanForm: React.FC<CreatePlanFormProps> = ({
       <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-gray-900">Create New Subscription Plan</h2>
+          <h2 className="text-xl font-semibold text-gray-900">
+            Create New Subscription Plan
+          </h2>
           <button
             onClick={onCancel}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -163,7 +169,9 @@ const CreatePlanForm: React.FC<CreatePlanFormProps> = ({
               }`}
               placeholder="e.g., Gold Package"
             />
-            {errors.title && <p className="mt-1 text-sm text-red-500">{errors.title}</p>}
+            {errors.title && (
+              <p className="mt-1 text-sm text-red-500">{errors.title}</p>
+            )}
           </div>
 
           {/* Plan Type */}
@@ -222,7 +230,9 @@ const CreatePlanForm: React.FC<CreatePlanFormProps> = ({
                   errors.price ? 'border-red-500' : 'border-gray-300'
                 }`}
               />
-              {errors.price && <p className="mt-1 text-sm text-red-500">{errors.price}</p>}
+              {errors.price && (
+                <p className="mt-1 text-sm text-red-500">{errors.price}</p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">

@@ -5,15 +5,19 @@ import {
   YachtLeadsTable,
 } from '@/components/DailyLeads';
 import { Pagination } from '@/components/ListingManagement';
-import { useGetDailyLeadsQuery } from '@/redux/features/dailyLeads/dailyLeads';
+import {
+  useGenerateDailyLeadsMutation,
+  useGetDailyLeadsQuery,
+} from '@/redux/features/dailyLeads/dailyLeads';
 import {
   useGetBoatLeadsQuery,
   useGetCustomerContactedQuery,
 } from '@/redux/features/leads/leadsApi';
 import type { CustomerContacted } from '@/types/customer-contacted-types';
 import type { YachtLead } from '@/types/yacht-leads-types';
-import { Download, Filter } from 'lucide-react';
+import { Download, Filter, RefreshCw } from 'lucide-react';
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 
 type TabType = 'daily-leads-ai' | 'yacht-leads' | 'customer-contacted';
 
@@ -25,6 +29,8 @@ const AllLeads: React.FC = () => {
   const [yachtStatus, setYachtStatus] = useState<string>('');
 
   const { data: leadsData, isLoading, isError } = useGetDailyLeadsQuery();
+  const [generateLeads, { isLoading: isGenerating }] =
+    useGenerateDailyLeadsMutation();
   const {
     data: customerContactedData,
     isLoading: isLoadingContacts,
@@ -41,7 +47,6 @@ const AllLeads: React.FC = () => {
     source: yachtSource || undefined,
   });
 
-  // Client-side filtering for status
   const filteredYachtLeads =
     yachtLeadsData?.data?.filter((lead: YachtLead) => {
       if (!yachtStatus) return true;
@@ -119,7 +124,9 @@ const AllLeads: React.FC = () => {
 
     const csvContent = [
       csvHeaders.join(','),
-      ...csvRows.map((row) => row.map((cell) => `"${cell}"`).join(',')),
+      ...csvRows.map((row: (string | number)[]) =>
+        row.map((cell: string | number) => `"${cell}"`).join(','),
+      ),
     ].join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -162,7 +169,9 @@ const AllLeads: React.FC = () => {
 
     const csvContent = [
       csvHeaders.join(','),
-      ...csvRows.map((row) => row.map((cell) => `"${cell}"`).join(',')),
+      ...csvRows.map((row: (string | number)[]) =>
+        row.map((cell: string | number) => `"${cell}"`).join(','),
+      ),
     ].join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -188,6 +197,18 @@ const AllLeads: React.FC = () => {
     setPage(1); // Reset to first page when limit changes
   };
 
+  const handleGenerateLeads = async () => {
+    try {
+      const result = await generateLeads().unwrap();
+      toast.success(
+        `Generated ${result.total_leads} new leads from chat history!`,
+      );
+    } catch (error) {
+      toast.error('Failed to generate leads. Please try again.');
+      console.error('Error generating leads:', error);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="p-4 md:p-6">
@@ -206,7 +227,7 @@ const AllLeads: React.FC = () => {
       <div className="p-4 md:p-6">
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
           <div className="flex items-center">
-            <div className="flex-shrink-0">
+            <div className="shrink-0">
               <svg
                 className="h-5 w-5 text-red-400"
                 viewBox="0 0 20 20"
@@ -238,7 +259,6 @@ const AllLeads: React.FC = () => {
     <div className="p-4 md:p-6">
       <DailyLeadsHeader totalLeads={leadsData?.total_leads || 0} />
 
-      {/* Tabs */}
       <div className="bg-white rounded-lg shadow mb-4">
         <div className="border-b border-gray-200">
           <nav className="flex -mb-px" aria-label="Tabs">
@@ -246,9 +266,10 @@ const AllLeads: React.FC = () => {
               onClick={() => setActiveTab('daily-leads-ai')}
               className={`
                 flex-1 py-4 px-1 text-center border-b-2 font-medium text-sm flex items-center justify-center gap-2
-                ${activeTab === 'daily-leads-ai'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ${
+                  activeTab === 'daily-leads-ai'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }
               `}
             >
@@ -272,9 +293,10 @@ const AllLeads: React.FC = () => {
               onClick={() => setActiveTab('yacht-leads')}
               className={`
                 flex-1 py-4 px-1 text-center border-b-2 font-medium text-sm flex items-center justify-center gap-2
-                ${activeTab === 'yacht-leads'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ${
+                  activeTab === 'yacht-leads'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }
               `}
             >
@@ -298,9 +320,10 @@ const AllLeads: React.FC = () => {
               onClick={() => setActiveTab('customer-contacted')}
               className={`
                 flex-1 py-4 px-1 text-center border-b-2 font-medium text-sm flex items-center justify-center gap-2
-                ${activeTab === 'customer-contacted'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ${
+                  activeTab === 'customer-contacted'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }
               `}
             >
@@ -324,16 +347,46 @@ const AllLeads: React.FC = () => {
         </div>
       </div>
 
-      {/* Tab Content */}
       <div className="bg-white rounded-lg shadow">
         {activeTab === 'daily-leads-ai' && (
           <>
-            {/* Export Button */}
-            <div className="p-4 border-b border-gray-200 flex justify-end">
+            <div className="p-4 border-b border-gray-200 flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
+              <button
+                onClick={handleGenerateLeads}
+                disabled={isGenerating}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              >
+                {isGenerating ? (
+                  <>
+                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                        fill="none"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
+                    </svg>
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="w-4 h-4" />
+                    Generate New Leads
+                  </>
+                )}
+              </button>
               <button
                 onClick={handleExportCSV}
                 disabled={!leadsData?.leads || leadsData.leads.length === 0}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 <Download className="w-4 h-4" />
                 Export CSV
@@ -344,10 +397,8 @@ const AllLeads: React.FC = () => {
         )}
         {activeTab === 'yacht-leads' && (
           <>
-            {/* Filters and Export Section */}
             <div className="p-4 border-b border-gray-200">
               <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-                {/* Filters */}
                 <div className="flex flex-wrap gap-3 items-center">
                   <Filter className="w-5 h-5 text-gray-500" />
                   <div className="flex gap-3">
@@ -357,6 +408,7 @@ const AllLeads: React.FC = () => {
                         setYachtSource(e.target.value);
                         setPage(1);
                       }}
+                      aria-label="Filter by source"
                       className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="">All Sources</option>
@@ -369,6 +421,7 @@ const AllLeads: React.FC = () => {
                         setYachtStatus(e.target.value);
                         setPage(1);
                       }}
+                      aria-label="Filter by status"
                       className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="">All Status</option>
@@ -378,7 +431,6 @@ const AllLeads: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Export Button */}
                 <button
                   onClick={handleExportYachtLeadsCSV}
                   disabled={
@@ -392,7 +444,6 @@ const AllLeads: React.FC = () => {
               </div>
             </div>
 
-            {/* Loading State */}
             {isLoadingYachtLeads && (
               <div className="p-6 text-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
@@ -400,14 +451,12 @@ const AllLeads: React.FC = () => {
               </div>
             )}
 
-            {/* Error State */}
             {isErrorYachtLeads && (
               <div className="p-6 text-center text-red-600">
                 <p>Error loading yacht leads. Please try again.</p>
               </div>
             )}
 
-            {/* Table */}
             {!isLoadingYachtLeads && !isErrorYachtLeads && (
               <>
                 <YachtLeadsTable
@@ -416,7 +465,6 @@ const AllLeads: React.FC = () => {
                   limit={limit}
                 />
 
-                {/* Pagination */}
                 {yachtLeadsData?.metadata && (
                   <Pagination
                     currentPage={page}
@@ -435,7 +483,6 @@ const AllLeads: React.FC = () => {
         )}
         {activeTab === 'customer-contacted' && (
           <>
-            {/* Export Button */}
             <div className="p-4 border-b border-gray-200 flex justify-end">
               <button
                 onClick={handleExportContactsCSV}
@@ -450,7 +497,6 @@ const AllLeads: React.FC = () => {
               </button>
             </div>
 
-            {/* Loading State */}
             {isLoadingContacts && (
               <div className="p-6 text-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
@@ -458,14 +504,12 @@ const AllLeads: React.FC = () => {
               </div>
             )}
 
-            {/* Error State */}
             {isErrorContacts && (
               <div className="p-6 text-center text-red-600">
                 <p>Error loading customer contacts. Please try again.</p>
               </div>
             )}
 
-            {/* Table */}
             {!isLoadingContacts && !isErrorContacts && (
               <>
                 <CustomerContactedTable
@@ -474,7 +518,6 @@ const AllLeads: React.FC = () => {
                   limit={limit}
                 />
 
-                {/* Pagination */}
                 {customerContactedData?.metadata && (
                   <Pagination
                     currentPage={page}

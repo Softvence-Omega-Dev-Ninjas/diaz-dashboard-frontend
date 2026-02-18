@@ -1,13 +1,13 @@
-export { default as ContactUsHeader } from './ContactUsHeader';
 export { default as ContactInfoForm } from './ContactInfoForm';
-export { default as WorkingHoursSection } from './WorkingHoursSection';
-export { default as SocialMediaSection } from './SocialMediaSection';
 export { default as ContactInfoPreview } from './ContactInfoPreview';
 export { default as ContactInfoSidebar } from './ContactInfoSidebar';
+export { default as ContactUsHeader } from './ContactUsHeader';
+export { default as SocialMediaSection } from './SocialMediaSection';
 export type {
-  ContactInfoFormData,
   ContactInfoApiResponse,
-  WorkingHour,
-  SocialMedia,
+  ContactInfoFormData,
   ImageData,
+  SocialMedia,
+  WorkingHour,
 } from './types';
+export { default as WorkingHoursSection } from './WorkingHoursSection';

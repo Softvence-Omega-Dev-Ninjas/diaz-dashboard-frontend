@@ -2,16 +2,7 @@ import React, { useMemo, useRef } from 'react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import './editor.css';
-
-interface RichTextEditorProps {
-  value: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
-  className?: string;
-  readOnly?: boolean;
-  theme?: 'snow' | 'bubble';
-  minHeight?: string;
-}
+import type { RichTextEditorProps } from '@/types/textEditor';
 
 const RichTextEditor: React.FC<RichTextEditorProps> = ({
   value,
