@@ -15,7 +15,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import Swal from 'sweetalert2';
 
-const url = 'https://development.floridayachttrader.com';
+const url = import.meta.env.VITE_FLORIDA_FRONTEND_URL || 'https://development.floridayachttrader.com';
 const ListingManagement: React.FC = () => {
   const navigate = useNavigate();
   const [filters, setFilters] = useState<ListingFilters>({

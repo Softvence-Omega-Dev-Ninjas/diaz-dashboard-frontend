@@ -62,10 +62,13 @@ export const YachtLeadsTable: React.FC<YachtLeadsTableProps> = ({
   };
 
   const handleViewListing = (lead: YachtLead) => {
+    const floridaUrl = import.meta.env.VITE_FLORIDA_FRONTEND_URL || 'https://development.floridayachttrader.com';
+    const jupiterUrl = import.meta.env.VITE_JUPITER_FRONTEND_URL || 'https://development.jupitermarinesales.com';
+    
     const baseUrl =
       lead.source === 'FLORIDA'
-        ? 'https://development.floridayachttrader.com/search-listing'
-        : 'https://development.jupitermarinesales.com/search-listing';
+        ? `${floridaUrl}/search-listing`
+        : `${jupiterUrl}/search-listing`;
 
     const listingId =
       lead.source === 'FLORIDA' && lead.floridaLeads.length > 0
