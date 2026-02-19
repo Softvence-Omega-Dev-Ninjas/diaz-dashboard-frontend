@@ -5,19 +5,16 @@ import {
   YachtLeadsTable,
 } from '@/components/DailyLeads';
 import { Pagination } from '@/components/ListingManagement';
-import {
-  useGenerateDailyLeadsMutation,
-  useGetDailyLeadsQuery,
-} from '@/redux/features/dailyLeads/dailyLeads';
+import { useGetDailyLeadsQuery } from '@/redux/features/dailyLeads/dailyLeads';
 import {
   useGetBoatLeadsQuery,
   useGetCustomerContactedQuery,
 } from '@/redux/features/leads/leadsApi';
 import type { CustomerContacted } from '@/types/customer-contacted-types';
 import type { YachtLead } from '@/types/yacht-leads-types';
-import { Download, Filter, RefreshCw } from 'lucide-react';
+import { Download, Filter } from 'lucide-react';
 import React, { useState } from 'react';
-import toast from 'react-hot-toast';
+// import toast from 'react-hot-toast';
 
 type TabType = 'daily-leads-ai' | 'yacht-leads' | 'customer-contacted';
 
@@ -29,8 +26,8 @@ const AllLeads: React.FC = () => {
   const [yachtStatus, setYachtStatus] = useState<string>('');
 
   const { data: leadsData, isLoading, isError } = useGetDailyLeadsQuery();
-  const [generateLeads, { isLoading: isGenerating }] =
-    useGenerateDailyLeadsMutation();
+  // const [generateLeads, { isLoading: isGenerating }] =
+  //   useGenerateDailyLeadsMutation();
   const {
     data: customerContactedData,
     isLoading: isLoadingContacts,
@@ -197,17 +194,17 @@ const AllLeads: React.FC = () => {
     setPage(1); // Reset to first page when limit changes
   };
 
-  const handleGenerateLeads = async () => {
-    try {
-      const result = await generateLeads().unwrap();
-      toast.success(
-        `Generated ${result.total_leads} new leads from chat history!`,
-      );
-    } catch (error) {
-      toast.error('Failed to generate leads. Please try again.');
-      console.error('Error generating leads:', error);
-    }
-  };
+  // const handleGenerateLeads = async () => {
+  //   try {
+  //     const result = await generateLeads().unwrap();
+  //     toast.success(
+  //       `Generated ${result.total_leads} new leads from chat history!`,
+  //     );
+  //   } catch (error) {
+  //     toast.error('Failed to generate leads. Please try again.');
+  //     console.error('Error generating leads:', error);
+  //   }
+  // };
 
   if (isLoading) {
     return (
@@ -350,8 +347,8 @@ const AllLeads: React.FC = () => {
       <div className="bg-white rounded-lg shadow">
         {activeTab === 'daily-leads-ai' && (
           <>
-            <div className="p-4 border-b border-gray-200 flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
-              <button
+            <div className="p-4 border-b border-gray-200 flex flex-col sm:flex-row gap-3 justify-between sm:items-center">
+              {/* <button
                 onClick={handleGenerateLeads}
                 disabled={isGenerating}
                 className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
@@ -382,7 +379,8 @@ const AllLeads: React.FC = () => {
                     Generate New Leads
                   </>
                 )}
-              </button>
+              </button> */}
+              <span></span>
               <button
                 onClick={handleExportCSV}
                 disabled={!leadsData?.leads || leadsData.leads.length === 0}
