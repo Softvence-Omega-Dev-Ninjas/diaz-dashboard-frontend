@@ -4,6 +4,7 @@ import {
   useGetListingByIdQuery,
   useUpdateListingMutation,
 } from '@/redux/features/listingManagement/listingManagement';
+import { ArrowLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -11,10 +12,13 @@ const EditListing = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const { data: listingData, isLoading: isLoadingListing, error } =
-    useGetListingByIdQuery(id!, {
-      skip: !id,
-    });
+  const {
+    data: listingData,
+    isLoading: isLoadingListing,
+    error,
+  } = useGetListingByIdQuery(id!, {
+    skip: !id,
+  });
 
   console.log('🔍 Listing ID:', id);
   console.log('📦 Listing Data:', listingData);
@@ -171,14 +175,14 @@ const EditListing = () => {
   // Handle extraDetails - can be array or object
   const parseExtraDetails = () => {
     if (!listing.extraDetails) return [{ title: '', description: '' }];
-    
+
     if (Array.isArray(listing.extraDetails)) {
       return listing.extraDetails.map((detail: any) => ({
         title: detail.key || '',
         description: detail.value || '',
       }));
     }
-    
+
     // If it's an object, convert to array
     if (typeof listing.extraDetails === 'object') {
       return Object.entries(listing.extraDetails).map(([key, value]) => ({
@@ -186,7 +190,7 @@ const EditListing = () => {
         description: String(value),
       }));
     }
-    
+
     return [{ title: '', description: '' }];
   };
 
@@ -248,17 +252,28 @@ const EditListing = () => {
     embedUrl: listing.embedUrl || listing.videoURL || '',
 
     // Add cover photo and gallery if available
-    coverPhoto: listing.images?.find((img: any) => img.imageType === 'COVER')?.file?.url || null,
-    galleryPhotos: listing.images?.filter((img: any) => img.imageType === 'GALLERY').map((img: any) => img.file?.url) || [],
+    coverPhoto: listing.coverImages?.[0]?.url || null,
+    galleryPhotos: (listing.galleryImages || [])
+      .map((img: any) => img.url)
+      .filter(Boolean),
   };
 
   return (
     <div className="min-h-screen bg-gray-50 rounded-lg">
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">Edit Listing</h1>
-        <p className="text-sm text-gray-500 mt-1">
-          Update listing information for {listing.name}
-        </p>
+      <div className="p-4 mb-6 flex items-center gap-4">
+        <button
+          onClick={() => navigate('/listings')}
+          className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+          aria-label="Go back"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+        <div>
+          <h1 className="text-2xl font-semibold text-gray-900">Edit Listing</h1>
+          <p className="text-sm text-gray-500 mt-1">
+            Update listing information for {listing.name}
+          </p>
+        </div>
       </div>
       <FirstListingPage
         onNext={handleSubmit}

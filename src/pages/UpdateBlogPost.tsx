@@ -84,10 +84,7 @@ const UpdateBlogPost: React.FC = () => {
   };
 
   const handleRemoveImage = () => {
-    if (
-      formData.blogImagePreview &&
-      formData.blogImagePreview !== formData.existingImageUrl
-    ) {
+    if (formData.blogImagePreview && formData.blogImagePreview !== formData.existingImageUrl) {
       URL.revokeObjectURL(formData.blogImagePreview);
     }
     setFormData((prev) => ({
@@ -281,7 +278,44 @@ const UpdateBlogPost: React.FC = () => {
                   Blog Image
                 </label>
 
-                {!formData.blogImagePreview ? (
+                {formData.blogImagePreview ? (
+                  <div className="mt-2 relative">
+                    <img
+                      src={formData.blogImagePreview}
+                      alt="Preview"
+                      className="w-full h-40 object-cover rounded-lg"
+                    />
+                    {formData.blogImage && (
+                      <button
+                        type="button"
+                        onClick={handleRemoveImage}
+                        className="absolute top-2 right-2 p-1.5 bg-red-500 hover:bg-red-600 text-white rounded-full transition-colors shadow-lg"
+                        aria-label="Cancel new image"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    )}
+                    <label
+                      htmlFor="blogImageUpload"
+                      className="mt-2 flex items-center justify-center gap-2 w-full py-2 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors text-sm text-gray-600"
+                    >
+                      <Upload className="w-4 h-4" />
+                      {formData.blogImage ? 'Change selection' : 'Replace image'}
+                      <input
+                        id="blogImageUpload"
+                        type="file"
+                        className="hidden"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                      />
+                    </label>
+                    {formData.blogImage && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        New: {formData.blogImage.name} ({(formData.blogImage.size / 1024).toFixed(2)} KB)
+                      </p>
+                    )}
+                  </div>
+                ) : (
                   <div className="mt-2">
                     <label
                       htmlFor="blogImageUpload"
@@ -293,9 +327,7 @@ const UpdateBlogPost: React.FC = () => {
                           <span className="font-semibold">Click to upload</span>{' '}
                           or drag and drop
                         </p>
-                        <p className="text-xs text-gray-500">
-                          PNG, JPG, GIF up to 5MB
-                        </p>
+                        <p className="text-xs text-gray-500">PNG, JPG, GIF up to 5MB</p>
                       </div>
                       <input
                         id="blogImageUpload"
@@ -305,33 +337,6 @@ const UpdateBlogPost: React.FC = () => {
                         onChange={handleImageUpload}
                       />
                     </label>
-                  </div>
-                ) : (
-                  <div className="mt-2 relative">
-                    <img
-                      src={formData.blogImagePreview}
-                      alt="Preview"
-                      className="w-full h-40 object-cover rounded-lg"
-                    />
-                    <button
-                      type="button"
-                      onClick={handleRemoveImage}
-                      className="absolute top-2 right-2 p-1.5 bg-red-500 hover:bg-red-600 text-white rounded-full transition-colors shadow-lg"
-                      aria-label="Remove image"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                    {formData.blogImage && (
-                      <p className="text-xs text-gray-500 mt-2">
-                        New image: {formData.blogImage.name} (
-                        {(formData.blogImage.size / 1024).toFixed(2)} KB)
-                      </p>
-                    )}
-                    {!formData.blogImage && formData.existingImageUrl && (
-                      <p className="text-xs text-gray-500 mt-2">
-                        Current image from server
-                      </p>
-                    )}
                   </div>
                 )}
               </div>
