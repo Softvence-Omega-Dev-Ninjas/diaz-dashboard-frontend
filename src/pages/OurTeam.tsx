@@ -126,7 +126,6 @@ const OurTeam: React.FC = () => {
       const formDataToSend = new FormData();
       formDataToSend.append('name', formData.name);
       formDataToSend.append('designation', formData.designation);
-      formDataToSend.append('isActive', formData.isActive ? 'true' : 'false');
 
       if (formData.image) {
         formDataToSend.append('image', formData.image);
@@ -136,6 +135,7 @@ const OurTeam: React.FC = () => {
         await updateTeamMember({
           id: editingMember.id,
           data: formDataToSend,
+          isActive: formData.isActive,
         }).unwrap();
         Swal.fire('Success!', 'Team member updated successfully', 'success');
       } else {

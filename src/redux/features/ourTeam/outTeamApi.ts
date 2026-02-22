@@ -66,12 +66,13 @@ const ourTeamApi = baseApi.injectEndpoints({
 
     updateOurTeam: build.mutation<
       SingleTeamMemberResponse,
-      { id: string; data: FormData }
+      { id: string; data: FormData; isActive: boolean }
     >({
-      query: ({ id, data }) => ({
+      query: ({ id, data, isActive }) => ({
         url: `/our-team/${id}`,
         method: 'PATCH',
         body: data,
+        params: { isActive },
       }),
       invalidatesTags: ['OurTeam'],
     }),

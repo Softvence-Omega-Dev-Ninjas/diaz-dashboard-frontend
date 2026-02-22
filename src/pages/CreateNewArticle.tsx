@@ -16,7 +16,7 @@ interface ArticleFormData {
 const CreateNewArticle: React.FC = () => {
   const navigate = useNavigate();
   const [isPreviewMode, setIsPreviewMode] = useState(false);
-  const [createBlog] = useCreateBlogMutation();
+  const [createBlog, { isLoading: isSaving }] = useCreateBlogMutation();
   const [formData, setFormData] = useState<ArticleFormData>({
     title: '',
     content: '',
@@ -104,7 +104,7 @@ const CreateNewArticle: React.FC = () => {
   };
 
   const handleBack = () => {
-    navigate('/content/backup');
+    navigate('/content');
   };
 
   return (
@@ -140,10 +140,11 @@ const CreateNewArticle: React.FC = () => {
               </button>
               <button
                 onClick={handleSave}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                disabled={isSaving}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Save className="w-4 h-4" />
-                Save Article
+                {isSaving ? 'Saving...' : 'Save Article'}
               </button>
             </div>
           </div>
