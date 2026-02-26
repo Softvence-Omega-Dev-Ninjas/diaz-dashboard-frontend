@@ -42,45 +42,7 @@ export const AboutUsForm: React.FC<AboutUsFormProps> = ({
         />
       </div>
 
-      {/* Mission */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <label
-          htmlFor="mission"
-          className="block text-sm font-medium text-gray-700 mb-2"
-        >
-          Mission *
-        </label>
-        <textarea
-          id="mission"
-          name="mission"
-          value={formData.mission}
-          onChange={onInputChange}
-          placeholder="Enter your mission statement"
-          rows={4}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-          required
-        />
-      </div>
-
-      {/* Vision */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <label
-          htmlFor="vision"
-          className="block text-sm font-medium text-gray-700 mb-2"
-        >
-          Vision *
-        </label>
-        <textarea
-          id="vision"
-          name="vision"
-          value={formData.vision}
-          onChange={onInputChange}
-          placeholder="Enter your vision statement"
-          rows={4}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-          required
-        />
-      </div>
+      {/* Mission & Vision — handled separately in MissionVisionSection */}
     </div>
   );
 };
