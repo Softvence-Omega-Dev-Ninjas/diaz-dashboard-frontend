@@ -7,7 +7,8 @@ export const ourStoryApi = baseApi.injectEndpoints({
         url: `/aboutus/our-story?site=${site}`,
         method: 'GET',
       }),
-      providesTags: ['OurStory'],
+      providesTags: (_result, _error, site) => [{ type: 'OurStory', id: site }],
+      keepUnusedDataFor: 0,
     }),
 
     createOurStory: build.mutation({
@@ -16,7 +17,7 @@ export const ourStoryApi = baseApi.injectEndpoints({
         method: 'POST',
         body: formData,
       }),
-      invalidatesTags: ['OurStory'],
+      invalidatesTags: (_result, _error, { site }) => [{ type: 'OurStory', id: site }],
     }),
 
     updateOurStory: build.mutation({
@@ -25,7 +26,7 @@ export const ourStoryApi = baseApi.injectEndpoints({
         method: 'PATCH',
         body: formData,
       }),
-      invalidatesTags: ['OurStory'],
+      invalidatesTags: (_result, _error, { site }) => [{ type: 'OurStory', id: site }],
     }),
   }),
 });

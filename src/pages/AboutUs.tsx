@@ -37,14 +37,22 @@ const AboutUs: React.FC = () => {
     'FLORIDA',
   );
 
-  const { data: aboutUsData, isLoading } =
-    useGetAboutUsContentQuery(selectedSite);
+  const { data: aboutUsData, isLoading, isError } =
+    useGetAboutUsContentQuery(selectedSite, {
+      refetchOnMountOrArgChange: true,
+    });
   const { data: ourStoryData, isLoading: isOurStoryLoading } =
-    useGetOurStoryQuery(selectedSite);
+    useGetOurStoryQuery(selectedSite, {
+      refetchOnMountOrArgChange: true,
+    });
   const { data: missionVisionData, isLoading: isMissionVisionLoading } =
-    useGetMissionVisionQuery(selectedSite);
+    useGetMissionVisionQuery(selectedSite, {
+      refetchOnMountOrArgChange: true,
+    });
   const { data: whatSetsUsApartData, isLoading: isWhatSetsUsApartLoading } =
-    useGetWhatSetsUsApartQuery(selectedSite);
+    useGetWhatSetsUsApartQuery(selectedSite, {
+      refetchOnMountOrArgChange: true,
+    });
 
   const [createAboutUs] = useCreateAboutUsMutation();
   const [updateAboutUs] = useUpdateAboutUsMutation();
@@ -310,14 +318,12 @@ const AboutUs: React.FC = () => {
     // Validate required fields
     if (
       !formData.aboutTitle.trim() ||
-      !formData.aboutDescription.trim() ||
-      !formData.mission.trim() ||
-      !formData.vision.trim()
+      !formData.aboutDescription.trim()
     ) {
       Swal.fire({
         icon: 'warning',
         title: 'Missing Fields',
-        text: 'Please fill in all required About Us fields',
+        text: 'Please fill in About Title and About Description',
       });
       return;
     }
@@ -331,7 +337,8 @@ const AboutUs: React.FC = () => {
         vision: formData.vision,
       };
 
-      if (aboutUsData?.id) {
+      // Auto-detect: if data exists and no error, update; otherwise create
+      if (aboutUsData?.id && !isError) {
         await updateAboutUs({
           site: selectedSite,
           aboutUsContent,

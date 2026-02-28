@@ -1,4 +1,5 @@
 import {
+  useCreatePrivacyPolicyMutation,
   useGetPrivacyPolicyQuery,
   useUpdatePrivacyPolicyMutation,
 } from '@/redux/features/contentmanagement/contentmanagement';
@@ -26,19 +27,33 @@ const PrivacyPolicy: React.FC = () => {
     site: 'FLORIDA',
   });
 
-  const { data: getPrivacyPolicyData, isLoading } =
-    useGetPrivacyPolicyQuery(selectedSite);
-  const [updatePrivacyPolicy] = useUpdatePrivacyPolicyMutation();
+  const { data: getPrivacyPolicyData, isLoading, isError, refetch } =
+    useGetPrivacyPolicyQuery(selectedSite, {
+      refetchOnMountOrArgChange: true,
+    });
+  const [createPrivacyPolicy, { isLoading: isCreating }] =
+    useCreatePrivacyPolicyMutation();
+  const [updatePrivacyPolicy, { isLoading: isUpdating }] =
+    useUpdatePrivacyPolicyMutation();
+
+  const isSaving = isCreating || isUpdating;
 
   useEffect(() => {
-    if (getPrivacyPolicyData) {
+    if (getPrivacyPolicyData && !isError) {
       setFormData({
         title: getPrivacyPolicyData.privacyTitle || '',
         content: getPrivacyPolicyData.privacyDescription || '',
         site: selectedSite,
       });
+    } else {
+      // Reset form when no data for selected site or error
+      setFormData({
+        title: '',
+        content: '',
+        site: selectedSite,
+      });
     }
-  }, [getPrivacyPolicyData, selectedSite]);
+  }, [getPrivacyPolicyData, selectedSite, isError]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -62,24 +77,32 @@ const PrivacyPolicy: React.FC = () => {
         privacyDescription: formData.content,
       };
 
-      await updatePrivacyPolicy({
-        site: selectedSite,
-        privacyPolicy,
-      }).unwrap();
+      if (getPrivacyPolicyData && !isError) {
+        await updatePrivacyPolicy({
+          site: selectedSite,
+          privacyPolicy,
+        }).unwrap();
+      } else {
+        await createPrivacyPolicy({
+          site: selectedSite,
+          privacyPolicy,
+        }).unwrap();
+      }
 
-      Swal.fire({
+      await Swal.fire({
         icon: 'success',
-        title: 'Privacy Policy Updated',
-        text: 'Privacy Policy page has been updated successfully!',
+        title: getPrivacyPolicyData ? 'Privacy Policy Updated' : 'Privacy Policy Created',
+        text: `Privacy Policy page has been ${getPrivacyPolicyData ? 'updated' : 'created'} successfully!`,
       });
+      refetch();
       navigate('/content');
     } catch (error) {
       Swal.fire({
         icon: 'error',
-        title: 'Update Failed',
+        title: 'Operation Failed',
         text:
           (error as { data?: { message?: string } })?.data?.message ||
-          'Failed to update Privacy Policy page',
+          'Failed to save Privacy Policy page',
       });
     }
   };
@@ -121,10 +144,11 @@ const PrivacyPolicy: React.FC = () => {
               </button>
               <button
                 onClick={handleSave}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                disabled={isSaving}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Save className="w-4 h-4" />
-                Save Changes
+                {isSaving ? 'Saving...' : 'Save Changes'}
               </button>
             </div>
           </div>

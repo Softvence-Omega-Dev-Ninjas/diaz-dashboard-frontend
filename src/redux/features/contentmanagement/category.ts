@@ -7,7 +7,14 @@ export const aboutUsApi = baseApi.injectEndpoints({
         url: `/category`,
         method: 'GET',
       }),
-      providesTags: ['Category'],
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ _id }: { _id: string }) => ({ type: 'Category' as const, id: _id })),
+              { type: 'Category', id: 'LIST' },
+            ]
+          : [{ type: 'Category', id: 'LIST' }],
+      keepUnusedDataFor: 0,
     }),
 
     createCategory: build.mutation({
@@ -16,7 +23,7 @@ export const aboutUsApi = baseApi.injectEndpoints({
         method: 'POST',
         body: categoryContent,
       }),
-      invalidatesTags: ['Category'],
+      invalidatesTags: [{ type: 'Category', id: 'LIST' }],
     }),
 
     getSingleCategory: build.query({
@@ -24,7 +31,8 @@ export const aboutUsApi = baseApi.injectEndpoints({
         url: `/category/${categoryId}`,
         method: 'GET',
       }),
-      providesTags: ['Category'],
+      providesTags: (_result, _error, categoryId) => [{ type: 'Category', id: categoryId }],
+      keepUnusedDataFor: 0,
     }),
 
     updateCategory: build.mutation({
@@ -33,7 +41,10 @@ export const aboutUsApi = baseApi.injectEndpoints({
         method: 'PATCH',
         body: categoryContent,
       }),
-      invalidatesTags: ['Category'],
+      invalidatesTags: (_result, _error, { categoryId }) => [
+        { type: 'Category', id: categoryId },
+        { type: 'Category', id: 'LIST' },
+      ],
     }),
 
     deleteCategory: build.mutation({
@@ -41,7 +52,7 @@ export const aboutUsApi = baseApi.injectEndpoints({
         url: `/category/${categoryId}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['Category'],
+      invalidatesTags: [{ type: 'Category', id: 'LIST' }],
     }),
   }),
 });

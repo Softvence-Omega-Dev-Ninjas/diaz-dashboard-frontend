@@ -29,7 +29,9 @@ const FeaturedBrands: React.FC = () => {
   const [deletingBrandId, setDeletingBrandId] = useState<string | undefined>();
 
   const { data: getFeaturedBrandsData, isLoading } =
-    useGetFeaturedBrandsQuery(selectedSite);
+    useGetFeaturedBrandsQuery(selectedSite, {
+      refetchOnMountOrArgChange: true,
+    });
   const [createFeaturedBrands, { isLoading: isCreating }] =
     useCreateFeaturedBrandsMutation();
   const [updateFeaturedBrands] = useUpdateFeaturedBrandsMutation();
@@ -54,7 +56,7 @@ const FeaturedBrands: React.FC = () => {
         featuredBrands: formDataToSend,
       }).unwrap();
 
-      Swal.fire('Success!', 'Brand added successfully', 'success');
+      await Swal.fire('Success!', 'Brand added successfully', 'success');
       setIsAddModalOpen(false);
     } catch (error: any) {
       console.error('Error adding brand:', error);
@@ -89,7 +91,7 @@ const FeaturedBrands: React.FC = () => {
         featuredBrands: formDataToSend,
       }).unwrap();
 
-      Swal.fire('Success!', 'Brand logo updated successfully', 'success');
+      await Swal.fire('Success!', 'Brand logo updated successfully', 'success');
     } catch (error: any) {
       console.error('Error updating brand:', error);
       Swal.fire(
