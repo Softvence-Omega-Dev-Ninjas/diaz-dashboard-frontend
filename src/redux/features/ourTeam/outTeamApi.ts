@@ -44,7 +44,14 @@ const ourTeamApi = baseApi.injectEndpoints({
         url: `/our-team`,
         method: 'GET',
       }),
-      providesTags: ['OurTeam'],
+      providesTags: (result) =>
+        result?.data
+          ? [
+              ...result.data.map(({ id }) => ({ type: 'OurTeam' as const, id })),
+              { type: 'OurTeam', id: 'LIST' },
+            ]
+          : [{ type: 'OurTeam', id: 'LIST' }],
+      keepUnusedDataFor: 0,
     }),
 
     getSingleTeamMember: build.query<SingleTeamMemberResponse, string>({
@@ -52,7 +59,8 @@ const ourTeamApi = baseApi.injectEndpoints({
         url: `/our-team/${id}`,
         method: 'GET',
       }),
-      providesTags: ['OurTeam'],
+      providesTags: (_result, _error, id) => [{ type: 'OurTeam', id }],
+      keepUnusedDataFor: 0,
     }),
 
     createOurTeam: build.mutation<SingleTeamMemberResponse, FormData>({
@@ -61,7 +69,7 @@ const ourTeamApi = baseApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: ['OurTeam'],
+      invalidatesTags: [{ type: 'OurTeam', id: 'LIST' }],
     }),
 
     updateOurTeam: build.mutation<
@@ -74,7 +82,10 @@ const ourTeamApi = baseApi.injectEndpoints({
         body: data,
         params: { isActive },
       }),
-      invalidatesTags: ['OurTeam'],
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'OurTeam', id },
+        { type: 'OurTeam', id: 'LIST' },
+      ],
     }),
 
     deleteOurTeam: build.mutation<
@@ -85,7 +96,7 @@ const ourTeamApi = baseApi.injectEndpoints({
         url: `/our-team/${id}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['OurTeam'],
+      invalidatesTags: [{ type: 'OurTeam', id: 'LIST' }],
     }),
   }),
 });

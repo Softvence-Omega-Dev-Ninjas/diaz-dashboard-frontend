@@ -51,7 +51,9 @@ const ContactUs: React.FC = () => {
   });
 
   const { data: contactInfoData, isLoading, isFetching } =
-    useGetContactInfoQuery(selectedSite);
+    useGetContactInfoQuery(selectedSite, {
+      refetchOnMountOrArgChange: true,
+    });
   const [createContactInfo, { isLoading: isCreating }] =
     useCreateContactInfoMutation();
   const [updateContactInfo, { isLoading: isUpdating }] =
@@ -214,7 +216,7 @@ const ContactUs: React.FC = () => {
           site: selectedSite,
           contactInfo: formDataToSend,
         }).unwrap();
-        Swal.fire(
+        await Swal.fire(
           'Success!',
           'Contact information updated successfully',
           'success',
@@ -246,7 +248,7 @@ const ContactUs: React.FC = () => {
           site: selectedSite,
           contactInfo: formDataToSend,
         }).unwrap();
-        Swal.fire(
+        await Swal.fire(
           'Success!',
           'Contact information created successfully',
           'success',

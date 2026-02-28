@@ -8,7 +8,8 @@ export const footerApi = baseApi.injectEndpoints({
         url: `/footer?site=${site}`,
         method: 'GET',
       }),
-      providesTags: ['Footer'],
+      providesTags: (_result, _error, { site }) => [{ type: 'Footer', id: site }],
+      keepUnusedDataFor: 0,
     }),
 
     createFooter: build.mutation({
@@ -17,7 +18,7 @@ export const footerApi = baseApi.injectEndpoints({
         method: 'POST',
         body: footerContent,
       }),
-      invalidatesTags: ['Footer'],
+      invalidatesTags: (_result, _error, { site }) => [{ type: 'Footer', id: site }],
     }),
 
     updateFooter: build.mutation({
@@ -26,7 +27,7 @@ export const footerApi = baseApi.injectEndpoints({
         method: 'PATCH',
         body: footerContent,
       }),
-      invalidatesTags: ['Footer'],
+      invalidatesTags: (_result, _error, { site }) => [{ type: 'Footer', id: site }],
     }),
   }),
 });

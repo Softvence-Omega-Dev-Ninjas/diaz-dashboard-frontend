@@ -26,7 +26,9 @@ interface EditingMember extends TeamMemberFormData {
 const OurTeam: React.FC = () => {
   const navigate = useNavigate();
   const { data: ourTeamData, isLoading: isOurTeamLoading } =
-    useGetOurTeamQuery();
+    useGetOurTeamQuery(undefined, {
+      refetchOnMountOrArgChange: true,
+    });
   const [createTeamMember, { isLoading: isCreating }] =
     useCreateOurTeamMutation();
   const [updateTeamMember, { isLoading: isUpdating }] =
@@ -137,10 +139,10 @@ const OurTeam: React.FC = () => {
           data: formDataToSend,
           isActive: formData.isActive,
         }).unwrap();
-        Swal.fire('Success!', 'Team member updated successfully', 'success');
+        await Swal.fire('Success!', 'Team member updated successfully', 'success');
       } else {
         await createTeamMember(formDataToSend).unwrap();
-        Swal.fire('Success!', 'Team member created successfully', 'success');
+        await Swal.fire('Success!', 'Team member created successfully', 'success');
       }
       closeForm();
     } catch (error: any) {
@@ -184,6 +186,7 @@ const OurTeam: React.FC = () => {
           <button
             onClick={handleBack}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            aria-label="Go back to content management"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>

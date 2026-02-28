@@ -8,7 +8,14 @@ export const featuredBrandsApi = baseApi.injectEndpoints({
         url: `/featured-brands?site=${site}`,
         method: 'GET',
       }),
-      providesTags: ['FeaturedBrands'],
+      providesTags: (result, _error, site) =>
+        result
+          ? [
+              ...result.map(({ _id }: { _id: string }) => ({ type: 'FeaturedBrands' as const, id: _id })),
+              { type: 'FeaturedBrands', id: `LIST-${site}` },
+            ]
+          : [{ type: 'FeaturedBrands', id: `LIST-${site}` }],
+      keepUnusedDataFor: 0,
     }),
 
     createFeaturedBrands: build.mutation({
@@ -17,7 +24,9 @@ export const featuredBrandsApi = baseApi.injectEndpoints({
         method: 'POST',
         body: featuredBrands,
       }),
-      invalidatesTags: ['FeaturedBrands'],
+      invalidatesTags: (_result, _error, { featuredBrands }) => [
+        { type: 'FeaturedBrands', id: `LIST-${featuredBrands.site}` },
+      ],
     }),
 
     updateFeaturedBrands: build.mutation({
@@ -26,7 +35,10 @@ export const featuredBrandsApi = baseApi.injectEndpoints({
         method: 'PATCH',
         body: featuredBrands,
       }),
-      invalidatesTags: ['FeaturedBrands'],
+      invalidatesTags: (_result, _error, { id, featuredBrands }) => [
+        { type: 'FeaturedBrands', id },
+        { type: 'FeaturedBrands', id: `LIST-${featuredBrands.site}` },
+      ],
     }),
 
     deleteFeaturedBrands: build.mutation({
@@ -34,7 +46,7 @@ export const featuredBrandsApi = baseApi.injectEndpoints({
         url: `/featured-brands/${id}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['FeaturedBrands'],
+      invalidatesTags: [{ type: 'FeaturedBrands', id: 'LIST-FLORIDA' }, { type: 'FeaturedBrands', id: 'LIST-JUPITER' }],
     }),
   }),
 });

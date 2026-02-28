@@ -8,7 +8,10 @@ export const termsAndConditionsApi = baseApi.injectEndpoints({
         url: `/terms-of-service?site=${site}`,
         method: 'GET',
       }),
-      providesTags: ['TermsOfService'],
+      providesTags: (_result, _error, site) => [
+        { type: 'TermsOfService', id: site },
+      ],
+      keepUnusedDataFor: 0,
     }),
 
     createTermsAndConditions: build.mutation({
@@ -17,7 +20,9 @@ export const termsAndConditionsApi = baseApi.injectEndpoints({
         method: 'POST',
         body: termsAndConditions,
       }),
-      invalidatesTags: ['TermsOfService'],
+      invalidatesTags: (_result, _error, { site }) => [
+        { type: 'TermsOfService', id: site },
+      ],
     }),
 
     updateTermsAndConditions: build.mutation({
@@ -26,7 +31,9 @@ export const termsAndConditionsApi = baseApi.injectEndpoints({
         method: 'PATCH',
         body: termsAndConditions,
       }),
-      invalidatesTags: ['TermsOfService'],
+      invalidatesTags: (_result, _error, { site }) => [
+        { type: 'TermsOfService', id: site },
+      ],
     }),
   }),
 });

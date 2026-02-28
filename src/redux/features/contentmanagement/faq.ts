@@ -8,7 +8,8 @@ export const faqApi = baseApi.injectEndpoints({
         url: `/faq?site=${site}`,
         method: 'GET',
       }),
-      providesTags: ['FAQ'],
+      providesTags: (_result, _error, site) => [{ type: 'FAQ', id: site }],
+      keepUnusedDataFor: 0,
     }),
 
     createFaq: build.mutation({
@@ -17,7 +18,9 @@ export const faqApi = baseApi.injectEndpoints({
         method: 'POST',
         body: faqContent,
       }),
-      invalidatesTags: ['FAQ'],
+      invalidatesTags: (_result, _error, { faqContent }) => [
+        { type: 'FAQ', id: faqContent.site },
+      ],
     }),
 
     updateFaq: build.mutation({
@@ -26,7 +29,7 @@ export const faqApi = baseApi.injectEndpoints({
         method: 'PATCH',
         body: faqContent,
       }),
-      invalidatesTags: ['FAQ'],
+      invalidatesTags: (_result, _error, { site }) => [{ type: 'FAQ', id: site }],
     }),
 
     deleteFaq: build.mutation({
@@ -34,7 +37,7 @@ export const faqApi = baseApi.injectEndpoints({
         url: `/faq?site=${site}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['FAQ'],
+      invalidatesTags: (_result, _error, { site }) => [{ type: 'FAQ', id: site }],
     }),
   }),
 });

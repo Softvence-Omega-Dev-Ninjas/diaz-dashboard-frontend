@@ -1,4 +1,5 @@
 import {
+  useCreateTermsAndConditionsMutation,
   useGetTermsAndConditionsQuery,
   useUpdateTermsAndConditionsMutation,
 } from '@/redux/features/contentmanagement/contentmanagement';
@@ -26,19 +27,33 @@ const TermsOfService: React.FC = () => {
     site: 'FLORIDA',
   });
 
-  const { data: getTermsData, isLoading } =
-    useGetTermsAndConditionsQuery(selectedSite);
-  const [updateTermsAndConditions] = useUpdateTermsAndConditionsMutation();
+  const { data: getTermsData, isLoading, isError, refetch } =
+    useGetTermsAndConditionsQuery(selectedSite, {
+      refetchOnMountOrArgChange: true,
+    });
+  const [createTermsAndConditions, { isLoading: isCreating }] =
+    useCreateTermsAndConditionsMutation();
+  const [updateTermsAndConditions, { isLoading: isUpdating }] =
+    useUpdateTermsAndConditionsMutation();
+
+  const isSaving = isCreating || isUpdating;
 
   useEffect(() => {
-    if (getTermsData) {
+    if (getTermsData && !isError) {
       setFormData({
         title: getTermsData.termsTitle || '',
         content: getTermsData.termsDescription || '',
         site: selectedSite,
       });
+    } else {
+      // Reset form when no data for selected site or error
+      setFormData({
+        title: '',
+        content: '',
+        site: selectedSite,
+      });
     }
-  }, [getTermsData, selectedSite]);
+  }, [getTermsData, selectedSite, isError]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -62,24 +77,32 @@ const TermsOfService: React.FC = () => {
         termsDescription: formData.content,
       };
 
-      await updateTermsAndConditions({
-        site: selectedSite,
-        termsAndConditions,
-      }).unwrap();
+      if (getTermsData && !isError) {
+        await updateTermsAndConditions({
+          site: selectedSite,
+          termsAndConditions,
+        }).unwrap();
+      } else {
+        await createTermsAndConditions({
+          site: selectedSite,
+          termsAndConditions,
+        }).unwrap();
+      }
 
-      Swal.fire({
+      await Swal.fire({
         icon: 'success',
-        title: 'Terms of Service Updated',
-        text: 'Terms of Service page has been updated successfully!',
+        title: getTermsData ? 'Terms of Service Updated' : 'Terms of Service Created',
+        text: `Terms of Service page has been ${getTermsData ? 'updated' : 'created'} successfully!`,
       });
+      refetch();
       navigate('/content');
     } catch (error) {
       Swal.fire({
         icon: 'error',
-        title: 'Update Failed',
+        title: 'Operation Failed',
         text:
           (error as { data?: { message?: string } })?.data?.message ||
-          'Failed to update Terms of Service page',
+          'Failed to save Terms of Service page',
       });
     }
   };
@@ -121,10 +144,11 @@ const TermsOfService: React.FC = () => {
               </button>
               <button
                 onClick={handleSave}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                disabled={isSaving}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Save className="w-4 h-4" />
-                Save Changes
+                {isSaving ? 'Saving...' : 'Save Changes'}
               </button>
             </div>
           </div>

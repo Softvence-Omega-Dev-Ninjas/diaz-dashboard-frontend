@@ -59,6 +59,7 @@ export const WhatSetsUsApartSection: React.FC<WhatSetsUsApartSectionProps> = ({
                 type="button"
                 onClick={() => removeImage(imageKey)}
                 className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                aria-label={`Remove image ${imageNumber}`}
               >
                 <X className="w-4 h-4" />
               </button>
