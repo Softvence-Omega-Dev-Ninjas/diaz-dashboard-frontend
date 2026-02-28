@@ -8,7 +8,10 @@ export const privacyPolicyApi = baseApi.injectEndpoints({
         url: `/privacy-policy?site=${site}`,
         method: 'GET',
       }),
-      providesTags: ['PrivacyPolicy'],
+      providesTags: (_result, _error, site) => [
+        { type: 'PrivacyPolicy', id: site },
+      ],
+      keepUnusedDataFor: 0,
     }),
 
     createPrivacyPolicy: build.mutation({
@@ -17,7 +20,9 @@ export const privacyPolicyApi = baseApi.injectEndpoints({
         method: 'POST',
         body: privacyPolicy,
       }),
-      invalidatesTags: ['PrivacyPolicy'],
+      invalidatesTags: (_result, _error, { site }) => [
+        { type: 'PrivacyPolicy', id: site },
+      ],
     }),
 
     updatePrivacyPolicy: build.mutation({
@@ -26,7 +31,9 @@ export const privacyPolicyApi = baseApi.injectEndpoints({
         method: 'PATCH',
         body: privacyPolicy,
       }),
-      invalidatesTags: ['PrivacyPolicy'],
+      invalidatesTags: (_result, _error, { site }) => [
+        { type: 'PrivacyPolicy', id: site },
+      ],
     }),
   }),
 });
