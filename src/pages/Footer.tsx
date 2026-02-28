@@ -36,7 +36,10 @@ const Footer: React.FC = () => {
     data: footerData,
     isLoading,
     isError,
-  } = useGetFooterQuery({ site: selectedSite });
+    error,
+  } = useGetFooterQuery({ site: selectedSite }, {
+    refetchOnMountOrArgChange: true,
+  });
 
   const [createFooter, { isLoading: isCreating }] = useCreateFooterMutation();
   const [updateFooter, { isLoading: isUpdating }] = useUpdateFooterMutation();
@@ -57,8 +60,12 @@ const Footer: React.FC = () => {
   ]);
   const [copyrightText, setCopyrightText] = useState('');
 
-  // Check if footer exists
-  const footerExists = footerData?.data?.id;
+  // Check if footer exists (ignore 404 errors)
+  console.log('Footer Error:', error);
+  console.log('Is Error:', isError);
+  console.log('Error Status:', (error as any)?.status);
+  const is404Error = isError && (error as any)?.status === 404;
+  const footerExists = !is404Error && footerData?.data?.id;
 
   // Load footer data when it's available
   useEffect(() => {
@@ -98,8 +105,18 @@ const Footer: React.FC = () => {
       );
 
       setCopyrightText(data.copyrightText || '');
+    } else if (is404Error) {
+      // Reset form for new site with no data
+      setCompanyName('');
+      setCompanyDescription('');
+      setQuickLinks([{ text: '', url: '' }]);
+      setPolicyLinks([{ text: '', url: '' }]);
+      setPhone('');
+      setEmail('');
+      setSocialMediaLinks([{ platform: '', url: '' }]);
+      setCopyrightText('');
     }
-  }, [footerData]);
+  }, [footerData, is404Error, selectedSite]);
 
   // Handle adding new quick link
   const handleAddQuickLink = () => {
@@ -260,7 +277,8 @@ const Footer: React.FC = () => {
     );
   }
 
-  if (isError) {
+  // Only show error if it's NOT a 404
+  if (isError && !is404Error) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-center text-red-600">
@@ -302,6 +320,7 @@ const Footer: React.FC = () => {
               setSelectedSite(e.target.value as 'FLORIDA' | 'JUPITER')
             }
             className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            aria-label="Select site"
           >
             <option value="FLORIDA">Florida</option>
             <option value="JUPITER">Jupiter</option>
@@ -490,6 +509,7 @@ const Footer: React.FC = () => {
                         type="button"
                         onClick={() => handleRemoveQuickLink(index)}
                         className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                        aria-label="Remove quick link"
                       >
                         <Trash2 size={18} />
                       </button>
@@ -540,6 +560,7 @@ const Footer: React.FC = () => {
                         type="button"
                         onClick={() => handleRemovePolicyLink(index)}
                         className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                        aria-label="Remove policy link"
                       >
                         <Trash2 size={18} />
                       </button>
@@ -623,6 +644,7 @@ const Footer: React.FC = () => {
                         type="button"
                         onClick={() => handleRemoveSocialLink(index)}
                         className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                        aria-label="Remove social media link"
                       >
                         <Trash2 size={18} />
                       </button>

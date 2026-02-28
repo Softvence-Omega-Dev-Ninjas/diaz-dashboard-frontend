@@ -37,7 +37,9 @@ const FAQ: React.FC = () => {
   });
 
   const { data: faqData, isLoading: isFaqLoading } =
-    useGetFaqQuery(selectedSite);
+    useGetFaqQuery(selectedSite, {
+      refetchOnMountOrArgChange: true,
+    });
   const [createFaq] = useCreateFaqMutation();
   const [updateFaq] = useUpdateFaqMutation();
   const [deleteFaq] = useDeleteFaqMutation();
@@ -150,13 +152,13 @@ const FAQ: React.FC = () => {
             })),
           },
         }).unwrap();
-        Swal.fire('Success!', 'FAQ updated successfully', 'success');
+        await Swal.fire('Success!', 'FAQ updated successfully', 'success');
       } else {
         // Create new FAQ
         await createFaq({
           faqContent: faqPayload,
         }).unwrap();
-        Swal.fire('Success!', 'FAQ created successfully', 'success');
+        await Swal.fire('Success!', 'FAQ created successfully', 'success');
       }
     } catch (error) {
       Swal.fire(

@@ -8,7 +8,8 @@ export const aboutUsApi = baseApi.injectEndpoints({
         url: `/aboutus?site=${site}`,
         method: 'GET',
       }),
-      providesTags: ['AboutUs'],
+      providesTags: (_result, _error, site) => [{ type: 'AboutUs', id: site }],
+      keepUnusedDataFor: 0,
     }),
 
     createAboutUs: build.mutation({
@@ -17,7 +18,7 @@ export const aboutUsApi = baseApi.injectEndpoints({
         method: 'POST',
         body: aboutUsContent,
       }),
-      invalidatesTags: ['AboutUs'],
+      invalidatesTags: (_result, _error, { site }) => [{ type: 'AboutUs', id: site }],
     }),
 
     updateAboutUs: build.mutation({
@@ -26,7 +27,7 @@ export const aboutUsApi = baseApi.injectEndpoints({
         method: 'PATCH',
         body: aboutUsContent,
       }),
-      invalidatesTags: ['AboutUs'],
+      invalidatesTags: (_result, _error, { site }) => [{ type: 'AboutUs', id: site }],
     }),
 
     getAboutUsOurStory: build.query({
@@ -34,7 +35,8 @@ export const aboutUsApi = baseApi.injectEndpoints({
         url: `/aboutus/our-story?site=${site}`,
         method: 'GET',
       }),
-      providesTags: ['AboutUs'],
+      providesTags: (_result, _error, site) => [{ type: 'AboutUs', id: `story-${site}` }],
+      keepUnusedDataFor: 0,
     }),
 
     createAboutUsOurStory: build.mutation({
@@ -43,7 +45,7 @@ export const aboutUsApi = baseApi.injectEndpoints({
         method: 'POST',
         body: aboutUsOurStory,
       }),
-      invalidatesTags: ['AboutUs'],
+      invalidatesTags: (_result, _error, { site }) => [{ type: 'AboutUs', id: `story-${site}` }],
     }),
 
     updateAboutUsOurStory: build.mutation({
@@ -52,7 +54,7 @@ export const aboutUsApi = baseApi.injectEndpoints({
         method: 'PATCH',
         body: aboutUsOurStory,
       }),
-      invalidatesTags: ['AboutUs'],
+      invalidatesTags: (_result, _error, { site }) => [{ type: 'AboutUs', id: `story-${site}` }],
     }),
   }),
 });
