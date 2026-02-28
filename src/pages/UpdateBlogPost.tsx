@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  useGetBlogsQuery,
+  useGetBlogByIdQuery,
   useUpdateBlogMutation,
 } from '@/redux/features/blogManagement/blogmanagement';
 import { ArrowLeft, Eye, Save, Upload, X } from 'lucide-react';
@@ -23,7 +23,9 @@ const UpdateBlogPost: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [updateBlog, { isLoading: isUpdating }] = useUpdateBlogMutation();
-  const { data: blogsData, isLoading } = useGetBlogsQuery({});
+  const { data: blogData, isLoading } = useGetBlogByIdQuery(id!, {
+    skip: !id,
+  });
 
   const [formData, setFormData] = useState<ArticleFormData>({
     title: '',
@@ -35,20 +37,17 @@ const UpdateBlogPost: React.FC = () => {
   });
 
   useEffect(() => {
-    if (blogsData && id) {
-      const currentBlog = blogsData.find((blog: any) => blog.id === id);
-      if (currentBlog) {
-        setFormData({
-          title: currentBlog.blogTitle || '',
-          content: currentBlog.blogDescription || '',
-          status: currentBlog.postStatus || 'DRAFT',
-          blogImage: null,
-          blogImagePreview: currentBlog.blogImage?.url || '',
-          existingImageUrl: currentBlog.blogImage?.url || '',
-        });
-      }
+    if (blogData) {
+      setFormData({
+        title: blogData.blogTitle || '',
+        content: blogData.blogDescription || '',
+        status: blogData.postStatus || 'DRAFT',
+        blogImage: null,
+        blogImagePreview: blogData.blogImage?.url || '',
+        existingImageUrl: blogData.blogImage?.url || '',
+      });
     }
-  }, [blogsData, id]);
+  }, [blogData]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,

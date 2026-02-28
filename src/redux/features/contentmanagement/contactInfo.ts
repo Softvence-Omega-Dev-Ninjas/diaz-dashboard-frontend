@@ -12,8 +12,8 @@ export const contactInfoApi = baseApi.injectEndpoints({
     }),
 
     createContactInfo: build.mutation({
-      query: ({ contactInfo }: ContactInfoParams) => ({
-        url: `/contact-info`,
+      query: ({ site, contactInfo }: ContactInfoParams) => ({
+        url: `/contact/contact-info?site=${site}`,
         method: 'POST',
         body: contactInfo,
       }),

@@ -80,7 +80,10 @@ export const adminBannerApi = baseApi.injectEndpoints({
           body: formData,
         };
       },
-      invalidatesTags: ['Admin'],
+      invalidatesTags: (_result, _error, { page, site }) => [
+        { type: 'Admin', id: `${page}-${site}` },
+        { type: 'Admin', id: 'LIST' },
+      ],
     }),
 
     getSingleBanner: builder.query<Banner, GetSingleBannerQuery>({
@@ -89,7 +92,9 @@ export const adminBannerApi = baseApi.injectEndpoints({
         method: 'GET',
         params: { page, site },
       }),
-      providesTags: ['Admin'],
+      providesTags: (_result, _error, { page, site }) => [
+        { type: 'Admin', id: `${page}-${site}` },
+      ],
     }),
 
     updateBanner: builder.mutation<Banner, UpdateBannerPayload>({
@@ -108,7 +113,13 @@ export const adminBannerApi = baseApi.injectEndpoints({
           body: formData,
         };
       },
-      invalidatesTags: ['Admin'],
+      invalidatesTags: (_result, _error, { id, ...data }) => {
+        const tags: any[] = [{ type: 'Admin', id: 'LIST' }];
+        if (data.page && data.site) {
+          tags.push({ type: 'Admin', id: `${data.page}-${data.site}` });
+        }
+        return tags;
+      },
     }),
 
     featuredBoats: builder.query({

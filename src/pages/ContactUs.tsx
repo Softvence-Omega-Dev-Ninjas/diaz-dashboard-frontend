@@ -21,6 +21,10 @@ const ContactUs: React.FC = () => {
   const [selectedSite, setSelectedSite] = useState<'FLORIDA' | 'JUPITER'>(
     'FLORIDA',
   );
+
+  const handleSiteChange = (site: 'FLORIDA' | 'JUPITER') => {
+    setSelectedSite(site);
+  };
   const [formData, setFormData] = useState<ContactInfoFormData>({
     address: '',
     email: '',
@@ -46,7 +50,7 @@ const ContactUs: React.FC = () => {
     site: 'FLORIDA',
   });
 
-  const { data: contactInfoData, isLoading } =
+  const { data: contactInfoData, isLoading, isFetching } =
     useGetContactInfoQuery(selectedSite);
   const [createContactInfo, { isLoading: isCreating }] =
     useCreateContactInfoMutation();
@@ -239,6 +243,7 @@ const ContactUs: React.FC = () => {
         }
 
         await createContactInfo({
+          site: selectedSite,
           contactInfo: formDataToSend,
         }).unwrap();
         Swal.fire(
@@ -267,7 +272,7 @@ const ContactUs: React.FC = () => {
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {isLoading ? (
+        {isLoading || isFetching ? (
           <div className="flex items-center justify-center p-8">
             <p className="text-gray-500">Loading...</p>
           </div>
@@ -301,7 +306,7 @@ const ContactUs: React.FC = () => {
             {/* Sidebar */}
             <ContactInfoSidebar
               selectedSite={selectedSite}
-              onSiteChange={setSelectedSite}
+              onSiteChange={handleSiteChange}
             />
           </div>
         )}

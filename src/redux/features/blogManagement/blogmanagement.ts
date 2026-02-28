@@ -8,7 +8,7 @@ const blogManagementApi = baseApi.injectEndpoints({
         method: 'POST',
         body: blog,
       }),
-      invalidatesTags: ['Blog'],
+      invalidatesTags: [{ type: 'Blog', id: 'LIST' }],
     }),
 
     getBlogs: build.query({
@@ -16,7 +16,22 @@ const blogManagementApi = baseApi.injectEndpoints({
         url: `/blogs`,
         method: 'GET',
       }),
-      providesTags: ['Blog'],
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }: { id: string }) => ({ type: 'Blog' as const, id })),
+              { type: 'Blog', id: 'LIST' },
+            ]
+          : [{ type: 'Blog', id: 'LIST' }],
+    }),
+
+    getBlogById: build.query({
+      query: (id) => ({
+        url: `/blogs/${id}`,
+        method: 'GET',
+      }),
+      providesTags: (_result, _error, id) => [{ type: 'Blog', id }],
+      keepUnusedDataFor: 5,
     }),
 
     updateBlog: build.mutation({
@@ -25,7 +40,10 @@ const blogManagementApi = baseApi.injectEndpoints({
         method: 'PATCH',
         body: body,
       }),
-      invalidatesTags: ['Blog'],
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'Blog', id },
+        { type: 'Blog', id: 'LIST' },
+      ],
     }),
 
     deleteBlog: build.mutation({
@@ -33,7 +51,7 @@ const blogManagementApi = baseApi.injectEndpoints({
         url: `/blogs/${id}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['Blog'],
+      invalidatesTags: [{ type: 'Blog', id: 'LIST' }],
     }),
   }),
 });
@@ -41,6 +59,7 @@ const blogManagementApi = baseApi.injectEndpoints({
 export const {
   useCreateBlogMutation,
   useGetBlogsQuery,
+  useGetBlogByIdQuery,
   useUpdateBlogMutation,
   useDeleteBlogMutation,
 } = blogManagementApi;
