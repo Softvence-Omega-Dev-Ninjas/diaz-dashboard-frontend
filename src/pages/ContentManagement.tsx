@@ -57,7 +57,7 @@ const DEMO_STATIC_PAGES: StaticPage[] = [
 const ContentManagement: React.FC = () => {
   const navigate = useNavigate();
   const [staticPages] = useState<StaticPage[]>(DEMO_STATIC_PAGES);
-  const { data: blogsData, isLoading } = useGetBlogsQuery({});
+  const { data: blogsData, isLoading, refetch } = useGetBlogsQuery(undefined);
   const [deleteBlog] = useDeleteBlogMutation();
 
   const blogPosts: BlogPost[] = blogsData || [];
@@ -85,6 +85,7 @@ const ContentManagement: React.FC = () => {
     if (result.isConfirmed) {
       try {
         await deleteBlog(id).unwrap();
+        await refetch(); // Force refetch after delete
         Swal.fire({
           title: 'Deleted!',
           text: 'Blog post has been deleted.',

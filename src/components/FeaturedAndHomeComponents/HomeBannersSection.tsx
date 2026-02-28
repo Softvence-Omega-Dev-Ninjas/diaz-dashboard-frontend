@@ -106,17 +106,26 @@ const HomeBannersSection: React.FC<HomeBannersSectionProps> = ({
 
   const logoInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
-  // Use RTK Query; only fetch when section is open using skip option
-  const queries = Object.keys(pageMap).map((key) => {
-    const isOpen = accordions.find((a) => a.id === key)?.isOpen;
-    return useGetSingleBannerQuery(
-      { page: pageMap[key], site: website },
-      { skip: !isOpen },
-    );
-  });
+  // Fetch all banners upfront (not conditionally)
+  const heroQuery = useGetSingleBannerQuery({ page: 'HOME', site: website });
+  const blogsQuery = useGetSingleBannerQuery({ page: 'BLOG', site: website });
+  const contactQuery = useGetSingleBannerQuery({ page: 'CONTACT', site: website });
+  const searchQuery = useGetSingleBannerQuery({ page: 'SEARCH', site: website });
+  const privacyQuery = useGetSingleBannerQuery({ page: 'PRIVACY_POLICY', site: website });
+  const termsQuery = useGetSingleBannerQuery({ page: 'TERMS_AND_CONDITION', site: website });
+
+  const queries = {
+    hero: heroQuery,
+    blogs: blogsQuery,
+    contact: contactQuery,
+    search: searchQuery,
+    privacy: privacyQuery,
+    terms: termsQuery,
+  };
 
   const [createBanner] = useCreateBannerMutation();
   const [updateBanner] = useUpdateBannerMutation();
+  const [loadingSection, setLoadingSection] = useState<string | null>(null);
 
   const handleLogoUpload = (
     sectionId: string,
@@ -158,6 +167,8 @@ const HomeBannersSection: React.FC<HomeBannersSectionProps> = ({
     const page = pageMap[sectionId];
     const state = sectionsState[sectionId];
 
+    setLoadingSection(sectionId);
+
     try {
       if (state.isExisting && state._id) {
         // update
@@ -166,34 +177,22 @@ const HomeBannersSection: React.FC<HomeBannersSectionProps> = ({
         if (state.subtitle) payload.subtitle = state.subtitle;
         if (state.backgroundFile) payload.background = state.backgroundFile;
 
-        const updatePromise = updateBanner(payload).unwrap();
-        try {
-          const res: any = await toast.promise(updatePromise, {
-            loading: `Updating ${pageMap[sectionId]}...`,
-            success: `Updated ${pageMap[sectionId]} banner`,
-            error: (err: any) => {
-              const msg = err?.data?.message || err?.message || 'Update failed';
-              return `Update failed: ${msg}`;
-            },
-          });
+        const res: any = await updateBanner(payload).unwrap();
+        
+        toast.success(`Updated ${pageMap[sectionId]} banner`);
 
-          // sync response
-          setSectionsState((prev) => ({
-            ...prev,
-            [sectionId]: {
-              ...prev[sectionId],
-              _id: res._id || res.id || prev[sectionId]._id,
-              backgroundPreview:
-                res.background?.url || prev[sectionId].backgroundPreview,
-              isExisting: true,
-              backgroundFile: null,
-            },
-          }));
-        } catch (err) {
-          // toast.promise already showed an error; keep console for debug
-
-          console.error('Update error', err);
-        }
+        // sync response
+        setSectionsState((prev) => ({
+          ...prev,
+          [sectionId]: {
+            ...prev[sectionId],
+            _id: res._id || res.id || prev[sectionId]._id,
+            backgroundPreview:
+              res.background?.url || prev[sectionId].backgroundPreview,
+            isExisting: true,
+            backgroundFile: null,
+          },
+        }));
       } else {
         // create
         const payload: any = {
@@ -204,39 +203,28 @@ const HomeBannersSection: React.FC<HomeBannersSectionProps> = ({
         if (state.subtitle) payload.subtitle = state.subtitle;
         if (state.backgroundFile) payload.background = state.backgroundFile;
 
-        const createPromise = createBanner(payload).unwrap();
-        try {
-          const res: any = await toast.promise(createPromise, {
-            loading: `Creating ${pageMap[sectionId]}...`,
-            success: `Created ${pageMap[sectionId]} banner`,
-            error: (err: any) => {
-              const msg = err?.data?.message || err?.message || 'Create failed';
-              return `Create failed: ${msg}`;
-            },
-          });
+        const res: any = await createBanner(payload).unwrap();
+        
+        toast.success(`Created ${pageMap[sectionId]} banner`);
 
-          setSectionsState((prev) => ({
-            ...prev,
-            [sectionId]: {
-              ...prev[sectionId],
-              _id: res._id || res.id,
-              backgroundPreview:
-                res.background?.url || prev[sectionId].backgroundPreview,
-              isExisting: true,
-              backgroundFile: null,
-            },
-          }));
-        } catch (err) {
-          // toast.promise showed error
-
-          console.error('Create error', err);
-        }
+        setSectionsState((prev) => ({
+          ...prev,
+          [sectionId]: {
+            ...prev[sectionId],
+            _id: res._id || res.id,
+            backgroundPreview:
+              res.background?.url || prev[sectionId].backgroundPreview,
+            isExisting: true,
+            backgroundFile: null,
+          },
+        }));
       }
-    } catch (err) {
-      // simple console for now
-      // in real app show toast
-
+    } catch (err: any) {
+      const msg = err?.data?.message || err?.message || 'Failed to save banner';
+      toast.error(msg);
       console.error('Save banner error', err);
+    } finally {
+      setLoadingSection(null);
     }
   };
 
@@ -250,40 +238,43 @@ const HomeBannersSection: React.FC<HomeBannersSectionProps> = ({
 
   // Sync query results into local state once they arrive
   useEffect(() => {
-    Object.keys(pageMap).forEach((sectionId, idx) => {
-      const query = queries[idx];
+    Object.keys(pageMap).forEach((sectionId) => {
+      const query = queries[sectionId as keyof typeof queries];
       const data: any = query.data;
+      
       if (query.isError) {
         const pageName = pageMap[sectionId];
         toast.error(`Failed to load ${pageName} banner`);
         return;
       }
+      
       if (data) {
         setSectionsState((prev) => ({
           ...prev,
           [sectionId]: {
             ...prev[sectionId],
-            _id: (data as any)._id || (data as any).id,
-            bannerTitle:
-              (data as any).bannerTitle || prev[sectionId].bannerTitle,
-            subtitle: (data as any).subtitle || prev[sectionId].subtitle,
-            backgroundPreview:
-              (data as any).background?.url ||
-              prev[sectionId].backgroundPreview,
+            _id: data._id || data.id,
+            bannerTitle: data.bannerTitle || '',
+            subtitle: data.subtitle || '',
+            backgroundPreview: data.background?.url || null,
             backgroundIsVideo:
-              (data as any).background?.fileType === 'video' ||
-              (data as any).background?.mimeType?.startsWith?.('video'),
+              data.background?.fileType === 'video' ||
+              data.background?.mimeType?.startsWith?.('video'),
             isExisting: true,
           },
         }));
       }
     });
   }, [
-    queries.map((q) => q.data).join?.(),
-    accordions.map((a) => a.isOpen).join?.(),
-    website,
+    heroQuery.data,
+    blogsQuery.data,
+    contactQuery.data,
+    searchQuery.data,
+    privacyQuery.data,
+    termsQuery.data,
   ]);
 
+  // Reset state when website changes
   useEffect(() => {
     setAccordions((prev) =>
       prev.map((accordion) => ({
@@ -303,6 +294,7 @@ const HomeBannersSection: React.FC<HomeBannersSectionProps> = ({
           <button
             onClick={() => toggleAccordion(accordion.id)}
             className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+            aria-label={`Toggle ${accordion.title}`}
           >
             <span className="text-sm font-medium text-gray-900">
               {accordion.title}
@@ -375,6 +367,7 @@ const HomeBannersSection: React.FC<HomeBannersSectionProps> = ({
                       onChange={(e) => handleLogoUpload(accordion.id, e)}
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                       accept="image/*,video/*"
+                      aria-label="Upload background image or video"
                     />
                     <div className="flex flex-col items-center justify-center text-center">
                       <Upload className="w-8 h-8 text-gray-400 mb-2" />
@@ -437,9 +430,12 @@ const HomeBannersSection: React.FC<HomeBannersSectionProps> = ({
               <div>
                 <button
                   onClick={() => handleSaveChanges(accordion.id)}
-                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+                  disabled={loadingSection === accordion.id}
+                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {sectionsState[accordion.id]?.isExisting
+                  {loadingSection === accordion.id
+                    ? 'Saving...'
+                    : sectionsState[accordion.id]?.isExisting
                     ? 'Update'
                     : 'Create'}
                 </button>
