@@ -4,446 +4,381 @@ import {
   useGetSingleBannerQuery,
   useUpdateBannerMutation,
 } from '@/redux/features/adminBannerApi/adminBannerApi';
-import { ChevronDown, ChevronUp, Upload, X } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
+import { ChevronDown, ChevronUp, Save, Upload, X } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
-interface AccordionSection {
-  id: string;
-  title: string;
-  isOpen: boolean;
-}
-
-interface SectionState {
-  _id?: string;
+interface BannerFormData {
+  id?: string;
   bannerTitle: string;
   subtitle: string;
-  backgroundPreview: string | null;
-  backgroundFile?: File | null;
-  backgroundIsVideo?: boolean;
-  isExisting: boolean;
+  backgroundFile: File | null;
+  existingBackground: string | null;
+  isVideo: boolean;
 }
 
 interface HomeBannersSectionProps {
   website: 'FLORIDA' | 'JUPITER';
 }
 
-const HomeBannersSection: React.FC<HomeBannersSectionProps> = ({
-  website,
-}: {
-  website: string;
-}) => {
-  const [accordions, setAccordions] = useState<AccordionSection[]>([
-    { id: 'hero', title: 'Homepage Hero Banner', isOpen: true },
-    { id: 'blogs', title: 'Blogs', isOpen: false },
-    { id: 'contact', title: 'Contact', isOpen: false },
-    { id: 'search', title: 'Search', isOpen: false },
-    { id: 'privacy', title: 'Privacy Policy', isOpen: false },
-    { id: 'terms', title: 'Terms of Service', isOpen: false },
-  ]);
+const PAGES = [
+  { id: 'HOME', title: 'Homepage Hero Banner' },
+  { id: 'BLOG', title: 'Blogs' },
+  { id: 'CONTACT', title: 'Contact' },
+  { id: 'SEARCH', title: 'Search' },
+  { id: 'PRIVACY_POLICY', title: 'Privacy Policy' },
+  { id: 'TERMS_AND_CONDITION', title: 'Terms of Service' },
+] as const;
 
-  const pageMap: Record<string, string> = {
-    hero: 'HOME',
-    blogs: 'BLOG',
-    contact: 'CONTACT',
-    search: 'SEARCH',
-    privacy: 'PRIVACY_POLICY',
-    terms: 'TERMS_AND_CONDITION',
-  };
+const HomeBannersSection: React.FC<HomeBannersSectionProps> = ({ website }) => {
+  const [openSection, setOpenSection] = useState<string>('HOME');
+  const [formDataMap, setFormDataMap] = useState<
+    Record<string, BannerFormData>
+  >({});
 
-  const [sectionsState, setSectionsState] = useState<
-    Record<string, SectionState>
-  >(() => ({
-    hero: {
-      bannerTitle: 'FLORIDA YACHT TRADER',
-      subtitle: "The World's most affordable and safe marketplace",
-      backgroundPreview: null,
-      backgroundFile: null,
-      backgroundIsVideo: false,
-      isExisting: false,
-    },
-    blogs: {
-      bannerTitle: '',
-      subtitle: '',
-      backgroundPreview: null,
-      backgroundFile: null,
-      backgroundIsVideo: false,
-      isExisting: false,
-    },
-    contact: {
-      bannerTitle: '',
-      subtitle: '',
-      backgroundPreview: null,
-      backgroundFile: null,
-      backgroundIsVideo: false,
-      isExisting: false,
-    },
-    search: {
-      bannerTitle: '',
-      subtitle: '',
-      backgroundPreview: null,
-      backgroundFile: null,
-      backgroundIsVideo: false,
-      isExisting: false,
-    },
-    privacy: {
-      bannerTitle: '',
-      subtitle: '',
-      backgroundPreview: null,
-      backgroundFile: null,
-      backgroundIsVideo: false,
-      isExisting: false,
-    },
-    terms: {
-      bannerTitle: '',
-      subtitle: '',
-      backgroundPreview: null,
-      backgroundFile: null,
-      backgroundIsVideo: false,
-      isExisting: false,
-    },
-  }));
-
-  const logoInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
-
-  // Fetch all banners upfront (not conditionally)
-  const heroQuery = useGetSingleBannerQuery({ page: 'HOME', site: website });
-  const blogsQuery = useGetSingleBannerQuery({ page: 'BLOG', site: website });
-  const contactQuery = useGetSingleBannerQuery({ page: 'CONTACT', site: website });
-  const searchQuery = useGetSingleBannerQuery({ page: 'SEARCH', site: website });
-  const privacyQuery = useGetSingleBannerQuery({ page: 'PRIVACY_POLICY', site: website });
-  const termsQuery = useGetSingleBannerQuery({ page: 'TERMS_AND_CONDITION', site: website });
-
+  // Fetch all banners
   const queries = {
-    hero: heroQuery,
-    blogs: blogsQuery,
-    contact: contactQuery,
-    search: searchQuery,
-    privacy: privacyQuery,
-    terms: termsQuery,
+    HOME: useGetSingleBannerQuery(
+      { page: 'HOME', site: website },
+      { refetchOnMountOrArgChange: true },
+    ),
+    BLOG: useGetSingleBannerQuery(
+      { page: 'BLOG', site: website },
+      { refetchOnMountOrArgChange: true },
+    ),
+    CONTACT: useGetSingleBannerQuery(
+      { page: 'CONTACT', site: website },
+      { refetchOnMountOrArgChange: true },
+    ),
+    SEARCH: useGetSingleBannerQuery(
+      { page: 'SEARCH', site: website },
+      { refetchOnMountOrArgChange: true },
+    ),
+    PRIVACY_POLICY: useGetSingleBannerQuery(
+      { page: 'PRIVACY_POLICY', site: website },
+      { refetchOnMountOrArgChange: true },
+    ),
+    TERMS_AND_CONDITION: useGetSingleBannerQuery(
+      { page: 'TERMS_AND_CONDITION', site: website },
+      { refetchOnMountOrArgChange: true },
+    ),
   };
 
   const [createBanner] = useCreateBannerMutation();
   const [updateBanner] = useUpdateBannerMutation();
-  const [loadingSection, setLoadingSection] = useState<string | null>(null);
+  const [savingSection, setSavingSection] = useState<string | null>(null);
 
-  const handleLogoUpload = (
-    sectionId: string,
-    e: React.ChangeEvent<HTMLInputElement>,
+  // Load data into form when queries complete
+  useEffect(() => {
+    const newFormDataMap: Record<string, BannerFormData> = {};
+
+    PAGES.forEach(({ id }) => {
+      const query = queries[id as keyof typeof queries];
+      const data = query.data;
+
+      if (data) {
+        newFormDataMap[id] = {
+          id: data.id,
+          bannerTitle: data.bannerTitle || '',
+          subtitle: data.subtitle || '',
+          backgroundFile: null,
+          existingBackground: data.background?.url || null,
+          isVideo:
+            data.background?.fileType === 'video' ||
+            data.background?.mimeType?.startsWith('video') ||
+            false,
+        };
+      } else {
+        newFormDataMap[id] = {
+          bannerTitle: '',
+          subtitle: '',
+          backgroundFile: null,
+          existingBackground: null,
+          isVideo: false,
+        };
+      }
+    });
+
+    setFormDataMap(newFormDataMap);
+  }, [
+    queries.HOME.data,
+    queries.BLOG.data,
+    queries.CONTACT.data,
+    queries.SEARCH.data,
+    queries.PRIVACY_POLICY.data,
+    queries.TERMS_AND_CONDITION.data,
+    website,
+  ]);
+
+  const handleInputChange = (
+    page: string,
+    field: 'bannerTitle' | 'subtitle',
+    value: string,
   ) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setSectionsState((prev) => ({
-          ...prev,
-          [sectionId]: {
-            ...prev[sectionId],
-            backgroundPreview: reader.result as string,
-            backgroundFile: file,
-            backgroundIsVideo: file.type.startsWith('video'),
-          },
-        }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const clearBackgroundPreview = (sectionId: string) => {
-    setSectionsState((prev) => ({
+    setFormDataMap((prev) => ({
       ...prev,
-      [sectionId]: {
-        ...prev[sectionId],
-        backgroundPreview: null,
-        backgroundFile: null,
-        backgroundIsVideo: false,
+      [page]: {
+        ...prev[page],
+        [field]: value,
       },
     }));
-    const ref = logoInputRefs.current[sectionId];
-    if (ref) ref.value = '';
   };
 
-  const handleSaveChanges = async (sectionId: string) => {
-    const page = pageMap[sectionId];
-    const state = sectionsState[sectionId];
+  const handleFileChange = (page: string, file: File | null) => {
+    setFormDataMap((prev) => ({
+      ...prev,
+      [page]: {
+        ...prev[page],
+        backgroundFile: file,
+        isVideo: file
+          ? file.type.startsWith('video')
+          : prev[page]?.isVideo || false,
+        ...(file === null && { existingBackground: null }),
+      },
+    }));
+  };
 
-    setLoadingSection(sectionId);
+  const getBackgroundPreview = (page: string): string | null => {
+    const formData = formDataMap[page];
+
+    if (!formData) return null;
+
+    if (formData.backgroundFile) {
+      return URL.createObjectURL(formData.backgroundFile);
+    }
+    return formData.existingBackground;
+  };
+
+  const handleSave = async (page: string) => {
+    const formData = formDataMap[page];
+    if (!formData) return;
+
+    console.log('🔵 Save clicked for:', page);
+    console.log('🔵 Form data:', formData);
+
+    if (!formData.bannerTitle.trim()) {
+      toast.error('Banner title is required');
+      return;
+    }
+
+    setSavingSection(page);
 
     try {
-      if (state.isExisting && state._id) {
-        // update
-        const payload: any = { id: state._id };
-        if (state.bannerTitle) payload.bannerTitle = state.bannerTitle;
-        if (state.subtitle) payload.subtitle = state.subtitle;
-        if (state.backgroundFile) payload.background = state.backgroundFile;
+      const payload: any = {
+        page,
+        site: website,
+        bannerTitle: formData.bannerTitle,
+      };
 
-        const res: any = await updateBanner(payload).unwrap();
-        
-        toast.success(`Updated ${pageMap[sectionId]} banner`);
+      if (formData.subtitle) {
+        payload.subtitle = formData.subtitle;
+      }
 
-        // sync response
-        setSectionsState((prev) => ({
+      if (formData.backgroundFile) {
+        payload.background = formData.backgroundFile;
+      }
+
+      console.log('🔵 Payload:', {
+        ...payload,
+        background: payload.background ? 'FILE' : 'NONE',
+      });
+
+      if (formData.id) {
+        // Update
+        payload.id = formData.id;
+        console.log('🟡 Updating banner with ID:', formData.id);
+        const result = await updateBanner(payload).unwrap();
+        console.log('✅ Update response:', result);
+        toast.success(`${page} banner updated successfully`);
+
+        // Update form state
+        setFormDataMap((prev) => ({
           ...prev,
-          [sectionId]: {
-            ...prev[sectionId],
-            _id: res._id || res.id || prev[sectionId]._id,
-            backgroundPreview:
-              res.background?.url || prev[sectionId].backgroundPreview,
-            isExisting: true,
+          [page]: {
+            ...prev[page],
             backgroundFile: null,
+            existingBackground:
+              result.background?.url || prev[page].existingBackground,
           },
         }));
       } else {
-        // create
-        const payload: any = {
-          page,
-          site: website,
-          bannerTitle: state.bannerTitle,
-        } as any;
-        if (state.subtitle) payload.subtitle = state.subtitle;
-        if (state.backgroundFile) payload.background = state.backgroundFile;
+        // Create
+        console.log('🟢 Creating new banner');
+        const result = await createBanner(payload).unwrap();
+        console.log('✅ Create response:', result);
+        toast.success(`${page} banner created successfully`);
 
-        const res: any = await createBanner(payload).unwrap();
-        
-        toast.success(`Created ${pageMap[sectionId]} banner`);
-
-        setSectionsState((prev) => ({
+        // Update form with new ID
+        setFormDataMap((prev) => ({
           ...prev,
-          [sectionId]: {
-            ...prev[sectionId],
-            _id: res._id || res.id,
-            backgroundPreview:
-              res.background?.url || prev[sectionId].backgroundPreview,
-            isExisting: true,
+          [page]: {
+            ...prev[page],
+            id: result.id,
             backgroundFile: null,
+            existingBackground:
+              result.background?.url || prev[page].existingBackground,
           },
         }));
       }
-    } catch (err: any) {
-      const msg = err?.data?.message || err?.message || 'Failed to save banner';
+    } catch (error: any) {
+      console.error('❌ Save error:', error);
+      const msg =
+        error?.data?.message || error?.message || 'Failed to save banner';
       toast.error(msg);
-      console.error('Save banner error', err);
     } finally {
-      setLoadingSection(null);
+      setSavingSection(null);
     }
   };
 
-  const toggleAccordion = (id: string) => {
-    setAccordions(
-      accordions.map((acc) =>
-        acc.id === id ? { ...acc, isOpen: !acc.isOpen } : acc,
-      ),
-    );
-  };
+  const renderBannerSection = (page: { id: string; title: string }) => {
+    const formData = formDataMap[page.id];
+    const query = queries[page.id as keyof typeof queries];
+    const isOpen = openSection === page.id;
+    const preview = getBackgroundPreview(page.id);
 
-  // Sync query results into local state once they arrive
-  useEffect(() => {
-    Object.keys(pageMap).forEach((sectionId) => {
-      const query = queries[sectionId as keyof typeof queries];
-      const data: any = query.data;
-      
-      if (query.isError) {
-        const pageName = pageMap[sectionId];
-        toast.error(`Failed to load ${pageName} banner`);
-        return;
-      }
-      
-      if (data) {
-        setSectionsState((prev) => ({
-          ...prev,
-          [sectionId]: {
-            ...prev[sectionId],
-            _id: data._id || data.id,
-            bannerTitle: data.bannerTitle || '',
-            subtitle: data.subtitle || '',
-            backgroundPreview: data.background?.url || null,
-            backgroundIsVideo:
-              data.background?.fileType === 'video' ||
-              data.background?.mimeType?.startsWith?.('video'),
-            isExisting: true,
-          },
-        }));
-      }
-    });
-  }, [
-    heroQuery.data,
-    blogsQuery.data,
-    contactQuery.data,
-    searchQuery.data,
-    privacyQuery.data,
-    termsQuery.data,
-  ]);
+    console.log('Main Data : ', formData);
 
-  // Reset state when website changes
-  useEffect(() => {
-    setAccordions((prev) =>
-      prev.map((accordion) => ({
-        ...accordion,
-        isOpen: false,
-      })),
-    );
-  }, [website]);
-  return (
-    <div className="space-y-4">
-      {/* Homepage Hero Banner Accordion */}
-      {accordions.map((accordion) => (
-        <div
-          key={accordion.id}
-          className="bg-white rounded-lg shadow-sm overflow-hidden"
+    if (!formData) return null;
+
+    return (
+      <div
+        key={page.id}
+        className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
+      >
+        <button
+          onClick={() => setOpenSection(isOpen ? '' : page.id)}
+          className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
         >
-          <button
-            onClick={() => toggleAccordion(accordion.id)}
-            className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
-            aria-label={`Toggle ${accordion.title}`}
-          >
-            <span className="text-sm font-medium text-gray-900">
-              {accordion.title}
-            </span>
-            {accordion.isOpen ? (
-              <ChevronUp className="w-5 h-5 text-gray-400" />
+          <span className="text-sm font-medium text-gray-900">
+            {page.title}
+          </span>
+          {isOpen ? (
+            <ChevronUp className="w-5 h-5 text-gray-400" />
+          ) : (
+            <ChevronDown className="w-5 h-5 text-gray-400" />
+          )}
+        </button>
+
+        {isOpen && (
+          <div className="p-6 border-t border-gray-100 space-y-6">
+            {query.isLoading ? (
+              <div className="text-center py-4 text-gray-500">Loading...</div>
             ) : (
-              <ChevronDown className="w-5 h-5 text-gray-400" />
-            )}
-          </button>
-
-          {accordion.isOpen && (
-            <div className="p-6 border-t border-gray-100 space-y-6">
-              {/* Banner Title */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Banner Title
-                </label>
-                <input
-                  type="text"
-                  value={sectionsState[accordion.id]?.bannerTitle || ''}
-                  onChange={(e) =>
-                    setSectionsState((prev) => ({
-                      ...prev,
-                      [accordion.id]: {
-                        ...prev[accordion.id],
-                        bannerTitle: e.target.value,
-                      },
-                    }))
-                  }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter banner title"
-                />
-              </div>
-
-              {/* Subtitle */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Subtitle
-                </label>
-                <input
-                  type="text"
-                  value={sectionsState[accordion.id]?.subtitle || ''}
-                  onChange={(e) =>
-                    setSectionsState((prev) => ({
-                      ...prev,
-                      [accordion.id]: {
-                        ...prev[accordion.id],
-                        subtitle: e.target.value,
-                      },
-                    }))
-                  }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter subtitle"
-                />
-              </div>
-
-              {/* File Uploads */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <>
+                {/* Banner Title */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Background Video/Image (Upload)
+                    Banner Title <span className="text-red-500">*</span>
                   </label>
-                  <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-8 hover:border-gray-400 transition-colors">
-                    <input
-                      ref={(el) => {
-                        logoInputRefs.current[accordion.id] = el;
-                      }}
-                      type="file"
-                      onChange={(e) => handleLogoUpload(accordion.id, e)}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                      accept="image/*,video/*"
-                      aria-label="Upload background image or video"
-                    />
-                    <div className="flex flex-col items-center justify-center text-center">
-                      <Upload className="w-8 h-8 text-gray-400 mb-2" />
-                      <p className="text-xs text-gray-500">
-                        Click to upload or drag and drop (image or video)
-                      </p>
-                      {sectionsState[accordion.id]?.backgroundFile?.name && (
-                        <p className="mt-2 text-xs text-gray-600">
-                          Selected:{' '}
-                          {sectionsState[accordion.id]?.backgroundFile?.name}
-                        </p>
-                      )}
-                    </div>
-                  </div>
+                  <input
+                    type="text"
+                    value={formData.bannerTitle}
+                    onChange={(e) =>
+                      handleInputChange(page.id, 'bannerTitle', e.target.value)
+                    }
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Enter banner title"
+                  />
                 </div>
 
-                {/* Preview-only (right column) */}
+                {/* Subtitle */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Background Video/Image (Preview)
+                    Subtitle
                   </label>
-                  {sectionsState[accordion.id]?.backgroundPreview ? (
-                    <div className="relative border-2 border-gray-300 rounded-lg p-4 group">
+                  <input
+                    type="text"
+                    value={formData.subtitle}
+                    onChange={(e) =>
+                      handleInputChange(page.id, 'subtitle', e.target.value)
+                    }
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Enter subtitle"
+                  />
+                </div>
+
+                {/* Background Upload */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Background Image/Video
+                  </label>
+                  {preview ? (
+                    <div className="relative border-2 border-gray-300 rounded-lg p-4">
                       <button
-                        onClick={() => clearBackgroundPreview(accordion.id)}
+                        type="button"
+                        onClick={() => handleFileChange(page.id, null)}
                         className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors z-10"
-                        aria-label="Remove background"
+                        aria-label="Remove background image"
+                        title="Remove background image"
                       >
                         <X className="w-4 h-4" />
                       </button>
-                      {sectionsState[accordion.id]?.backgroundIsVideo ? (
+                      {formData.isVideo ? (
                         <video
-                          src={
-                            sectionsState[accordion.id]?.backgroundPreview || ''
-                          }
-                          className="w-full h-32 object-cover rounded"
+                          src={preview}
+                          className="w-full h-48 object-cover rounded"
                           controls
                         />
                       ) : (
                         <img
-                          src={
-                            sectionsState[accordion.id]?.backgroundPreview || ''
-                          }
-                          alt="Background preview"
-                          className="w-full h-32 object-cover rounded"
+                          src={preview}
+                          alt="Background"
+                          className="w-full h-48 object-cover rounded"
                         />
                       )}
                     </div>
                   ) : (
-                    <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-8">
-                      <p className="text-xs text-gray-500">
-                        No background selected
-                      </p>
-                    </div>
+                    <label className="border-2 border-dashed border-gray-300 rounded-lg p-8 hover:border-blue-400 transition-colors cursor-pointer flex flex-col items-center">
+                      <Upload className="w-8 h-8 text-gray-400 mb-2" />
+                      <span className="text-sm text-gray-600">
+                        Click to upload image or video
+                      </span>
+                      <span className="text-xs text-gray-400 mt-1">
+                        PNG, JPG, MP4 up to 50MB
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/*,video/*"
+                        onChange={(e) =>
+                          handleFileChange(page.id, e.target.files?.[0] || null)
+                        }
+                        className="hidden"
+                      />
+                    </label>
                   )}
                 </div>
-              </div>
 
-              {/* Save Changes Button */}
-              <div>
-                <button
-                  onClick={() => handleSaveChanges(accordion.id)}
-                  disabled={loadingSection === accordion.id}
-                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {loadingSection === accordion.id
-                    ? 'Saving...'
-                    : sectionsState[accordion.id]?.isExisting
-                    ? 'Update'
-                    : 'Create'}
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      ))}
+                {/* Save Button */}
+                <div className="flex justify-end">
+                  <button
+                    onClick={() => {
+                      console.log('🔴 BUTTON CLICKED!');
+                      console.log('🔴 Page ID:', page.id);
+                      console.log('🔴 Saving section:', savingSection);
+                      handleSave(page.id);
+                    }}
+                    disabled={savingSection === page.id}
+                    className="flex items-center gap-2 px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-lg transition-colors"
+                  >
+                    <Save className="w-4 h-4" />
+                    {savingSection === page.id
+                      ? 'Saving...'
+                      : formData.id
+                        ? 'Update'
+                        : 'Create'}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <div className="space-y-4">
+      {PAGES.map((page) => renderBannerSection(page))}
     </div>
   );
 };
