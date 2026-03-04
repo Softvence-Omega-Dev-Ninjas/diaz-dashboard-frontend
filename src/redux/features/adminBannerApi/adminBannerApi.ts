@@ -1,12 +1,17 @@
 import { baseApi } from '@/redux/api/baseApi';
 
 export interface Banner {
-  _id: string;
+  id: string;
   page: string;
   site: string;
   bannerTitle: string;
   subtitle?: string;
-  background?: string;
+  background?: {
+    id: string;
+    url: string;
+    fileType?: string;
+    mimeType?: string;
+  };
   createdAt?: string;
   updatedAt?: string;
 }
@@ -81,8 +86,8 @@ export const adminBannerApi = baseApi.injectEndpoints({
         };
       },
       invalidatesTags: (_result, _error, { page, site }) => [
-        { type: 'Admin', id: `${page}-${site}` },
-        { type: 'Admin', id: 'LIST' },
+        { type: 'PageBanner', id: `${page}-${site}` },
+        { type: 'PageBanner', id: 'LIST' },
       ],
     }),
 
@@ -93,19 +98,26 @@ export const adminBannerApi = baseApi.injectEndpoints({
         params: { page, site },
       }),
       providesTags: (_result, _error, { page, site }) => [
-        { type: 'Admin', id: `${page}-${site}` },
+        { type: 'PageBanner', id: `${page}-${site}` },
       ],
+      keepUnusedDataFor: 0,
+      transformErrorResponse: (response: any) => {
+        console.error('Get banner error:', response);
+        return response;
+      },
     }),
 
     updateBanner: builder.mutation<Banner, UpdateBannerPayload>({
-      query: ({ id, ...data }) => {
+      query: ({ id, page, site, bannerTitle, subtitle, background }) => {
         const formData = new FormData();
 
-        if (data.page) formData.append('page', data.page);
-        if (data.site) formData.append('site', data.site);
-        if (data.bannerTitle) formData.append('bannerTitle', data.bannerTitle);
-        if (data.subtitle) formData.append('subtitle', data.subtitle);
-        if (data.background) formData.append('background', data.background);
+        if (page) formData.append('page', page);
+        if (site) formData.append('site', site);
+        if (bannerTitle) formData.append('bannerTitle', bannerTitle);
+        if (subtitle) formData.append('subtitle', subtitle);
+        if (background) formData.append('background', background);
+
+        console.log('Update banner payload:', { id, page, site, bannerTitle, subtitle, hasFile: !!background });
 
         return {
           url: `/banners/${id}`,
@@ -113,12 +125,17 @@ export const adminBannerApi = baseApi.injectEndpoints({
           body: formData,
         };
       },
-      invalidatesTags: (_result, _error, { id, ...data }) => {
-        const tags: any[] = [{ type: 'Admin', id: 'LIST' }];
-        if (data.page && data.site) {
-          tags.push({ type: 'Admin', id: `${data.page}-${data.site}` });
+      invalidatesTags: (_result, _error, { page, site }) => {
+        const tags = [{ type: 'PageBanner' as const, id: 'LIST' }];
+        if (page && site) {
+          tags.push({ type: 'PageBanner' as const, id: `${page}-${site}` });
         }
+        console.log('Invalidating tags:', tags);
         return tags;
+      },
+      transformErrorResponse: (response: any) => {
+        console.error('Update banner error:', response);
+        return response;
       },
     }),
 
@@ -127,7 +144,8 @@ export const adminBannerApi = baseApi.injectEndpoints({
         url: `/boats/featured?site=FLORIDA`,
         method: 'GET',
       }),
-      providesTags: ['Admin'],
+      providesTags: [{ type: 'FeaturedBoats', id: 'LIST' }],
+      keepUnusedDataFor: 0,
     }),
   }),
 });

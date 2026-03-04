@@ -54,6 +54,8 @@ export const baseApi = createApi({
     'Subscription',
     'PromoCodes',
     'Notification',
+    'PageBanner',
+    'FeaturedBoats',
   ],
 
   endpoints: () => ({}),
