@@ -55,6 +55,15 @@ const listingManagementApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Listing'],
     }),
+
+    updateListingStatus: build.mutation({
+      query: ({ id, status }) => ({
+        url: `/admin/listings/${id}`,
+        method: 'PATCH',
+        body: { status },
+      }),
+      invalidatesTags: ['Listing'],
+    }),
   }),
 });
 
@@ -64,4 +73,5 @@ export const {
   useCreateListingMutation,
   useUpdateListingMutation,
   useDeleteListingMutation,
+  useUpdateListingStatusMutation,
 } = listingManagementApi;

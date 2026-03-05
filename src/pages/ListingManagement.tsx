@@ -48,7 +48,10 @@ const ListingManagement: React.FC = () => {
     data: listingData,
     isLoading,
     isError,
-  } = useGetAllListingQuery(queryParams);
+    refetch,
+  } = useGetAllListingQuery(queryParams, {
+    refetchOnMountOrArgChange: true,
+  });
 
   useEffect(() => {
     if (listingData?.total) {
@@ -205,6 +208,7 @@ const ListingManagement: React.FC = () => {
           onView={handleView}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          onStatusUpdate={refetch}
         />
 
         {!isLoading && !isError && listingData && (
