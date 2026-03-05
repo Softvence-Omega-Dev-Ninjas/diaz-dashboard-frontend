@@ -5,6 +5,7 @@ import {
   ListingsTable,
   Pagination,
 } from '@/components/ListingManagement';
+import { ListingDetailsModal } from '@/components/ListingManagement/ListingDetailsModal';
 import { usePagination } from '@/hooks/use-pagination';
 import {
   useDeleteListingMutation,
@@ -15,7 +16,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import Swal from 'sweetalert2';
 
-const url = import.meta.env.VITE_FLORIDA_FRONTEND_URL || 'https://development.floridayachttrader.com';
 const ListingManagement: React.FC = () => {
   const navigate = useNavigate();
   const [filters, setFilters] = useState<ListingFilters>({
@@ -25,6 +25,7 @@ const ListingManagement: React.FC = () => {
     priceRange: '',
   });
   const [deleteListing] = useDeleteListingMutation();
+  const [selectedListingId, setSelectedListingId] = useState<string | null>(null);
 
   const pagination = usePagination({ initialPage: 1, initialLimit: 10 });
   const queryParams = useMemo(() => {
@@ -69,7 +70,7 @@ const ListingManagement: React.FC = () => {
   };
 
   const handleView = (id: string) => {
-    window.open(`${url}/search-listing/${id}`, '_blank');
+    setSelectedListingId(id);
   };
 
   const handleEdit = (id: string) => {
@@ -224,6 +225,14 @@ const ListingManagement: React.FC = () => {
           />
         )}
       </div>
+
+      {/* Listing Details Modal */}
+      {selectedListingId && (
+        <ListingDetailsModal
+          listingId={selectedListingId}
+          onClose={() => setSelectedListingId(null)}
+        />
+      )}
     </div>
   );
 };
