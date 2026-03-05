@@ -1,37 +1,23 @@
 import type { Listing } from '@/types/listing-types';
 import { Edit, Eye, Trash2 } from 'lucide-react';
 import React from 'react';
+import type { BoatListingStatus } from './StatusDropdown';
+import { StatusDropdown } from './StatusDropdown';
 
 interface ListingsTableProps {
   listings: Listing[];
   onView: (id: string) => void;
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
+  onStatusUpdate?: () => void;
 }
-
-const STATUS_COLORS: Record<string, string> = {
-  ONBOARDING_PENDING: 'bg-yellow-100 text-yellow-800',
-  DRAFT: 'bg-gray-100 text-gray-800',
-  PENDING: 'bg-blue-100 text-blue-800',
-  ACTIVE: 'bg-green-100 text-green-800',
-  INACTIVE: 'bg-gray-100 text-gray-800',
-  SOLD: 'bg-purple-100 text-purple-800',
-};
-
-const STATUS_LABELS: Record<string, string> = {
-  ONBOARDING_PENDING: 'Onboarding Pending',
-  DRAFT: 'Draft',
-  PENDING: 'Pending',
-  ACTIVE: 'Active',
-  INACTIVE: 'Inactive',
-  SOLD: 'Sold',
-};
 
 export const ListingsTable: React.FC<ListingsTableProps> = ({
   listings,
   onView,
   onEdit,
   onDelete,
+  onStatusUpdate,
 }) => {
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -128,13 +114,11 @@ export const ListingsTable: React.FC<ListingsTableProps> = ({
                   </span>
                 </td>
                 <td className="px-6 py-4">
-                  <span
-                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      STATUS_COLORS[listing.status]
-                    }`}
-                  >
-                    {STATUS_LABELS[listing.status]}
-                  </span>
+                  <StatusDropdown
+                    listingId={listing.id}
+                    currentStatus={listing.status as BoatListingStatus}
+                    onStatusChange={onStatusUpdate}
+                  />
                 </td>
                 <td className="px-6 py-4">
                   <span className="text-sm text-gray-900">{listing.views}</span>
@@ -189,13 +173,11 @@ export const ListingsTable: React.FC<ListingsTableProps> = ({
                   {listing.make} {listing.model} • {listing.year}
                 </p>
               </div>
-              <span
-                className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ml-2 ${
-                  STATUS_COLORS[listing.status]
-                }`}
-              >
-                {STATUS_LABELS[listing.status]}
-              </span>
+              <StatusDropdown
+                listingId={listing.id}
+                currentStatus={listing.status as BoatListingStatus}
+                onStatusChange={onStatusUpdate}
+              />
             </div>
 
             {/* Details Grid */}
