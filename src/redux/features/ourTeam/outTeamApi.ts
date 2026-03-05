@@ -51,7 +51,6 @@ const ourTeamApi = baseApi.injectEndpoints({
               { type: 'OurTeam', id: 'LIST' },
             ]
           : [{ type: 'OurTeam', id: 'LIST' }],
-      keepUnusedDataFor: 0,
     }),
 
     getSingleTeamMember: build.query<SingleTeamMemberResponse, string>({
@@ -60,7 +59,6 @@ const ourTeamApi = baseApi.injectEndpoints({
         method: 'GET',
       }),
       providesTags: (_result, _error, id) => [{ type: 'OurTeam', id }],
-      keepUnusedDataFor: 0,
     }),
 
     createOurTeam: build.mutation<SingleTeamMemberResponse, FormData>({

@@ -21,13 +21,14 @@ const TermsOfService: React.FC = () => {
   const [selectedSite, setSelectedSite] = useState<'FLORIDA' | 'JUPITER'>(
     'FLORIDA',
   );
+  const [editorKey, setEditorKey] = useState(0);
   const [formData, setFormData] = useState<TermsOfServiceFormData>({
     title: '',
     content: '',
     site: 'FLORIDA',
   });
 
-  const { data: getTermsData, isLoading, isError, refetch } =
+  const { data: getTermsData, isLoading, isError } =
     useGetTermsAndConditionsQuery(selectedSite, {
       refetchOnMountOrArgChange: true,
     });
@@ -39,21 +40,34 @@ const TermsOfService: React.FC = () => {
   const isSaving = isCreating || isUpdating;
 
   useEffect(() => {
+    console.log('🔵 Terms useEffect triggered');
+    console.log('🔵 getTermsData:', getTermsData);
+    console.log('🔵 isError:', isError);
+    console.log('🔵 isLoading:', isLoading);
+    console.log('🔵 selectedSite:', selectedSite);
+    
     if (getTermsData && !isError) {
+      console.log('✅ Setting form data with:', {
+        title: getTermsData.termsTitle,
+        contentLength: getTermsData.termsDescription?.length,
+      });
       setFormData({
         title: getTermsData.termsTitle || '',
         content: getTermsData.termsDescription || '',
         site: selectedSite,
       });
+      setEditorKey(prev => prev + 1);
     } else {
+      console.log('⚠️ Resetting form data');
       // Reset form when no data for selected site or error
       setFormData({
         title: '',
         content: '',
         site: selectedSite,
       });
+      setEditorKey(prev => prev + 1);
     }
-  }, [getTermsData, selectedSite, isError]);
+  }, [getTermsData, selectedSite, isError, isLoading]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -69,6 +83,8 @@ const TermsOfService: React.FC = () => {
   const handleContentChange = (value: string) => {
     setFormData((prev) => ({ ...prev, content: value }));
   };
+
+
 
   const handleSave = async () => {
     try {
@@ -94,7 +110,6 @@ const TermsOfService: React.FC = () => {
         title: getTermsData ? 'Terms of Service Updated' : 'Terms of Service Created',
         text: `Terms of Service page has been ${getTermsData ? 'updated' : 'created'} successfully!`,
       });
-      refetch();
       navigate('/content');
     } catch (error) {
       Swal.fire({
@@ -156,11 +171,7 @@ const TermsOfService: React.FC = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {isLoading ? (
-          <div className="flex items-center justify-center p-8">
-            <p className="text-gray-500">Loading...</p>
-          </div>
-        ) : isPreviewMode ? (
+        {isPreviewMode ? (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
             <div className="max-w-4xl mx-auto">
               <h1 className="text-4xl font-bold text-gray-900 mb-8">
@@ -196,6 +207,7 @@ const TermsOfService: React.FC = () => {
                   Page Content *
                 </label>
                 <RichTextEditor
+                  key={editorKey}
                   value={formData.content}
                   onChange={handleContentChange}
                   placeholder="Write your Terms of Service content here..."

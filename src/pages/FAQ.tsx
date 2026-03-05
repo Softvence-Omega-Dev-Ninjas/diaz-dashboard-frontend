@@ -29,6 +29,7 @@ const FAQ: React.FC = () => {
   const [selectedSite, setSelectedSite] = useState<'FLORIDA' | 'JUPITER'>(
     'FLORIDA',
   );
+  const [editorRefreshKey, setEditorRefreshKey] = useState(0);
   const [formData, setFormData] = useState<FAQFormData>({
     title: 'Frequently Asked Questions',
     subtitle: 'Find answers to common questions about our services',
@@ -36,10 +37,9 @@ const FAQ: React.FC = () => {
     site: 'FLORIDA',
   });
 
-  const { data: faqData, isLoading: isFaqLoading } =
-    useGetFaqQuery(selectedSite, {
-      refetchOnMountOrArgChange: true,
-    });
+  const { data: faqData } = useGetFaqQuery(selectedSite, {
+    refetchOnMountOrArgChange: true,
+  });
   const [createFaq] = useCreateFaqMutation();
   const [updateFaq] = useUpdateFaqMutation();
   const [deleteFaq] = useDeleteFaqMutation();
@@ -62,6 +62,7 @@ const FAQ: React.FC = () => {
             : [{ id: '1', question: '', answer: '' }],
         site: selectedSite,
       });
+      setEditorRefreshKey(prev => prev + 1);
     } else {
       // Reset to default when no data or site changes
       setFormData({
@@ -70,6 +71,7 @@ const FAQ: React.FC = () => {
         faqs: [{ id: '1', question: '', answer: '' }],
         site: selectedSite,
       });
+      setEditorRefreshKey(prev => prev + 1);
     }
   }, [faqData, selectedSite]);
 
@@ -258,11 +260,7 @@ const FAQ: React.FC = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {isFaqLoading ? (
-          <div className="flex items-center justify-center p-8">
-            <p className="text-gray-500">Loading...</p>
-          </div>
-        ) : isPreviewMode ? (
+        {isPreviewMode ? (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
             <div className="max-w-4xl mx-auto">
               <h1 className="text-4xl font-bold text-gray-900 mb-2">
@@ -355,6 +353,8 @@ const FAQ: React.FC = () => {
                           <button
                             onClick={() => removeFAQ(faq.id!)}
                             className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
+                            aria-label="Remove FAQ"
+                            title="Remove this FAQ"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -381,6 +381,7 @@ const FAQ: React.FC = () => {
                           Answer
                         </label>
                         <RichTextEditor
+                          key={`${faq.id}-${editorRefreshKey}`}
                           value={faq.answer}
                           onChange={(value) =>
                             handleFAQChange(faq.id!, 'answer', value)
