@@ -3,6 +3,7 @@ export { ListingsHeader } from './ListingsHeader';
 export { ListingsTable } from './ListingsTable';
 export { Pagination } from './Pagination';
 export { StatusDropdown } from './StatusDropdown';
+export { ListingDetailsModal } from './ListingDetailsModal';
 
 // Re-export types for convenience
 export type {
