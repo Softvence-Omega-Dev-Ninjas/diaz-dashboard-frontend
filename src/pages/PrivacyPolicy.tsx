@@ -21,13 +21,14 @@ const PrivacyPolicy: React.FC = () => {
   const [selectedSite, setSelectedSite] = useState<'FLORIDA' | 'JUPITER'>(
     'FLORIDA',
   );
+  const [editorKey, setEditorKey] = useState(0);
   const [formData, setFormData] = useState<PrivacyPolicyFormData>({
     title: '',
     content: '',
     site: 'FLORIDA',
   });
 
-  const { data: getPrivacyPolicyData, isLoading, isError, refetch } =
+  const { data: getPrivacyPolicyData, isLoading, isError } =
     useGetPrivacyPolicyQuery(selectedSite, {
       refetchOnMountOrArgChange: true,
     });
@@ -39,21 +40,34 @@ const PrivacyPolicy: React.FC = () => {
   const isSaving = isCreating || isUpdating;
 
   useEffect(() => {
+    console.log('🟢 Privacy useEffect triggered');
+    console.log('🟢 getPrivacyPolicyData:', getPrivacyPolicyData);
+    console.log('🟢 isError:', isError);
+    console.log('🟢 isLoading:', isLoading);
+    console.log('🟢 selectedSite:', selectedSite);
+    
     if (getPrivacyPolicyData && !isError) {
+      console.log('✅ Setting form data with:', {
+        title: getPrivacyPolicyData.privacyTitle,
+        contentLength: getPrivacyPolicyData.privacyDescription?.length,
+      });
       setFormData({
         title: getPrivacyPolicyData.privacyTitle || '',
         content: getPrivacyPolicyData.privacyDescription || '',
         site: selectedSite,
       });
+      setEditorKey(prev => prev + 1);
     } else {
+      console.log('⚠️ Resetting form data');
       // Reset form when no data for selected site or error
       setFormData({
         title: '',
         content: '',
         site: selectedSite,
       });
+      setEditorKey(prev => prev + 1);
     }
-  }, [getPrivacyPolicyData, selectedSite, isError]);
+  }, [getPrivacyPolicyData, selectedSite, isError, isLoading]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -69,6 +83,8 @@ const PrivacyPolicy: React.FC = () => {
   const handleContentChange = (value: string) => {
     setFormData((prev) => ({ ...prev, content: value }));
   };
+
+
 
   const handleSave = async () => {
     try {
@@ -94,7 +110,6 @@ const PrivacyPolicy: React.FC = () => {
         title: getPrivacyPolicyData ? 'Privacy Policy Updated' : 'Privacy Policy Created',
         text: `Privacy Policy page has been ${getPrivacyPolicyData ? 'updated' : 'created'} successfully!`,
       });
-      refetch();
       navigate('/content');
     } catch (error) {
       Swal.fire({
@@ -156,11 +171,7 @@ const PrivacyPolicy: React.FC = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {isLoading ? (
-          <div className="flex items-center justify-center p-8">
-            <p className="text-gray-500">Loading...</p>
-          </div>
-        ) : isPreviewMode ? (
+        {isPreviewMode ? (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
             <div className="max-w-4xl mx-auto">
               <h1 className="text-4xl font-bold text-gray-900 mb-8">
@@ -196,6 +207,7 @@ const PrivacyPolicy: React.FC = () => {
                   Page Content *
                 </label>
                 <RichTextEditor
+                  key={editorKey}
                   value={formData.content}
                   onChange={handleContentChange}
                   placeholder="Write your Privacy Policy content here..."

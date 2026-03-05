@@ -6,7 +6,7 @@ import {
 } from '@/redux/features/adminBannerApi/adminBannerApi';
 import { ChevronDown, ChevronUp, Save, Upload, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import toast from 'react-hot-toast';
+import Swal from 'sweetalert2';
 
 interface BannerFormData {
   id?: string;
@@ -157,7 +157,11 @@ const HomeBannersSection: React.FC<HomeBannersSectionProps> = ({ website }) => {
     console.log('🔵 Form data:', formData);
 
     if (!formData.bannerTitle.trim()) {
-      toast.error('Banner title is required');
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Banner title is required',
+      });
       return;
     }
 
@@ -189,7 +193,13 @@ const HomeBannersSection: React.FC<HomeBannersSectionProps> = ({ website }) => {
         console.log('🟡 Updating banner with ID:', formData.id);
         const result = await updateBanner(payload).unwrap();
         console.log('✅ Update response:', result);
-        toast.success(`${page} banner updated successfully`);
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: `${page} banner updated successfully`,
+          timer: 2000,
+          showConfirmButton: false,
+        });
 
         // Update form state
         setFormDataMap((prev) => ({
@@ -206,7 +216,13 @@ const HomeBannersSection: React.FC<HomeBannersSectionProps> = ({ website }) => {
         console.log('🟢 Creating new banner');
         const result = await createBanner(payload).unwrap();
         console.log('✅ Create response:', result);
-        toast.success(`${page} banner created successfully`);
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: `${page} banner created successfully`,
+          timer: 2000,
+          showConfirmButton: false,
+        });
 
         // Update form with new ID
         setFormDataMap((prev) => ({
@@ -224,7 +240,11 @@ const HomeBannersSection: React.FC<HomeBannersSectionProps> = ({ website }) => {
       console.error('❌ Save error:', error);
       const msg =
         error?.data?.message || error?.message || 'Failed to save banner';
-      toast.error(msg);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: msg,
+      });
     } finally {
       setSavingSection(null);
     }

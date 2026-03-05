@@ -8,7 +8,7 @@ type Tab = 'featured' | 'FLORIDA' | 'JUPITER';
 const FeaturedAndHomeManagement: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>('featured');
   const { data: featuredBoatsData, isLoading: isFeaturedBoatsLoading } =
-    useFeaturedBoatsQuery({});
+    useFeaturedBoatsQuery({}, { refetchOnMountOrArgChange: true });
 
   return (
     <div className="p-4 md:p-6">
