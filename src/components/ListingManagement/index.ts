@@ -2,6 +2,7 @@ export { ListingsFilters } from './ListingsFilters';
 export { ListingsHeader } from './ListingsHeader';
 export { ListingsTable } from './ListingsTable';
 export { Pagination } from './Pagination';
+export { StatusDropdown } from './StatusDropdown';
 
 // Re-export types for convenience
 export type {
