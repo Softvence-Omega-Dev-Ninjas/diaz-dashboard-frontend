@@ -22,9 +22,11 @@ const UpdateBlogPost: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [editorKey, setEditorKey] = useState(0);
   const [updateBlog, { isLoading: isUpdating }] = useUpdateBlogMutation();
-  const { data: blogData, isLoading } = useGetBlogByIdQuery(id!, {
+  const { data: blogData, isLoading, refetch } = useGetBlogByIdQuery(id!, {
     skip: !id,
+    refetchOnMountOrArgChange: true,
   });
 
   const [formData, setFormData] = useState<ArticleFormData>({
@@ -46,6 +48,7 @@ const UpdateBlogPost: React.FC = () => {
         blogImagePreview: blogData.blogImage?.url || '',
         existingImageUrl: blogData.blogImage?.url || '',
       });
+      setEditorKey(prev => prev + 1);
     }
   }, [blogData]);
 
@@ -111,13 +114,13 @@ const UpdateBlogPost: React.FC = () => {
         body: formDataToSend,
       }).unwrap();
 
+      await refetch();
+
       Swal.fire({
         title: 'Success!',
         text: 'Blog post updated successfully',
         icon: 'success',
         confirmButtonText: 'OK',
-      }).then(() => {
-        navigate('/content');
       });
     } catch (error: any) {
       console.error('Update error:', error);
@@ -236,6 +239,7 @@ const UpdateBlogPost: React.FC = () => {
                   Article Description *
                 </label>
                 <RichTextEditor
+                  key={editorKey}
                   value={formData.content}
                   onChange={handleContentChange}
                   placeholder="Write your article content here..."
