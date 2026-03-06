@@ -74,6 +74,86 @@ export interface EmailSubscriptionQueryParams {
   limit?: number;
 }
 
+export interface UserSubscription {
+  id: string;
+  userId: string;
+  planId: string;
+  stripeTransactionId: string;
+  stripeSubscriptionId: string;
+  status: string;
+  planStartedAt: string;
+  planEndedAt: string;
+  trialEndsAt: string | null;
+  paidAt: string;
+  failedAt: string | null;
+  promoCodeId: string | null;
+  billingCycle: number;
+  createdAt: string;
+  updatedAt: string;
+  user: {
+    id: string;
+    email: string;
+    name: string;
+    avatarUrl: string;
+  };
+  plan: {
+    id: string;
+    title: string;
+    planType: string;
+    description: string;
+    benefits: string[];
+    picLimit: number;
+    wordLimit: number;
+    isBest: boolean;
+    isActive: boolean;
+    stripeProductId: string;
+    stripePriceId: string;
+    currency: string;
+    price: number;
+    billingPeriodMonths: number;
+    createdAt: string;
+    updatedAt: string;
+  };
+  promoCode: {
+    code: string;
+  } | null;
+}
+
+export interface UserSubscriptionResponse {
+  success: boolean;
+  message: string;
+  data: UserSubscription[];
+  metadata: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPage: number;
+  };
+}
+
+export interface UserSubscriptionDetails extends UserSubscription {
+  Invoice: {
+    id: string;
+    stripeInvoiceId: string;
+    userId: string;
+    subscriptionId: string;
+    amount: number;
+    currency: string;
+    status: string;
+    paidAt: string;
+    dueAt: string | null;
+    failedAt: string | null;
+    createdAt: string;
+    updatedAt: string;
+  }[];
+}
+
+export interface UserSubscriptionDetailsResponse {
+  success: boolean;
+  message: string;
+  data: UserSubscriptionDetails;
+}
+
 const subscriptionApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     getSubscriptionPlans: build.query<SubscriptionPlan[], void>({
@@ -161,6 +241,39 @@ const subscriptionApi = baseApi.injectEndpoints({
       },
       providesTags: ['Subscription'],
     }),
+
+    // User Subscription Endpoints
+    getUserSubscriptions: build.query<
+      UserSubscriptionResponse,
+      { page?: number; limit?: number; status?: string; userId?: string; search?: string }
+    >({
+      query: (params = {}) => {
+        const { page = 1, limit = 10, status, userId, search } = params;
+        return {
+          url: `/admin/subscriptions`,
+          method: 'GET',
+          params: { 
+            page, 
+            limit,
+            ...(status && { status }),
+            ...(userId && { userId }),
+            ...(search && { search }),
+          },
+        };
+      },
+      providesTags: ['Subscription'],
+    }),
+
+    getSubscriptionDetails: build.query<
+      UserSubscriptionDetailsResponse,
+      string
+    >({
+      query: (id) => ({
+        url: `/admin/subscriptions/${id}`,
+        method: 'GET',
+      }),
+      providesTags: ['Subscription'],
+    }),
   }),
 });
 
@@ -172,4 +285,6 @@ export const {
   useDeleteSubscriptionPlanMutation,
   useGetEmailSubscriptionsQuery,
   useGetActiveEmailSubscriptionsQuery,
+  useGetUserSubscriptionsQuery,
+  useGetSubscriptionDetailsQuery,
 } = subscriptionApi;
