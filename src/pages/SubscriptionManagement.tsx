@@ -1,10 +1,11 @@
 import {
   EmailSubscriptionList,
   PlanList,
+  SubscriptionList,
 } from '@/components/SubscriptionManagement';
 import React, { useState } from 'react';
 
-type Tab = 'plan' | 'email';
+type Tab = 'plan' | 'email' | 'subscriptions';
 
 const SubscriptionManagement: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>('plan');
@@ -33,6 +34,16 @@ const SubscriptionManagement: React.FC = () => {
             Plan
           </button>
           <button
+            onClick={() => setActiveTab('subscriptions')}
+            className={`px-4 py-2 text-sm font-medium rounded-full transition-colors whitespace-nowrap ${
+              activeTab === 'subscriptions'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'bg-transparent text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            Subscription List
+          </button>
+          <button
             onClick={() => setActiveTab('email')}
             className={`px-4 py-2 text-sm font-medium rounded-full transition-colors whitespace-nowrap ${
               activeTab === 'email'
@@ -45,7 +56,13 @@ const SubscriptionManagement: React.FC = () => {
         </div>
       </div>
 
-      {activeTab === 'plan' ? <PlanList /> : <EmailSubscriptionList />}
+      {activeTab === 'plan' ? (
+        <PlanList />
+      ) : activeTab === 'subscriptions' ? (
+        <SubscriptionList />
+      ) : (
+        <EmailSubscriptionList />
+      )}
     </div>
   );
 };
