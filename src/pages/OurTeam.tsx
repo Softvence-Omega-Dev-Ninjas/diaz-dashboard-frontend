@@ -14,6 +14,7 @@ import Swal from 'sweetalert2';
 interface TeamMemberFormData {
   name: string;
   designation: string;
+  bio: string;
   image: File | null;
   isActive: boolean;
 }
@@ -45,6 +46,7 @@ const OurTeam: React.FC = () => {
   const [formData, setFormData] = useState<TeamMemberFormData>({
     name: '',
     designation: '',
+    bio: '',
     image: null,
     isActive: true,
   });
@@ -72,6 +74,7 @@ const OurTeam: React.FC = () => {
     setFormData({
       name: '',
       designation: '',
+      bio: '',
       image: null,
       isActive: true,
     });
@@ -84,6 +87,7 @@ const OurTeam: React.FC = () => {
     setFormData({
       name: member.name,
       designation: member.designation,
+      bio: member.bio || '',
       image: null,
       isActive: member.isActive,
     });
@@ -91,6 +95,7 @@ const OurTeam: React.FC = () => {
       id: member.id,
       name: member.name,
       designation: member.designation,
+      bio: member.bio || '',
       image: null,
       isActive: member.isActive,
       existingImageUrl: member.image?.url,
@@ -105,6 +110,7 @@ const OurTeam: React.FC = () => {
     setFormData({
       name: '',
       designation: '',
+      bio: '',
       image: null,
       isActive: true,
     });
@@ -128,6 +134,9 @@ const OurTeam: React.FC = () => {
       const formDataToSend = new FormData();
       formDataToSend.append('name', formData.name);
       formDataToSend.append('designation', formData.designation);
+      if (formData.bio) {
+        formDataToSend.append('bio', formData.bio);
+      }
 
       if (formData.image) {
         formDataToSend.append('image', formData.image);
@@ -411,6 +420,21 @@ const OurTeam: React.FC = () => {
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                     placeholder="e.g., Senior Developer"
                     required
+                  />
+                </div>
+
+                {/* Bio */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Bio
+                  </label>
+                  <textarea
+                    name="bio"
+                    value={formData.bio}
+                    onChange={handleInputChange}
+                    rows={4}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+                    placeholder="Short biography of the team member..."
                   />
                 </div>
 
