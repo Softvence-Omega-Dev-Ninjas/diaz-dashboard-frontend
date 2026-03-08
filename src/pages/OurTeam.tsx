@@ -26,10 +26,13 @@ interface EditingMember extends TeamMemberFormData {
 
 const OurTeam: React.FC = () => {
   const navigate = useNavigate();
-  const { data: ourTeamData, isLoading: isOurTeamLoading, refetch } =
-    useGetOurTeamQuery(undefined, {
-      refetchOnMountOrArgChange: true,
-    });
+  const {
+    data: ourTeamData,
+    isLoading: isOurTeamLoading,
+    refetch,
+  } = useGetOurTeamQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
   const [createTeamMember, { isLoading: isCreating }] =
     useCreateOurTeamMutation();
   const [updateTeamMember, { isLoading: isUpdating }] =
@@ -149,11 +152,19 @@ const OurTeam: React.FC = () => {
           isActive: formData.isActive,
         }).unwrap();
         await refetch();
-        await Swal.fire('Success!', 'Team member updated successfully', 'success');
+        await Swal.fire(
+          'Success!',
+          'Team member updated successfully',
+          'success',
+        );
       } else {
         await createTeamMember(formDataToSend).unwrap();
         await refetch();
-        await Swal.fire('Success!', 'Team member created successfully', 'success');
+        await Swal.fire(
+          'Success!',
+          'Team member created successfully',
+          'success',
+        );
       }
       closeForm();
     } catch (error: any) {
@@ -253,7 +264,7 @@ const OurTeam: React.FC = () => {
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
+                      <div className="w-full h-full bg-linear-to-br from-blue-100 to-blue-200 flex items-center justify-center">
                         <span className="text-4xl font-bold text-blue-600">
                           {member.name.charAt(0)}
                         </span>
@@ -338,9 +349,21 @@ const OurTeam: React.FC = () => {
                 onClick={closeForm}
                 className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded-lg transition-colors"
                 disabled={isCreating || isUpdating}
+                aria-label="Close modal"
+                title="Close modal"
               >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
@@ -363,8 +386,16 @@ const OurTeam: React.FC = () => {
                           className="w-24 h-24 rounded-full object-cover border-4 border-gray-200 shadow-sm"
                         />
                         <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-green-500 rounded-full border-4 border-white flex items-center justify-center">
-                          <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          <svg
+                            className="w-4 h-4 text-white"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                              clipRule="evenodd"
+                            />
                           </svg>
                         </div>
                       </div>
