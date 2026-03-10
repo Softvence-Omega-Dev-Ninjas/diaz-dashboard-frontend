@@ -193,7 +193,7 @@ const ContentManagement: React.FC = () => {
             </div>
 
             {/* Blog Posts List */}
-            <div className="divide-y divide-gray-200 max-h-[800px] overflow-y-auto">
+            <div className="divide-y divide-gray-200 max-h-[calc(100vh-400px)] overflow-y-auto">
               {isLoading ? (
                 <div className="flex items-center justify-center p-8">
                   <p className="text-gray-500">Loading blog posts...</p>
