@@ -4,8 +4,10 @@ export interface SellerData {
   email: string;
   username: string;
   avatarUrl: string;
+  isVerified: boolean;
   boatsCount: number;
   totalSalesValue: number;
+  createdAt: string;
 }
 
 export interface SellerResponse {
