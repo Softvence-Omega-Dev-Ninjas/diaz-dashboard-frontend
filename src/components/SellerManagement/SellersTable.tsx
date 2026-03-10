@@ -4,11 +4,17 @@ import React from 'react';
 interface SellersTableProps {
   sellers: SellerData[];
   onViewProfile: (id: string) => void;
+  sortBy?: 'name' | 'boatsCount' | 'totalSalesValue' | 'createdAt';
+  sortOrder?: 'asc' | 'desc';
+  onSort: (field: 'name' | 'boatsCount' | 'totalSalesValue' | 'createdAt') => void;
 }
 
 export const SellersTable: React.FC<SellersTableProps> = ({
   sellers,
   onViewProfile,
+  sortBy,
+  sortOrder,
+  onSort,
 }) => {
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -41,13 +47,27 @@ export const SellersTable: React.FC<SellersTableProps> = ({
     return colors[index];
   };
 
+  const SortIcon = ({ field }: { field: string }) => {
+    if (sortBy !== field) return <span className="text-gray-400">↕</span>;
+    return sortOrder === 'asc' ? (
+      <span className="text-blue-600">↑</span>
+    ) : (
+      <span className="text-blue-600">↓</span>
+    );
+  };
+
   return (
     <div className="overflow-x-auto">
       <table className="w-full min-w-[800px]">
         <thead>
           <tr className="bg-gray-50 border-b border-gray-200">
-            <th className="text-left px-4 md:px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Seller Name
+            <th
+              onClick={() => onSort('name')}
+              className="text-left px-4 md:px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+            >
+              <div className="flex items-center gap-1">
+                Seller Name <SortIcon field="name" />
+              </div>
             </th>
             <th className="text-left px-4 md:px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
               Username
@@ -55,11 +75,21 @@ export const SellersTable: React.FC<SellersTableProps> = ({
             <th className="text-left px-4 md:px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
               Contact
             </th>
-            <th className="text-left px-4 md:px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Boats
+            <th
+              onClick={() => onSort('boatsCount')}
+              className="text-left px-4 md:px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+            >
+              <div className="flex items-center gap-1">
+                Boats <SortIcon field="boatsCount" />
+              </div>
             </th>
-            <th className="text-left px-4 md:px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Total Sales
+            <th
+              onClick={() => onSort('totalSalesValue')}
+              className="text-left px-4 md:px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+            >
+              <div className="flex items-center gap-1">
+                Total Sales <SortIcon field="totalSalesValue" />
+              </div>
             </th>
             <th className="text-left px-4 md:px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
               Actions
@@ -105,6 +135,11 @@ export const SellersTable: React.FC<SellersTableProps> = ({
                       <span className="text-sm font-medium text-gray-900">
                         {seller.name}
                       </span>
+                      {seller.isVerified && (
+                        <span className="text-xs text-green-600 flex items-center gap-1">
+                          ✓ Verified
+                        </span>
+                      )}
                     </div>
                   </div>
                 </td>
