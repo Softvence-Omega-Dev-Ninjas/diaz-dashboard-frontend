@@ -12,7 +12,7 @@ import {
 } from '@/redux/features/leads/leadsApi';
 import type { CustomerContacted } from '@/types/customer-contacted-types';
 import type { YachtLead } from '@/types/yacht-leads-types';
-import { Download, Filter } from 'lucide-react';
+import { Download, Filter, RefreshCw } from 'lucide-react';
 import React, { useState } from 'react';
 // import toast from 'react-hot-toast';
 
@@ -25,24 +25,49 @@ const AllLeads: React.FC = () => {
   const [yachtSource, setYachtSource] = useState<string>('');
   const [yachtStatus, setYachtStatus] = useState<string>('');
 
-  const { data: leadsData, isLoading, isError } = useGetDailyLeadsQuery();
+  const { data: leadsData, isLoading, isError, refetch: refetchDailyLeads } = useGetDailyLeadsQuery(undefined, {
+    pollingInterval: 30000, // Auto-refresh every 30 seconds
+  });
   // const [generateLeads, { isLoading: isGenerating }] =
   //   useGenerateDailyLeadsMutation();
   const {
     data: customerContactedData,
     isLoading: isLoadingContacts,
     isError: isErrorContacts,
-  } = useGetCustomerContactedQuery({ page, limit });
+    refetch: refetchCustomerContacted,
+  } = useGetCustomerContactedQuery({ page, limit }, {
+    pollingInterval: 30000, // Auto-refresh every 30 seconds
+  });
 
   const {
     data: yachtLeadsData,
     isLoading: isLoadingYachtLeads,
     isError: isErrorYachtLeads,
+    refetch: refetchYachtLeads,
   } = useGetBoatLeadsQuery({
     page,
     limit,
     source: yachtSource || undefined,
+  }, {
+    pollingInterval: 30000, // Auto-refresh every 30 seconds
   });
+
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefreshData = async () => {
+    setIsRefreshing(true);
+    try {
+      if (activeTab === 'daily-leads-ai') {
+        await refetchDailyLeads();
+      } else if (activeTab === 'yacht-leads') {
+        await refetchYachtLeads();
+      } else if (activeTab === 'customer-contacted') {
+        await refetchCustomerContacted();
+      }
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   const filteredYachtLeads =
     yachtLeadsData?.data?.filter((lead: YachtLead) => {
@@ -254,7 +279,18 @@ const AllLeads: React.FC = () => {
 
   return (
     <div className="p-4 md:p-6">
-      <DailyLeadsHeader totalLeads={leadsData?.total_leads || 0} />
+      <div className="flex items-center justify-between mb-4">
+        <DailyLeadsHeader totalLeads={leadsData?.total_leads || 0} />
+        <button
+          onClick={handleRefreshData}
+          disabled={isRefreshing}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          title="Refresh data"
+        >
+          <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+          {isRefreshing ? 'Refreshing...' : 'Refresh'}
+        </button>
+      </div>
 
       <div className="bg-white rounded-lg shadow mb-4">
         <div className="border-b border-gray-200">
@@ -284,7 +320,7 @@ const AllLeads: React.FC = () => {
                   d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"
                 />
               </svg>
-              Daily Leads - AI
+              JP Daily Leads - AI
             </button>
             <button
               onClick={() => setActiveTab('yacht-leads')}
@@ -311,7 +347,7 @@ const AllLeads: React.FC = () => {
                   d="M3 15l3-9h12l3 9M5 21h14M6 18h12"
                 />
               </svg>
-              Yacht Leads
+              FL Yacht Leads
             </button>
             <button
               onClick={() => setActiveTab('customer-contacted')}
@@ -390,7 +426,7 @@ const AllLeads: React.FC = () => {
                 Export CSV
               </button>
             </div>
-            <DailyLeadsTable leads={leadsData?.leads || []} />
+            <DailyLeadsTable leads={leadsData?.leads || []} onRefetch={refetchDailyLeads} />
           </>
         )}
         {activeTab === 'yacht-leads' && (
@@ -461,6 +497,7 @@ const AllLeads: React.FC = () => {
                   leads={filteredYachtLeads}
                   currentPage={page}
                   limit={limit}
+                  onRefetch={refetchYachtLeads}
                 />
 
                 {yachtLeadsData?.metadata && (

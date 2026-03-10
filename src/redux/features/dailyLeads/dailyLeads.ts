@@ -9,6 +9,9 @@ export const aiApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: AI_API_URL,
   }),
+  refetchOnMountOrArgChange: 30,
+  refetchOnFocus: true,
+  refetchOnReconnect: true,
   tagTypes: ['DailyLeads'],
   endpoints: (builder) => ({
     getDailyLeads: builder.query<DailyLeadsResponse, void>({

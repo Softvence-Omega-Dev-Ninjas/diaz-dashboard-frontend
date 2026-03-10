@@ -7,9 +7,10 @@ import { LeadDetailsModal } from './LeadDetailsModal';
 
 interface DailyLeadsTableProps {
   leads: Lead[];
+  onRefetch?: () => void;
 }
 
-export const DailyLeadsTable: React.FC<DailyLeadsTableProps> = ({ leads }) => {
+export const DailyLeadsTable: React.FC<DailyLeadsTableProps> = ({ leads, onRefetch }) => {
   const [updateLeadStatus] = useUpdateLeadStatusMutation();
   const [updatingId, setUpdatingId] = useState<number | null>(null);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
@@ -37,6 +38,10 @@ export const DailyLeadsTable: React.FC<DailyLeadsTableProps> = ({ leads }) => {
     try {
       await updateLeadStatus({ leadId: lead.id, status: newStatus }).unwrap();
       toast.success(`Lead marked as ${newStatus}`);
+      // Refetch data after successful update
+      if (onRefetch) {
+        onRefetch();
+      }
     } catch (error) {
       toast.error('Failed to update lead status');
       console.error('Error updating lead status:', error);
