@@ -24,6 +24,10 @@ export const baseApi = createApi({
     },
   }),
 
+  refetchOnMountOrArgChange: 30,
+  refetchOnFocus: true,
+  refetchOnReconnect: true,
+
   tagTypes: [
     'Auth',
     'User',

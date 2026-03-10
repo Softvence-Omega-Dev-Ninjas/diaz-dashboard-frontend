@@ -10,12 +10,14 @@ interface YachtLeadsTableProps {
   leads: YachtLead[];
   currentPage: number;
   limit: number;
+  onRefetch?: () => void;
 }
 
 export const YachtLeadsTable: React.FC<YachtLeadsTableProps> = ({
   leads,
   currentPage,
   limit,
+  onRefetch,
 }) => {
   const [updateBoatLeadsStatus, { isLoading: isUpdating }] =
     useUpdateBoatLeadsStatusMutation();
@@ -47,6 +49,10 @@ export const YachtLeadsTable: React.FC<YachtLeadsTableProps> = ({
       try {
         await updateBoatLeadsStatus({ leadId }).unwrap();
         toast.success('Lead status updated successfully!');
+        // Refetch data after successful update
+        if (onRefetch) {
+          onRefetch();
+        }
       } catch (error: any) {
         toast.error(error?.data?.message || 'Failed to update lead status');
       }

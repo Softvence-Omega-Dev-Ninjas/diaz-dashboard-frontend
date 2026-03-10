@@ -29,12 +29,12 @@ const navItems = [
     icon: <LuLayoutDashboard className="text-lg" />,
   },
   {
-    label: 'Listings Management',
+    label: 'FL Listings Management',
     path: '/listings',
     icon: <LuShip className="text-lg" />,
   },
   {
-    label: 'Seller Management',
+    label: 'FL Seller Management',
     path: '/sellers',
     icon: <LuUsers className="text-lg" />,
   },
