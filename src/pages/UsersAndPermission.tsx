@@ -6,7 +6,6 @@ import {
   useDeletePermissionMutation,
   useGetAllPermissionUsersQuery,
 } from '@/redux/features/permissionManagement/permission';
-import { adminEmails } from '@/types/customer-contacted-types';
 import type {
   CreateAdminRequest,
   PermissionUser,
@@ -14,7 +13,7 @@ import type {
 } from '@/types/permission-types';
 import { MoreVertical, Pencil, Plus, Trash2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import Swal from 'sweetalert2';
 
 const UsersAndPermission: React.FC = () => {
@@ -63,8 +62,12 @@ const UsersAndPermission: React.FC = () => {
       toast.success('Admin created successfully');
       setIsAddModalOpen(false);
     } catch (error) {
-      const err = error as { data?: { message?: string } };
-      toast.error(err?.data?.message || 'Failed to create admin');
+      const err = error as any;
+      const errorMessage =
+        err?.data?.message?.[0] ||
+        err?.data?.message ||
+        'Failed to create admin';
+      toast.error(errorMessage);
     }
   };
 
@@ -76,15 +79,18 @@ const UsersAndPermission: React.FC = () => {
 
   const handleRoleUpdate = async (data: UpdateRoleRequest) => {
     if (!selectedUser) return;
-    console.log('Updating role with data:', data);
     try {
-      await updateRole({ id: selectedUser.id, data }).unwrap();
+      await updateRole({ id: selectedUser.id, role: data.role }).unwrap();
       toast.success('Role updated successfully');
       setIsUpdateModalOpen(false);
       setSelectedUser(null);
     } catch (error) {
-      const err = error as { data?: { message?: string } };
-      toast.error(err?.data?.message || 'Failed to update role');
+      const err = error as any;
+      const errorMessage =
+        err?.data?.message?.[0] ||
+        err?.data?.message ||
+        'Failed to update role';
+      toast.error(errorMessage);
     }
   };
 
@@ -107,8 +113,12 @@ const UsersAndPermission: React.FC = () => {
         await deleteUser(user.id).unwrap();
         toast.success('User deleted successfully');
       } catch (error) {
-        const err = error as { data?: { message?: string } };
-        toast.error(err?.data?.message || 'Failed to delete user');
+        const err = error as any;
+        const errorMessage =
+          err?.data?.message?.[0] ||
+          err?.data?.message ||
+          'Failed to delete user';
+        toast.error(errorMessage);
       }
     }
   };
@@ -140,10 +150,6 @@ const UsersAndPermission: React.FC = () => {
   const getRoleLabel = (role: string) => {
     return role === 'SUPER_ADMIN' ? 'Super Admin' : 'Admin';
   };
-
-  const filteredUsers = users.filter(
-    (user: any) => !adminEmails.includes(user.email),
-  );
 
   if (isLoading) {
     return (
@@ -198,12 +204,12 @@ const UsersAndPermission: React.FC = () => {
 
         {/* Users List */}
         <div className="divide-y divide-gray-200">
-          {filteredUsers.length === 0 ? (
+          {users.length === 0 ? (
             <div className="p-8 text-center text-gray-500">
               No admin users found
             </div>
           ) : (
-            filteredUsers.map((user: any) => (
+            users.map((user: any) => (
               <div
                 key={user.id}
                 className="flex flex-col lg:flex-row items-start lg:items-center justify-between p-4 md:p-6 hover:bg-gray-50 transition-colors gap-4"

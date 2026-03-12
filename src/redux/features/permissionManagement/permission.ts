@@ -1,5 +1,10 @@
 import { baseApi } from '@/redux/api/baseApi';
 
+interface User {
+  id: string;
+  [key: string]: unknown;
+}
+
 const permissionManageApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     getAllPermissionUsers: build.query({
@@ -7,7 +12,13 @@ const permissionManageApi = baseApi.injectEndpoints({
         url: `/user-permissions/get-admins`,
         method: 'GET',
       }),
-      providesTags: ['PERMISSION'],
+      providesTags: (result) => [
+        { type: 'PERMISSION', id: 'LIST' },
+        ...(result?.map((user: User) => ({
+          type: 'PERMISSION' as const,
+          id: user.id,
+        })) || []),
+      ],
     }),
     createPermission: build.mutation({
       query: (data) => ({
@@ -15,22 +26,58 @@ const permissionManageApi = baseApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: ['PERMISSION'],
+      invalidatesTags: [{ type: 'PERMISSION', id: 'LIST' }],
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          dispatch(
+            permissionManageApi.util.invalidateTags([
+              { type: 'PERMISSION', id: 'LIST' },
+            ]),
+          );
+        } catch (error) {
+          console.error('Error creating permission:', error);
+        }
+      },
     }),
     changeRole: build.mutation({
-      query: ({ id, data }) => ({
-        url: `/user-permissions/${id}?changerole=${data.role}`,
+      query: ({ id, role }) => ({
+        url: `/user-permissions/${id}?changerole=${role}`,
         method: 'PATCH',
       }),
-      invalidatesTags: ['PERMISSION'],
+      invalidatesTags: [{ type: 'PERMISSION', id: 'LIST' }],
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          dispatch(
+            permissionManageApi.util.invalidateTags([
+              { type: 'PERMISSION', id: 'LIST' },
+            ]),
+          );
+        } catch (error) {
+          console.error('Error changing role:', error);
+        }
+      },
     }),
 
     deletePermission: build.mutation({
       query: (id) => ({
-        url: `/user-permissions/delete/${id}`,
-        method: 'PATCH',
+        url: `/user-permissions/${id}`,
+        method: 'DELETE',
       }),
-      invalidatesTags: ['PERMISSION'],
+      invalidatesTags: [{ type: 'PERMISSION', id: 'LIST' }],
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          dispatch(
+            permissionManageApi.util.invalidateTags([
+              { type: 'PERMISSION', id: 'LIST' },
+            ]),
+          );
+        } catch (error) {
+          console.error('Error deleting permission:', error);
+        }
+      },
     }),
   }),
 });
