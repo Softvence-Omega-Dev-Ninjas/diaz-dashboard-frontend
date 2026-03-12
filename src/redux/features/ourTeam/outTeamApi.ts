@@ -18,6 +18,8 @@ export interface TeamMember {
   name: string;
   designation: string;
   bio?: string;
+  email?: string;
+  contact?: string;
   imageId: string;
   order: number;
   isActive: boolean;

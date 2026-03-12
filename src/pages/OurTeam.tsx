@@ -15,6 +15,8 @@ interface TeamMemberFormData {
   name: string;
   designation: string;
   bio: string;
+  email: string;
+  contact: string;
   image: File | null;
   isActive: boolean;
 }
@@ -49,6 +51,8 @@ const OurTeam: React.FC = () => {
   const [formData, setFormData] = useState<TeamMemberFormData>({
     name: '',
     designation: '',
+    email: '',
+    contact: '',
     bio: '',
     image: null,
     isActive: true,
@@ -77,6 +81,8 @@ const OurTeam: React.FC = () => {
     setFormData({
       name: '',
       designation: '',
+      email: '',
+      contact: '',
       bio: '',
       image: null,
       isActive: true,
@@ -90,6 +96,8 @@ const OurTeam: React.FC = () => {
     setFormData({
       name: member.name,
       designation: member.designation,
+      email: member.email || '',
+      contact: member.contact || '',
       bio: member.bio || '',
       image: null,
       isActive: member.isActive,
@@ -98,6 +106,8 @@ const OurTeam: React.FC = () => {
       id: member.id,
       name: member.name,
       designation: member.designation,
+      email: member.email || '',
+      contact: member.contact || '',
       bio: member.bio || '',
       image: null,
       isActive: member.isActive,
@@ -113,6 +123,8 @@ const OurTeam: React.FC = () => {
     setFormData({
       name: '',
       designation: '',
+      email: '',
+      contact: '',
       bio: '',
       image: null,
       isActive: true,
@@ -139,6 +151,12 @@ const OurTeam: React.FC = () => {
       formDataToSend.append('designation', formData.designation);
       if (formData.bio) {
         formDataToSend.append('bio', formData.bio);
+      }
+      if (formData.email) {
+        formDataToSend.append('email', formData.email);
+      }
+      if (formData.contact) {
+        formDataToSend.append('contact', formData.contact);
       }
 
       if (formData.image) {
@@ -435,6 +453,36 @@ const OurTeam: React.FC = () => {
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                     placeholder="e.g., John Doe"
                     required
+                  />
+                </div>
+
+                {/* Email */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    placeholder="e.g., john@example.com"
+                  />
+                </div>
+
+                {/* Contact */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Contact
+                  </label>
+                  <input
+                    type="text"
+                    name="contact"
+                    value={formData.contact}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    placeholder="e.g., +1 234 567 8900"
                   />
                 </div>
 
