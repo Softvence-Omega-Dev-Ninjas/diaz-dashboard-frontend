@@ -16,6 +16,13 @@ interface ApiError {
   };
 }
 
+const getErrorMessage = (error: ApiError): string => {
+  if (Array.isArray(error?.data?.message)) {
+    return error.data.message.join(', ');
+  }
+  return error?.data?.message || 'An error occurred';
+};
+
 const PasswordRequirement: React.FC<{ met: boolean; text: string }> = ({
   met,
   text,
@@ -108,12 +115,8 @@ export const AddAdminModal: React.FC<AddAdminModalProps> = ({
       try {
         await onSubmit(formData);
       } catch (error) {
-        const err = error as ApiError;
-        const errorMessage =
-          (Array.isArray(err?.data?.message)
-            ? err.data.message[0]
-            : err?.data?.message) || 'Failed to create admin';
-        toast.error(errorMessage);
+        const errorMessage = getErrorMessage(error as ApiError);
+        toast.error(errorMessage || 'Failed to create admin');
       }
     }
   };

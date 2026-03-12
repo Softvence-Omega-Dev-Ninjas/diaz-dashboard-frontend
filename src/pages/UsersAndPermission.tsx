@@ -16,6 +16,19 @@ import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import Swal from 'sweetalert2';
 
+interface ApiError {
+  data?: {
+    message?: string | string[];
+  };
+}
+
+const getErrorMessage = (error: ApiError): string => {
+  if (Array.isArray(error?.data?.message)) {
+    return error.data.message.join(', ');
+  }
+  return error?.data?.message || 'An error occurred';
+};
+
 const UsersAndPermission: React.FC = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
@@ -62,12 +75,8 @@ const UsersAndPermission: React.FC = () => {
       toast.success('Admin created successfully');
       setIsAddModalOpen(false);
     } catch (error) {
-      const err = error as any;
-      const errorMessage =
-        err?.data?.message?.[0] ||
-        err?.data?.message ||
-        'Failed to create admin';
-      toast.error(errorMessage);
+      const errorMessage = getErrorMessage(error as ApiError);
+      toast.error(errorMessage || 'Failed to create admin');
     }
   };
 
@@ -85,12 +94,8 @@ const UsersAndPermission: React.FC = () => {
       setIsUpdateModalOpen(false);
       setSelectedUser(null);
     } catch (error) {
-      const err = error as any;
-      const errorMessage =
-        err?.data?.message?.[0] ||
-        err?.data?.message ||
-        'Failed to update role';
-      toast.error(errorMessage);
+      const errorMessage = getErrorMessage(error as ApiError);
+      toast.error(errorMessage || 'Failed to update role');
     }
   };
 
@@ -113,12 +118,8 @@ const UsersAndPermission: React.FC = () => {
         await deleteUser(user.id).unwrap();
         toast.success('User deleted successfully');
       } catch (error) {
-        const err = error as any;
-        const errorMessage =
-          err?.data?.message?.[0] ||
-          err?.data?.message ||
-          'Failed to delete user';
-        toast.error(errorMessage);
+        const errorMessage = getErrorMessage(error as ApiError);
+        toast.error(errorMessage || 'Failed to delete user');
       }
     }
   };
