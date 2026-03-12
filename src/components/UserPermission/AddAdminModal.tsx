@@ -1,6 +1,7 @@
 import type { CreateAdminRequest } from '@/types/permission-types';
-import { X } from 'lucide-react';
-import React, { useState } from 'react';
+import { X, Check, AlertCircle } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { toast } from 'sonner';
 
 interface AddAdminModalProps {
   isOpen: boolean;
@@ -8,6 +9,28 @@ interface AddAdminModalProps {
   onSubmit: (data: CreateAdminRequest) => void;
   isLoading?: boolean;
 }
+
+interface ApiError {
+  data?: {
+    message?: string | string[];
+  };
+}
+
+const PasswordRequirement: React.FC<{ met: boolean; text: string }> = ({
+  met,
+  text,
+}) => (
+  <div className="flex items-center gap-2">
+    {met ? (
+      <Check className="w-4 h-4 text-green-500 shrink-0" />
+    ) : (
+      <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
+    )}
+    <span className={`text-xs ${met ? 'text-green-600' : 'text-red-600'}`}>
+      {text}
+    </span>
+  </div>
+);
 
 export const AddAdminModal: React.FC<AddAdminModalProps> = ({
   isOpen,
@@ -39,6 +62,19 @@ export const AddAdminModal: React.FC<AddAdminModalProps> = ({
     setErrors((prev) => ({ ...prev, [name]: '' }));
   };
 
+  const passwordValidation = useMemo(() => {
+    const pwd = formData.password;
+    return {
+      hasLowercase: /[a-z]/.test(pwd),
+      hasUppercase: /[A-Z]/.test(pwd),
+      hasNumber: /\d/.test(pwd),
+      hasSpecial: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pwd),
+      hasMinLength: pwd.length >= 8,
+    };
+  }, [formData.password]);
+
+  const isPasswordValid = Object.values(passwordValidation).every(Boolean);
+
   const validateForm = (): boolean => {
     const newErrors: Partial<Record<keyof CreateAdminRequest, string>> = {};
 
@@ -54,8 +90,8 @@ export const AddAdminModal: React.FC<AddAdminModalProps> = ({
 
     if (!formData.password.trim()) {
       newErrors.password = 'Password is required';
-    } else if (formData.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters';
+    } else if (!isPasswordValid) {
+      newErrors.password = 'Password does not meet all requirements';
     }
 
     if (!formData.name.trim()) {
@@ -66,10 +102,19 @@ export const AddAdminModal: React.FC<AddAdminModalProps> = ({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      onSubmit(formData);
+      try {
+        await onSubmit(formData);
+      } catch (error) {
+        const err = error as ApiError;
+        const errorMessage =
+          (Array.isArray(err?.data?.message)
+            ? err.data.message[0]
+            : err?.data?.message) || 'Failed to create admin';
+        toast.error(errorMessage);
+      }
     }
   };
 
@@ -100,6 +145,8 @@ export const AddAdminModal: React.FC<AddAdminModalProps> = ({
             onClick={handleClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
             disabled={isLoading}
+            title="Close modal"
+            aria-label="Close modal"
           >
             <X className="w-5 h-5" />
           </button>
@@ -190,12 +237,49 @@ export const AddAdminModal: React.FC<AddAdminModalProps> = ({
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                formData.password
+                  ? isPasswordValid
+                    ? 'border-green-300 focus:ring-green-500'
+                    : 'border-red-300 focus:ring-red-500'
+                  : 'border-gray-300 focus:ring-blue-500'
+              }`}
               placeholder="SuperSecret123!"
               disabled={isLoading}
             />
             {errors.password && (
               <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+            )}
+
+            {/* Password Requirements */}
+            {formData.password && (
+              <div className="mt-3 space-y-2">
+                <p className="text-xs font-medium text-gray-600">
+                  Password Requirements:
+                </p>
+                <div className="space-y-1">
+                  <PasswordRequirement
+                    met={passwordValidation.hasMinLength}
+                    text="At least 8 characters"
+                  />
+                  <PasswordRequirement
+                    met={passwordValidation.hasLowercase}
+                    text="Lowercase letter (a-z)"
+                  />
+                  <PasswordRequirement
+                    met={passwordValidation.hasUppercase}
+                    text="Uppercase letter (A-Z)"
+                  />
+                  <PasswordRequirement
+                    met={passwordValidation.hasNumber}
+                    text="Number (0-9)"
+                  />
+                  <PasswordRequirement
+                    met={passwordValidation.hasSpecial}
+                    text="Special character (!@#$%^&*)"
+                  />
+                </div>
+              </div>
             )}
           </div>
 
