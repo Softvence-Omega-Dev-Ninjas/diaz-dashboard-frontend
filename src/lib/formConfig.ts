@@ -29,23 +29,14 @@ export const FUEL_TYPE_OPTIONS = [
 ];
 
 export const ENGINE_COUNT_OPTIONS = [
-  { value: '01', label: '01' },
-  { value: '02', label: '02' },
-  { value: '03', label: '03' },
-  { value: '04', label: '04' },
-];
-
-export const CABIN_COUNT_OPTIONS = [
   { value: '1', label: '1' },
   { value: '2', label: '2' },
   { value: '3', label: '3' },
   { value: '4', label: '4' },
-];
-
-export const HEAD_COUNT_OPTIONS = [
-  { value: '1', label: '1' },
-  { value: '2', label: '2' },
-  { value: '3', label: '3' },
+  { value: '5', label: '5' },
+  { value: '6', label: '6' },
+  { value: '7', label: '7' },
+  { value: '8', label: '8' },
 ];
 
 export const CONDITION_OPTIONS = [
