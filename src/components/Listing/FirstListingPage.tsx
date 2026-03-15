@@ -2,14 +2,12 @@
 import { firstStepSchema } from '@/lib/formValidation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import {
-  CABIN_COUNT_OPTIONS,
   ENGINE_COUNT_OPTIONS,
-  HEAD_COUNT_OPTIONS,
   YEAR_OPTIONS,
 } from '../../lib/formConfig';
 import { combineMeasurements } from '../../lib/formUtils';
@@ -57,7 +55,19 @@ const FirstListingPage = ({
   const { register, handleSubmit, watch, setValue } =
     useForm<FirstStepFormData>({
       resolver: zodResolver(firstStepSchema) as any,
-      defaultValues: initialData || {},
+      defaultValues: {
+        ...initialData,
+        engines: initialData?.engines || [
+          {
+            hours: 0,
+            make: '',
+            model: '',
+            totalPower: 0,
+            fuelType: '',
+            propellerType: '',
+          },
+        ],
+      },
     });
 
   const [coverPhoto, setCoverPhoto] = useState<string | null>(
@@ -75,6 +85,42 @@ const FirstListingPage = ({
 
   // Watch form values for real-time preview updates
   const formValues = watch();
+  const numberOfEngines = watch('numberOfEngines');
+
+  // Initialize engines array when numberOfEngines changes
+  useEffect(() => {
+    const engineCount = Number(numberOfEngines) || 1;
+    const currentEngines = formValues.engines || [];
+
+    if (currentEngines.length !== engineCount) {
+      const newEngines = Array.from({ length: engineCount }, (_, index) => {
+        return (
+          currentEngines[index] || {
+            hours: 0,
+            make: '',
+            model: '',
+            totalPower: 0,
+            fuelType: '',
+            propellerType: '',
+          }
+        );
+      });
+      setValue('engines', newEngines);
+    }
+  }, [numberOfEngines, formValues.engines, setValue]);
+
+  // Delete engine handler
+  const handleDeleteEngine = (indexToDelete: number) => {
+    const currentEngines = formValues.engines || [];
+    const newEngines = currentEngines.filter((_: any, index: number) => index !== indexToDelete);
+    
+    // Update engines array
+    setValue('engines', newEngines);
+    
+    // Update numberOfEngines
+    const newCount = newEngines.length;
+    setValue('numberOfEngines', newCount);
+  };
 
   const handleCoverPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -204,7 +250,6 @@ const FirstListingPage = ({
                   register={register}
                   value={formValues.material}
                   onChange={(value) => setValue('material', value)}
-                  required
                 />
                 <DynamicFormSelect
                   label="Fuel Type:"
@@ -242,17 +287,15 @@ const FirstListingPage = ({
                   label="Number of Cabin:"
                   name="numberOfCabins"
                   register={register}
-                  type="select"
-                  options={CABIN_COUNT_OPTIONS}
-                  required
+                  type="number"
+                  placeholder="Type here"
                 />
                 <FormField
                   label="Number of Heads:"
                   name="numberOfHeads"
                   register={register}
-                  type="select"
-                  options={HEAD_COUNT_OPTIONS}
-                  required
+                  type="number"
+                  placeholder="Type here"
                 />
               </div>
             </div>
@@ -267,6 +310,8 @@ const FirstListingPage = ({
                   setValue={setValue}
                   watch={watch}
                   engineNumber={index + 1}
+                  onDelete={() => handleDeleteEngine(index)}
+                  canDelete={(formValues.engines?.length || 1) > 1}
                 />
               ),
             )}
@@ -330,6 +375,7 @@ const FirstListingPage = ({
                 register={register}
                 type="textarea"
                 placeholder="Write description..."
+                required
               />
             </div>
 
