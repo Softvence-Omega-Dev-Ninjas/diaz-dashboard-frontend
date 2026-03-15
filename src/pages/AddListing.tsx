@@ -1,8 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import FirstListingPage from '@/components/Listing/FirstListingPage';
 import { useCreateListingMutation } from '@/redux/features/listingManagement/listingManagement';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+
+interface Engine {
+  hours?: number;
+  make: string;
+  model?: string;
+  totalPower?: number;
+  fuelType?: string;
+  propellerType?: string;
+}
 
 interface FormData {
   buildYear?: number;
@@ -22,12 +31,7 @@ interface FormData {
   numberOfCabins?: number;
   numberOfHeads?: number;
 
-  [key: `engine${number}Hours`]: number | undefined;
-  [key: `engine${number}Make`]: string | undefined;
-  [key: `engine${number}Model`]: string | undefined;
-  [key: `engine${number}TotalPower`]: number | undefined;
-  [key: `engine${number}FuelType`]: string | undefined;
-  [key: `engine${number}PropellerType`]: string | undefined;
+  engines?: Engine[];
 
   condition?: string;
   price?: number;
@@ -93,26 +97,14 @@ const createBoatRegistrationFormData = async (
     make: data.make || '',
     fuelType: data.fuelType || '',
     state: data.state || '',
-    engines: Array.from(
-      { length: toNumber(data.numberOfEngines) || 1 },
-      (_, index) => {
-        const engineNum = index + 1;
-        return {
-          hours: toNumber(
-            (data as any)[`engine${engineNum}Hours`] as number | undefined,
-          ),
-          horsepower: toNumber(
-            (data as any)[`engine${engineNum}TotalPower`] as number | undefined,
-          ),
-          make: ((data as any)[`engine${engineNum}Make`] as string) || '',
-          model: ((data as any)[`engine${engineNum}Model`] as string) || '',
-          fuelType:
-            ((data as any)[`engine${engineNum}FuelType`] as string) || '',
-          propellerType:
-            ((data as any)[`engine${engineNum}PropellerType`] as string) || '',
-        };
-      },
-    ),
+    engines: (data.engines || []).map((engine) => ({
+      hours: toNumber(engine.hours),
+      horsepower: toNumber(engine.totalPower),
+      make: engine.make || '',
+      model: engine.model || '',
+      fuelType: engine.fuelType || '',
+      propellerType: engine.propellerType || '',
+    })),
     extraDetails:
       data.moreDetails?.map((detail) => ({
         key: detail.title,
@@ -278,7 +270,14 @@ const AddListing = () => {
       navigate('/listings');
     } catch (error: any) {
       console.error('❌ Submission failed:', error);
-      toast.error(error?.data?.message || 'Failed to create listing');
+      
+      const errorMessage = 
+        error?.data?.message || 
+        error?.data?.error || 
+        error?.message || 
+        'Failed to create listing';
+      
+      toast.error(errorMessage);
     }
   };
 
