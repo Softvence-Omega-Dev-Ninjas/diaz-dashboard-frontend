@@ -5,7 +5,7 @@ import {
   useUpdateListingMutation,
 } from '@/redux/features/listingManagement/listingManagement';
 import { ArrowLeft } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const EditListing = () => {
@@ -75,6 +75,21 @@ const EditListing = () => {
       if (data.numberOfHeads)
         updateData.headsNumber = parseInt(data.numberOfHeads);
 
+      // Engines array - convert from new format to backend format
+      // IMPORTANT: Always send engines array to properly update engine count
+      if (data.engines && Array.isArray(data.engines)) {
+        updateData.engines = data.engines.map((engine: any) => ({
+          hours: parseInt(engine.hours || 0),
+          horsepower: parseInt(engine.totalPower || 0),
+          make: engine.make || '',
+          model: engine.model || '',
+          fuelType: engine.fuelType || '',
+          propellerType: engine.propellerType || '',
+        }));
+        // Update enginesNumber to match actual engines array length
+        updateData.enginesNumber = data.engines.length;
+      }
+
       // Arrays
       if (data.electronics) updateData.electronics = data.electronics;
       if (data.insideEquipment)
@@ -115,7 +130,14 @@ const EditListing = () => {
       navigate('/listings');
     } catch (error: any) {
       console.error('❌ Update failed:', error);
-      toast.error(error?.data?.message || 'Failed to update listing');
+      
+      const errorMessage = 
+        error?.data?.message || 
+        error?.data?.error || 
+        error?.message || 
+        'Failed to update listing';
+      
+      toast.error(errorMessage);
     }
   };
 
@@ -192,6 +214,31 @@ const EditListing = () => {
     }
 
     return [{ title: '', description: '' }];
+  };
+
+  // Convert backend engines to form format
+  const parseEngines = () => {
+    if (!listing.engines || !Array.isArray(listing.engines)) {
+      return [
+        {
+          hours: 0,
+          make: '',
+          model: '',
+          totalPower: 0,
+          fuelType: '',
+          propellerType: '',
+        },
+      ];
+    }
+
+    return listing.engines.map((engine: any) => ({
+      hours: engine.hours || 0,
+      make: engine.make || '',
+      model: engine.model || '',
+      totalPower: engine.horsepower || 0,
+      fuelType: engine.fuelType || '',
+      propellerType: engine.propellerType || '',
+    }));
   };
 
   const initialData = {

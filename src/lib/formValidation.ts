@@ -1,6 +1,16 @@
 import z from 'zod';
 
-// Step 1 - Boat Information Schema
+// Engine schema for dynamic engines
+export const engineSchema = z.object({
+  hours: z.coerce.number().min(0, 'Hours must be positive').optional(),
+  make: z.string().min(1, 'Engine make is required'),
+  model: z.string().optional(),
+  totalPower: z.coerce.number().min(0, 'Total power must be positive').optional(),
+  fuelType: z.string().optional(),
+  propellerType: z.string().optional(),
+});
+
+// Step 1 - Boat Information Schema (matching Florida project)
 export const firstStepSchema = z.object({
   buildYear: z.coerce
     .number()
@@ -8,25 +18,32 @@ export const firstStepSchema = z.object({
     .max(new Date().getFullYear() + 1, 'Invalid year'),
   make: z.string().min(1, 'Make is required'),
   model: z.string().min(1, 'Model is required'),
+  name: z.string().min(1, 'Boat name is required'),
+  
+  // Dimensions - lengthFeet and lengthInches required, others optional
   lengthFt: z.coerce.number().min(0, 'Length feet must be positive'),
   lengthIn: z.coerce
     .number()
     .min(0, 'Length inches must be 0-12')
     .max(12, 'Inches cannot exceed 12'),
-  beamFt: z.coerce.number().min(0, 'Beam feet must be positive'),
+  beamFt: z.coerce.number().min(0, 'Beam feet must be positive').optional(),
   beamIn: z.coerce
     .number()
     .min(0, 'Beam inches must be 0-12')
-    .max(12, 'Inches cannot exceed 12'),
-  maxDraftFt: z.coerce.number().min(0, 'Draft feet must be positive'),
+    .max(12, 'Inches cannot exceed 12')
+    .optional(),
+  maxDraftFt: z.coerce.number().min(0, 'Draft feet must be positive').optional(),
   maxDraftIn: z.coerce
     .number()
     .min(0, 'Draft inches must be 0-12')
-    .max(12, 'Inches cannot exceed 12'),
+    .max(12, 'Inches cannot exceed 12')
+    .optional(),
+  
   class: z.string().min(1, 'Class is required'),
-  material: z.string().min(1, 'Material is required'),
+  material: z.string().optional(),
   fuelType: z.string().min(1, 'Fuel type is required'),
   propMaterial: z.string().min(1, 'Propeller material is required'),
+  
   numberOfEngines: z.coerce
     .number()
     .min(1, 'Number of engines is required')
@@ -34,7 +51,8 @@ export const firstStepSchema = z.object({
   numberOfCabins: z.coerce
     .number()
     .min(0, 'Number of cabins must be positive')
-    .max(50, 'Maximum 50 cabins'),
+    .max(50, 'Maximum 50 cabins')
+    .optional(),
   numberOfHeads: z.coerce
     .number()
     .min(0, 'Number of heads must be positive')
@@ -118,9 +136,8 @@ export const firstStepSchema = z.object({
   city: z.string().min(1, 'City is required'),
   state: z.string().min(1, 'State is required'),
   zip: z.string().min(1, 'Zip is required'),
-  name: z.string().min(1, 'Name is required'),
-  description: z.string().min(1, 'Description is required'),
-  embedUrl: z.string().optional(),
+  description: z.string().min(10, 'Description must be at least 10 characters'),
+  embedUrl: z.string().url().optional().or(z.literal('')),
 });
 
 // Step 2 - Seller Information Schema
