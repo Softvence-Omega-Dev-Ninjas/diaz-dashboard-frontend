@@ -65,9 +65,8 @@ export const firstStepSchema = z.object({
   engine1PropellerType: z.string().min(1, 'Propeller type is required'),
 
   // Engine fields for engine2..engine10.
-  // These must exist in the schema; otherwise `zodResolver` strips them and only
-  // `engine1*` values reach `createBoatRegistrationFormData`, resulting in only
-  // the first engine being effectively persisted.
+  // These exist in the schema so `zodResolver` keeps them in the form data,
+  // but they are fully optional so they never block submit.
   engine2Hours: z.coerce.number().min(0, 'Hours must be positive').optional(),
   engine2Make: z.string().optional(),
   engine2Model: z.string().optional(),
@@ -136,25 +135,9 @@ export const firstStepSchema = z.object({
   city: z.string().min(1, 'City is required'),
   state: z.string().min(1, 'State is required'),
   zip: z.string().min(1, 'Zip is required'),
-  description: z.string().min(10, 'Description must be at least 10 characters'),
-  embedUrl: z.string().url().optional().or(z.literal('')),
-}).superRefine((data, ctx) => {
-  const count = Number((data as any).numberOfEngines) || 1;
-
-  const requireString = (key: string, message: string) => {
-    const value = (data as any)[key];
-    if (typeof value !== 'string' || value.trim() === '') {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, path: [key], message });
-    }
-  };
-
-  // Engine 1 is already required above. Only enforce engine2..engine{count}.
-  for (let engineNum = 2; engineNum <= Math.min(10, count); engineNum++) {
-    requireString(`engine${engineNum}Make`, 'Engine make is required');
-    requireString(`engine${engineNum}Model`, 'Engine model is required');
-    requireString(`engine${engineNum}FuelType`, 'Engine fuel type is required');
-    requireString(`engine${engineNum}PropellerType`, 'Propeller type is required');
-  }
+  description: z.string().min(1, 'Description is required'),
+  // Allow any string or empty for existing data that may not be a strict URL
+  embedUrl: z.string().optional(),
 });
 
 // Step 2 - Seller Information Schema
