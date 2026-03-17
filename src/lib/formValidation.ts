@@ -69,67 +69,67 @@ export const firstStepSchema = z.object({
   // `engine1*` values reach `createBoatRegistrationFormData`, resulting in only
   // the first engine being effectively persisted.
   engine2Hours: z.coerce.number().min(0, 'Hours must be positive').optional(),
-  engine2Make: z.string().min(1, 'Engine make is required').optional(),
-  engine2Model: z.string().min(1, 'Engine model is required').optional(),
+  engine2Make: z.string().optional(),
+  engine2Model: z.string().optional(),
   engine2TotalPower: z.coerce.number().min(0, 'Total power must be positive').optional(),
-  engine2FuelType: z.string().min(1, 'Engine fuel type is required').optional(),
-  engine2PropellerType: z.string().min(1, 'Propeller type is required').optional(),
+  engine2FuelType: z.string().optional(),
+  engine2PropellerType: z.string().optional(),
 
   engine3Hours: z.coerce.number().min(0, 'Hours must be positive').optional(),
-  engine3Make: z.string().min(1, 'Engine make is required').optional(),
-  engine3Model: z.string().min(1, 'Engine model is required').optional(),
+  engine3Make: z.string().optional(),
+  engine3Model: z.string().optional(),
   engine3TotalPower: z.coerce.number().min(0, 'Total power must be positive').optional(),
-  engine3FuelType: z.string().min(1, 'Engine fuel type is required').optional(),
-  engine3PropellerType: z.string().min(1, 'Propeller type is required').optional(),
+  engine3FuelType: z.string().optional(),
+  engine3PropellerType: z.string().optional(),
 
   engine4Hours: z.coerce.number().min(0, 'Hours must be positive').optional(),
-  engine4Make: z.string().min(1, 'Engine make is required').optional(),
-  engine4Model: z.string().min(1, 'Engine model is required').optional(),
+  engine4Make: z.string().optional(),
+  engine4Model: z.string().optional(),
   engine4TotalPower: z.coerce.number().min(0, 'Total power must be positive').optional(),
-  engine4FuelType: z.string().min(1, 'Engine fuel type is required').optional(),
-  engine4PropellerType: z.string().min(1, 'Propeller type is required').optional(),
+  engine4FuelType: z.string().optional(),
+  engine4PropellerType: z.string().optional(),
 
   engine5Hours: z.coerce.number().min(0, 'Hours must be positive').optional(),
-  engine5Make: z.string().min(1, 'Engine make is required').optional(),
-  engine5Model: z.string().min(1, 'Engine model is required').optional(),
+  engine5Make: z.string().optional(),
+  engine5Model: z.string().optional(),
   engine5TotalPower: z.coerce.number().min(0, 'Total power must be positive').optional(),
-  engine5FuelType: z.string().min(1, 'Engine fuel type is required').optional(),
-  engine5PropellerType: z.string().min(1, 'Propeller type is required').optional(),
+  engine5FuelType: z.string().optional(),
+  engine5PropellerType: z.string().optional(),
 
   engine6Hours: z.coerce.number().min(0, 'Hours must be positive').optional(),
-  engine6Make: z.string().min(1, 'Engine make is required').optional(),
-  engine6Model: z.string().min(1, 'Engine model is required').optional(),
+  engine6Make: z.string().optional(),
+  engine6Model: z.string().optional(),
   engine6TotalPower: z.coerce.number().min(0, 'Total power must be positive').optional(),
-  engine6FuelType: z.string().min(1, 'Engine fuel type is required').optional(),
-  engine6PropellerType: z.string().min(1, 'Propeller type is required').optional(),
+  engine6FuelType: z.string().optional(),
+  engine6PropellerType: z.string().optional(),
 
   engine7Hours: z.coerce.number().min(0, 'Hours must be positive').optional(),
-  engine7Make: z.string().min(1, 'Engine make is required').optional(),
-  engine7Model: z.string().min(1, 'Engine model is required').optional(),
+  engine7Make: z.string().optional(),
+  engine7Model: z.string().optional(),
   engine7TotalPower: z.coerce.number().min(0, 'Total power must be positive').optional(),
-  engine7FuelType: z.string().min(1, 'Engine fuel type is required').optional(),
-  engine7PropellerType: z.string().min(1, 'Propeller type is required').optional(),
+  engine7FuelType: z.string().optional(),
+  engine7PropellerType: z.string().optional(),
 
   engine8Hours: z.coerce.number().min(0, 'Hours must be positive').optional(),
-  engine8Make: z.string().min(1, 'Engine make is required').optional(),
-  engine8Model: z.string().min(1, 'Engine model is required').optional(),
+  engine8Make: z.string().optional(),
+  engine8Model: z.string().optional(),
   engine8TotalPower: z.coerce.number().min(0, 'Total power must be positive').optional(),
-  engine8FuelType: z.string().min(1, 'Engine fuel type is required').optional(),
-  engine8PropellerType: z.string().min(1, 'Propeller type is required').optional(),
+  engine8FuelType: z.string().optional(),
+  engine8PropellerType: z.string().optional(),
 
   engine9Hours: z.coerce.number().min(0, 'Hours must be positive').optional(),
-  engine9Make: z.string().min(1, 'Engine make is required').optional(),
-  engine9Model: z.string().min(1, 'Engine model is required').optional(),
+  engine9Make: z.string().optional(),
+  engine9Model: z.string().optional(),
   engine9TotalPower: z.coerce.number().min(0, 'Total power must be positive').optional(),
-  engine9FuelType: z.string().min(1, 'Engine fuel type is required').optional(),
-  engine9PropellerType: z.string().min(1, 'Propeller type is required').optional(),
+  engine9FuelType: z.string().optional(),
+  engine9PropellerType: z.string().optional(),
 
   engine10Hours: z.coerce.number().min(0, 'Hours must be positive').optional(),
-  engine10Make: z.string().min(1, 'Engine make is required').optional(),
-  engine10Model: z.string().min(1, 'Engine model is required').optional(),
+  engine10Make: z.string().optional(),
+  engine10Model: z.string().optional(),
   engine10TotalPower: z.coerce.number().min(0, 'Total power must be positive').optional(),
-  engine10FuelType: z.string().min(1, 'Engine fuel type is required').optional(),
-  engine10PropellerType: z.string().min(1, 'Propeller type is required').optional(),
+  engine10FuelType: z.string().optional(),
+  engine10PropellerType: z.string().optional(),
 
   condition: z.string().min(1, 'Condition is required'),
   price: z.coerce.number().min(0, 'Price must be positive'),
@@ -138,6 +138,23 @@ export const firstStepSchema = z.object({
   zip: z.string().min(1, 'Zip is required'),
   description: z.string().min(10, 'Description must be at least 10 characters'),
   embedUrl: z.string().url().optional().or(z.literal('')),
+}).superRefine((data, ctx) => {
+  const count = Number((data as any).numberOfEngines) || 1;
+
+  const requireString = (key: string, message: string) => {
+    const value = (data as any)[key];
+    if (typeof value !== 'string' || value.trim() === '') {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: [key], message });
+    }
+  };
+
+  // Engine 1 is already required above. Only enforce engine2..engine{count}.
+  for (let engineNum = 2; engineNum <= Math.min(10, count); engineNum++) {
+    requireString(`engine${engineNum}Make`, 'Engine make is required');
+    requireString(`engine${engineNum}Model`, 'Engine model is required');
+    requireString(`engine${engineNum}FuelType`, 'Engine fuel type is required');
+    requireString(`engine${engineNum}PropellerType`, 'Propeller type is required');
+  }
 });
 
 // Step 2 - Seller Information Schema
