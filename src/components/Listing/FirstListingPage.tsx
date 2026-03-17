@@ -34,6 +34,14 @@ interface FirstListingPageProps {
       coverPhoto: string | null;
       galleryPhotos: string[];
       moreDetails: MoreDetail[];
+      engines: Array<{
+        hours?: number;
+        make: string;
+        model?: string;
+        totalPower?: number;
+        fuelType?: string;
+        propellerType?: string;
+      }>;
     },
   ) => void;
   initialData?: Partial<FirstStepFormData> & {
@@ -122,7 +130,34 @@ const FirstListingPage = ({
 
   const onSubmit = (data: FirstStepFormData) => {
     const formattedData = combineMeasurements(data);
-    onNext({ ...formattedData, coverPhoto, galleryPhotos, moreDetails });
+
+    const engineCount = Number(formattedData.numberOfEngines) || 1;
+    const engines = Array.from({ length: engineCount }, (_, index) => {
+      const n = index + 1;
+      const hours = (formattedData as any)[`engine${n}Hours`];
+      const make = (formattedData as any)[`engine${n}Make`];
+      const model = (formattedData as any)[`engine${n}Model`];
+      const totalPower = (formattedData as any)[`engine${n}TotalPower`];
+      const fuelType = (formattedData as any)[`engine${n}FuelType`];
+      const propellerType = (formattedData as any)[`engine${n}PropellerType`];
+
+      return {
+        hours,
+        make,
+        model,
+        totalPower,
+        fuelType,
+        propellerType,
+      };
+    }).filter((e) => {
+      // Keep engine 1 always (schema requires make), keep others only if any value was provided
+      if (e.make) return true;
+      return Boolean(
+        e.hours || e.model || e.totalPower || e.fuelType || e.propellerType,
+      );
+    });
+
+    onNext({ ...formattedData, engines, coverPhoto, galleryPhotos, moreDetails });
   };
 
   return (
