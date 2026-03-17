@@ -268,8 +268,20 @@ const EditListing = () => {
     numberOfCabins: listing.cabinsNumber || listing.numberOfCabins || 0,
     numberOfHeads: listing.headsNumber || listing.numberOfHeads || 0,
 
-    // Engines array - new format
-    engines: parseEngines(),
+    // Engine data - map from engines array
+    ...(listing.engines && listing.engines.length > 0
+      ? listing.engines.reduce((acc: any, engine: any, index: number) => {
+          const engineNum = index + 1;
+          acc[`engine${engineNum}Make`] = engine.make || '';
+          acc[`engine${engineNum}Model`] = engine.model || '';
+          acc[`engine${engineNum}Hours`] = engine.hours || 0;
+          // The form expects `engine{n}TotalPower`, not `engine{n}Horsepower`.
+          acc[`engine${engineNum}TotalPower`] = engine.horsepower || 0;
+          acc[`engine${engineNum}FuelType`] = engine.fuelType || '';
+          acc[`engine${engineNum}PropellerType`] = engine.propellerType || '';
+          return acc;
+        }, {})
+      : {}),
 
     electronics: listing.electronics || [],
     insideEquipment: listing.insideEquipment || [],
