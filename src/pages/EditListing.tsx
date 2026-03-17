@@ -228,7 +228,8 @@ const EditListing = () => {
           acc[`engine${engineNum}Make`] = engine.make || '';
           acc[`engine${engineNum}Model`] = engine.model || '';
           acc[`engine${engineNum}Hours`] = engine.hours || 0;
-          acc[`engine${engineNum}Horsepower`] = engine.horsepower || 0;
+          // The form expects `engine{n}TotalPower`, not `engine{n}Horsepower`.
+          acc[`engine${engineNum}TotalPower`] = engine.horsepower || 0;
           acc[`engine${engineNum}FuelType`] = engine.fuelType || '';
           acc[`engine${engineNum}PropellerType`] = engine.propellerType || '';
           return acc;
