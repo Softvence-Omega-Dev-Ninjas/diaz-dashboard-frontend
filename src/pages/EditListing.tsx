@@ -216,31 +216,6 @@ const EditListing = () => {
     return [{ title: '', description: '' }];
   };
 
-  // Convert backend engines to form format
-  const parseEngines = () => {
-    if (!listing.engines || !Array.isArray(listing.engines)) {
-      return [
-        {
-          hours: 0,
-          make: '',
-          model: '',
-          totalPower: 0,
-          fuelType: '',
-          propellerType: '',
-        },
-      ];
-    }
-
-    return listing.engines.map((engine: any) => ({
-      hours: engine.hours || 0,
-      make: engine.make || '',
-      model: engine.model || '',
-      totalPower: engine.horsepower || 0,
-      fuelType: engine.fuelType || '',
-      propellerType: engine.propellerType || '',
-    }));
-  };
-
   const initialData = {
     name: listing.name || '',
     price: listing.price || 0,

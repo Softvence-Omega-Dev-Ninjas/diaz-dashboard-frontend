@@ -2,7 +2,7 @@
 import { firstStepSchema } from '@/lib/formValidation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
@@ -55,19 +55,7 @@ const FirstListingPage = ({
   const { register, handleSubmit, watch, setValue } =
     useForm<FirstStepFormData>({
       resolver: zodResolver(firstStepSchema) as any,
-      defaultValues: {
-        ...initialData,
-        engines: initialData?.engines || [
-          {
-            hours: 0,
-            make: '',
-            model: '',
-            totalPower: 0,
-            fuelType: '',
-            propellerType: '',
-          },
-        ],
-      },
+      defaultValues: initialData || {},
     });
 
   const [coverPhoto, setCoverPhoto] = useState<string | null>(
@@ -85,42 +73,6 @@ const FirstListingPage = ({
 
   // Watch form values for real-time preview updates
   const formValues = watch();
-  const numberOfEngines = watch('numberOfEngines');
-
-  // Initialize engines array when numberOfEngines changes
-  useEffect(() => {
-    const engineCount = Number(numberOfEngines) || 1;
-    const currentEngines = formValues.engines || [];
-
-    if (currentEngines.length !== engineCount) {
-      const newEngines = Array.from({ length: engineCount }, (_, index) => {
-        return (
-          currentEngines[index] || {
-            hours: 0,
-            make: '',
-            model: '',
-            totalPower: 0,
-            fuelType: '',
-            propellerType: '',
-          }
-        );
-      });
-      setValue('engines', newEngines);
-    }
-  }, [numberOfEngines, formValues.engines, setValue]);
-
-  // Delete engine handler
-  const handleDeleteEngine = (indexToDelete: number) => {
-    const currentEngines = formValues.engines || [];
-    const newEngines = currentEngines.filter((_: any, index: number) => index !== indexToDelete);
-    
-    // Update engines array
-    setValue('engines', newEngines);
-    
-    // Update numberOfEngines
-    const newCount = newEngines.length;
-    setValue('numberOfEngines', newCount);
-  };
 
   const handleCoverPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -310,8 +262,6 @@ const FirstListingPage = ({
                   setValue={setValue}
                   watch={watch}
                   engineNumber={index + 1}
-                  onDelete={() => handleDeleteEngine(index)}
-                  canDelete={(formValues.engines?.length || 1) > 1}
                 />
               ),
             )}
