@@ -78,14 +78,30 @@ const EditListing = () => {
       // Engines array - convert from new format to backend format
       // IMPORTANT: Always send engines array to properly update engine count
       if (data.engines && Array.isArray(data.engines)) {
-        updateData.engines = data.engines.map((engine: any) => ({
-          hours: parseInt(engine.hours || 0),
-          horsepower: parseInt(engine.totalPower || 0),
-          make: engine.make || '',
-          model: engine.model || '',
-          fuelType: engine.fuelType || '',
-          propellerType: engine.propellerType || '',
-        }));
+        const currentListing = listingData?.data || listingData;
+        const existingEngines: any[] = Array.isArray(currentListing?.engines)
+          ? currentListing.engines
+          : [];
+
+        updateData.engines = data.engines.map((engine: any, index: number) => {
+          const existingId = existingEngines?.[index]?.id;
+          const payloadEngine: any = {
+            hours: parseInt(engine.hours || 0),
+            horsepower: parseInt(engine.totalPower || 0),
+            make: engine.make || '',
+            model: engine.model || '',
+            fuelType: engine.fuelType || '',
+            propellerType: engine.propellerType || '',
+          };
+
+          // Backend validates `engines[n].id` as UUID on update.
+          // Only include id if we actually have one from the current listing.
+          if (typeof existingId === 'string' && existingId.trim() !== '') {
+            payloadEngine.id = existingId;
+          }
+
+          return payloadEngine;
+        });
         // Update enginesNumber to match actual engines array length
         updateData.enginesNumber = data.engines.length;
       }
